@@ -11,7 +11,7 @@
 
 Both SQL migrations are installed. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
 
-Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in, and account cloud saving has been verified. Two-player verification is in progress. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
+Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in. Account cloud saving and loading have been verified. Two independent accounts, signed in through Google in Chrome and Discord in Codex's browser, both showed two online keepers, listed each other, and rendered their companions and live movement in Mossbell Village after the Broadcast fix. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
 ## Supabase
 
