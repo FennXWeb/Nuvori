@@ -904,6 +904,7 @@ export default function App() {
             </div>
             <div className="aside-footer">
               <span>Made for a little wonder.</span>
+              <a href="./privacy.html" target="_blank" rel="noreferrer">Privacy &amp; data</a>
               <span>NUVORI · EARLY ACCESS</span>
             </div>
           </aside>
@@ -1456,6 +1457,7 @@ export default function App() {
               <p className="auth-note">
                 Your guest adventure stays on this device. Account adventures
                 save separately.
+                {" "}<a href="./privacy.html" target="_blank" rel="noreferrer">Privacy &amp; data</a>
               </p>
               <button className="text-button centered" onClick={closePanel}>
                 Continue as a guest

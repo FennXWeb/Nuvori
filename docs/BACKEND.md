@@ -1,5 +1,18 @@
 # Nuvori backend setup
 
+## Provisioned services
+
+- Game: <https://fennxweb.github.io/Nuvori/>
+- Supabase project: [Nuvori](https://supabase.com/dashboard/project/uvnlmfpqonmccbaqxyzt), free plan, East US (Ohio).
+- Google Cloud project: [nuvori-509916](https://console.cloud.google.com/auth/overview?project=nuvori-509916).
+- Discord application: [Nuvori](https://discord.com/developers/applications/1553803905442250872/oauth2), application ID `1553803905442250872`.
+- Provider callback: `https://uvnlmfpqonmccbaqxyzt.supabase.co/auth/v1/callback`.
+- Google JavaScript origin: `https://fennxweb.github.io`.
+
+The initial SQL migration is installed. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
+
+Google and Discord credentials have been entered by the project owner and both providers are enabled. Never put those secrets in chat, source control, or the frontend environment. End-to-end sign-in, cloud-save, and two-player verification is in progress. Google's audience also needs to be published for public sign-in. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
+
 ## Supabase
 
 1. Create a free Supabase project. Enable the Data API and row-level security.
