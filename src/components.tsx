@@ -1,5 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { X, Volume2, VolumeX } from "lucide-react";
+import { nuvoAtlas, drawCustomization, keeperSheet } from "./spriteMotion";
+import type { Player } from "./game";
 import {
   SPECIES_BY_ID,
   TYPE_COLORS,
@@ -40,9 +42,11 @@ export function NuvoArt({
         {
           width: size,
           height: size,
-          "--hue": `${prismatic ? 140 : s.stage ? s.branch * 22 : 0}deg`,
-          "--scale": 1 + s.stage * 0.09,
-          backgroundPosition: `${(s.sprite % 5) * 25}% ${Math.floor(s.sprite / 5) * 25}%`,
+          "--hue": `${prismatic ? 140 : 0}deg`,
+          "--scale": 1,
+          backgroundImage: `url(${import.meta.env.BASE_URL}assets/${nuvoAtlas(s)})`,
+          backgroundSize: s.id === "oneirune" ? "100% 100%" : "500% 500%",
+          backgroundPosition: s.id === "oneirune" ? "center" : `${(s.sprite % 5) * 25}% ${Math.floor(s.sprite / 5) * 25}%`,
         } as CSSProperties
       }
     >
@@ -56,19 +60,27 @@ export function NuvoArt({
 export function PlayerArt({
   palette = 0,
   size = 110,
+  look,
 }: {
   palette?: number;
   size?: number;
+  look?: Pick<Player,"outfit"|"hair"|"hairColor">;
 }) {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const el=canvas.current!, ctx=el.getContext("2d")!, im=new Image(); let alive=true;
+    im.src=import.meta.env.BASE_URL+"assets/explorer-atlas.png";
+    void im.decode().then(()=>{ if(!alive)return;ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);ctx.imageSmoothingEnabled=false;ctx.drawImage(keeperSheet(im,{palette,...look}),0,0,im.width/4,im.height/4,0,0,size,size);drawCustomization(ctx,size/2,size*.83,size,look || {});ctx.restore(); }).catch(()=>{});
+    return()=>{alive=false;};
+  },[size,palette,look?.outfit,look?.hair,look?.hairColor]);
   return (
-    <span
-      className="player-art"
+    <canvas ref={canvas} width={size*2} height={size*2}
+      className="keeper-art"
       role="img"
       aria-label="Your keeper"
       style={{
         width: size,
         height: size,
-        filter: `hue-rotate(${[0, 140, 240, 60][palette]}deg)`,
       }}
     />
   );

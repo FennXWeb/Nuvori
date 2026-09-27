@@ -1,4 +1,4 @@
-import type { Interior } from "./adventure";
+import { interiorName, type Interior } from "./adventure";
 
 // Room art shares the world's tile grid so walking, followers and multiplayer stay continuous.
 export function drawInterior(ctx: CanvasRenderingContext2D, room: Interior, time: number) {
@@ -26,7 +26,7 @@ export function drawInterior(ctx: CanvasRenderingContext2D, room: Interior, time
   }
   ctx.fillStyle="#344e47";ctx.fillRect(484,151,184,42);
   ctx.font="bold 17px Georgia";ctx.textAlign="center";ctx.fillStyle="#f3e4af";
-  ctx.fillText(lodge ? "✚ HEALING LODGE" : "◈ TRAIL SUPPLIES",576,178);
+  ctx.fillText(interiorName(room).toUpperCase(),576,178);
   // Framed wall pennants.
   for (const x of [292,850]) { ctx.fillStyle=lodge?"#dce9d5":"#d4a66d";ctx.fillRect(x,153,18,45);ctx.fillStyle="#ede1aa";ctx.fillRect(x+7,161,4,18); }
   // Door, threshold, and a softly pulsing exit rune.
@@ -62,6 +62,13 @@ export function drawFurniture(ctx: CanvasRenderingContext2D, kind: number, x: nu
         ctx.fillStyle="#eee6bd";ctx.fillRect(x-27+col*16,y-79+row*27,6,4);
       }
     }
+  } else if (kind === 24) {
+    ctx.fillStyle="#614d46";ctx.fillRect(x-32,y-80,5,90);ctx.fillRect(x+27,y-80,5,90);ctx.fillRect(x-32,y-80,64,5);
+    for(let i=0;i<3;i++){ctx.fillStyle=["#76ad91","#c78197","#8d80bc"][i];ctx.fillRect(x-25+i*18,y-62,15,46);ctx.fillRect(x-29+i*18,y-62,23,12);ctx.strokeStyle="#e0c793";ctx.beginPath();ctx.moveTo(x-20+i*18,y-76);ctx.lineTo(x-27+i*18,y-63);ctx.lineTo(x-12+i*18,y-63);ctx.stroke();}
+  } else if (kind === 25) {
+    ctx.fillStyle="#745942";ctx.fillRect(x-30,y-84,60,72);ctx.fillStyle="#acd1d3";ctx.fillRect(x-25,y-79,50,60);
+    ctx.fillStyle="#e8f5e488";ctx.beginPath();ctx.moveTo(x-22,y-75);ctx.lineTo(x+10,y-75);ctx.lineTo(x-22,y-40);ctx.fill();
+    ctx.fillStyle="#604e68";ctx.fillRect(x-24,y-30,48,33);ctx.fillStyle="#c49a8a";ctx.fillRect(x-26,y-7,52,12);ctx.fillStyle="#888783";ctx.fillRect(x-3,y+4,6,13);
   } else if (kind === 23) {
     ctx.fillStyle="#88766a";ctx.fillRect(x-36,y-65,72,74);
     ctx.fillStyle="#483d36";ctx.fillRect(x-25,y-36,50,42);

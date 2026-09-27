@@ -1,6 +1,6 @@
 {
   "families": 25,
-  "forms": 175,
+  "forms": 176,
   "rarity": {
     "name": "Prismatic",
     "wildOdds": "1/512"
@@ -14658,6 +14658,90 @@
         "stone-8",
         "stone-9"
       ]
+    },
+    {
+      "id": "oneirune",
+      "dex": 26,
+      "name": "Oneirune",
+      "types": [
+        "Astral",
+        "Shade"
+      ],
+      "title": "The dream between heartbeats",
+      "habitat": "Dream Land",
+      "sprite": 25,
+      "stage": 0,
+      "branch": 0,
+      "lore": "A mythical dream dragon that stitches fallen stars into sleeping skies. Only keepers who awaken beyond the veil can meet it.",
+      "stats": {
+        "hp": 98,
+        "attack": 94,
+        "defense": 88,
+        "speed": 96
+      },
+      "base": "oneirune",
+      "evolvesTo": [],
+      "evolveLevel": 50,
+      "startMoves": [
+        "astral-0",
+        "shade-1"
+      ],
+      "learnset": [
+        {
+          "level": 4,
+          "move": "astral-2"
+        },
+        {
+          "level": 7,
+          "move": "shade-3"
+        },
+        {
+          "level": 10,
+          "move": "astral-4"
+        },
+        {
+          "level": 13,
+          "move": "shade-5"
+        },
+        {
+          "level": 17,
+          "move": "astral-6"
+        },
+        {
+          "level": 22,
+          "move": "shade-7"
+        },
+        {
+          "level": 26,
+          "move": "astral-8"
+        },
+        {
+          "level": 32,
+          "move": "astral-9"
+        }
+      ],
+      "teachable": [
+        "shade-0",
+        "shade-1",
+        "shade-2",
+        "shade-3",
+        "shade-4",
+        "shade-5",
+        "shade-6",
+        "shade-7",
+        "shade-8",
+        "shade-9",
+        "astral-0",
+        "astral-1",
+        "astral-2",
+        "astral-3",
+        "astral-4",
+        "astral-5",
+        "astral-6",
+        "astral-7",
+        "astral-8",
+        "astral-9"
+      ]
     }
   ],
   "moves": [
@@ -15988,8 +16072,8 @@
       "landmark": "The Wishing Fountain",
       "prop": 11,
       "pos": [
-        20,
-        72
+        13,
+        77
       ]
     },
     {
@@ -16018,8 +16102,8 @@
       "landmark": "The Heartwood Arch",
       "prop": 9,
       "pos": [
-        20,
-        48
+        13,
+        53
       ]
     },
     {
@@ -16046,8 +16130,8 @@
       "landmark": "The Tidebell",
       "prop": 10,
       "pos": [
-        48,
-        86
+        38,
+        87
       ]
     },
     {
@@ -16073,8 +16157,8 @@
       "landmark": "The Sunwake Beacon",
       "prop": 10,
       "pos": [
-        80,
-        72
+        59,
+        78
       ]
     },
     {
@@ -16102,8 +16186,8 @@
       "landmark": "The Whispering Ring",
       "prop": 3,
       "pos": [
-        15,
-        23
+        12,
+        29
       ]
     },
     {
@@ -16132,8 +16216,8 @@
       "landmark": "The Resonance Spire",
       "prop": 8,
       "pos": [
-        50,
-        48
+        39,
+        57
       ]
     },
     {
@@ -16155,13 +16239,14 @@
       ],
       "links": {
         "south": "sunwake",
-        "west": "crystal"
+        "west": "crystal",
+        "east": "saffron"
       },
       "landmark": "The Cinder Gate",
       "prop": 9,
       "pos": [
-        83,
-        43
+        58,
+        57
       ]
     },
     {
@@ -16182,13 +16267,14 @@
       ],
       "links": {
         "south": "crystal",
-        "west": "starfall"
+        "west": "starfall",
+        "east": "tempest"
       },
       "landmark": "The Frozen Mirror",
       "prop": 11,
       "pos": [
-        78,
-        20
+        45,
+        29
       ]
     },
     {
@@ -16215,9 +16301,185 @@
       "landmark": "The Observatory of Echoes",
       "prop": 10,
       "pos": [
-        44,
+        29,
         13
       ]
+    },
+    {
+      "id": "saffron",
+      "name": "Saffron Expanse",
+      "kind": "Wild zone",
+      "subtitle": "Where the dunes remember",
+      "description": "Amber dunes circle a colossal half-buried sun dial. The east road leads to a caravan haven.",
+      "color": "#d9af66",
+      "level": [
+        16,
+        23
+      ],
+      "pool": [
+        7,
+        13,
+        16,
+        22
+      ],
+      "links": {
+        "west": "emberfall",
+        "east": "threadhaven",
+        "north": "tempest"
+      },
+      "landmark": "The Hourglass Colossus",
+      "prop": 8,
+      "pos": [
+        78,
+        57
+      ],
+      "biome": "desert"
+    },
+    {
+      "id": "threadhaven",
+      "name": "Threadhaven",
+      "kind": "Town",
+      "subtitle": "Wear the story you want to tell",
+      "description": "Tailors and barbers gather beneath windmill sails. Its Champions Hall welcomes courageous crews.",
+      "color": "#d5a7b5",
+      "level": [
+        18,
+        24
+      ],
+      "pool": [
+        4,
+        10,
+        20
+      ],
+      "links": {
+        "west": "saffron",
+        "north": "mirelight"
+      },
+      "landmark": "The Weaver’s Windmill",
+      "prop": 10,
+      "pos": [
+        88,
+        79
+      ],
+      "biome": "meadow"
+    },
+    {
+      "id": "mirelight",
+      "name": "Mirelight Fen",
+      "kind": "Wild zone",
+      "subtitle": "A thousand lanterns beneath the reeds",
+      "description": "Luminous lilies and ancient lanterns float over violet water. The causeway winds west toward the storm-carved cliffs.",
+      "color": "#8dada0",
+      "level": [
+        21,
+        29
+      ],
+      "pool": [
+        5,
+        6,
+        9,
+        15,
+        19,
+        21
+      ],
+      "links": {
+        "south": "threadhaven",
+        "west": "tempest"
+      },
+      "landmark": "The Lantern Leviathan",
+      "prop": 9,
+      "pos": [
+        88,
+        39
+      ],
+      "biome": "marsh"
+    },
+    {
+      "id": "tempest",
+      "name": "Tempest Shelf",
+      "kind": "Wild zone",
+      "subtitle": "Run where the thunder lands",
+      "description": "Wind-carved cliffs catch violet lightning. The Thunder Harp turns every storm into a song.",
+      "color": "#9b9bc4",
+      "level": [
+        24,
+        33
+      ],
+      "pool": [
+        3,
+        4,
+        8,
+        12,
+        20,
+        23
+      ],
+      "links": {
+        "west": "frostmere",
+        "south": "saffron",
+        "east": "mirelight",
+        "north": "crownspire"
+      },
+      "landmark": "The Thunder Harp",
+      "prop": 8,
+      "pos": [
+        65,
+        29
+      ],
+      "biome": "storm"
+    },
+    {
+      "id": "crownspire",
+      "name": "Crownspire",
+      "kind": "Town",
+      "subtitle": "The summit of possibility",
+      "description": "A marble town above the clouds, home to the final Champions League guardian. Its bells ring for every victorious keeper.",
+      "color": "#c7b8df",
+      "level": [
+        28,
+        38
+      ],
+      "pool": [
+        12,
+        17,
+        23,
+        24
+      ],
+      "links": {
+        "south": "tempest"
+      },
+      "landmark": "The Crown of Auralis",
+      "prop": 10,
+      "pos": [
+        86,
+        12
+      ],
+      "biome": "storm"
+    },
+    {
+      "id": "dreamland",
+      "name": "Dream Land",
+      "kind": "Landmark",
+      "subtitle": "Somewhere between a wish and waking",
+      "description": "Floating islands drift through a lavender sky. Seek Oneirune beyond the path; touch the Dreaming Gate to return to the Healing Lodge.",
+      "color": "#d0a5ec",
+      "level": [
+        30,
+        35
+      ],
+      "pool": [
+        3,
+        12,
+        17
+      ],
+      "links": {},
+      "landmark": "The Dreaming Gate",
+      "prop": 9,
+      "pos": [
+        45,
+        48
+      ],
+      "biome": "dream",
+      "hidden": true
     }
   ]
 }

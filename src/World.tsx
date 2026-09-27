@@ -4,10 +4,13 @@ import type { Save } from "./game";
 import type { RemoteKeeper } from "./online";
 import { cellKey, edgeMarker, type Interior } from "./adventure";
 import { drawInterior, drawFurniture } from "./interiors";
+import { TRAINERS } from "./expansion";
+import { nuvoAtlas, drawCompanion, drawCustomization, keeperSheet } from "./spriteMotion";
+import { drawFrontierLandmark } from "./frontierScenery";
 export const TILE = 32,
   WORLD_W = 36,
   WORLD_H = 26;
-export type Interaction = "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit";
+export type Interaction = "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}`;
 export interface WorldProps {
   save: Save | null;
   paused: boolean;
@@ -43,9 +46,9 @@ const noise = (x: number, y: number, seed = 1) => {
 export function getMap(region: Region, interior?: Interior): Prop[] {
   const props: Prop[] = [];
   if (interior) return [
-    { x: 18, y: 9, kind: -1, size: 62, solid: false, label: interior === "lodge" ? "Nurse Liora" : "Shopkeeper Finch" },
-    ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: (interior === "lodge" ? "nurse" : "merchant") as Interaction, label: interior === "lodge" ? "Restore your team" : "Browse supplies" })),
-    ...[11,15,18].map(y => ({ x: 11, y, kind: interior === "lodge" ? 20 : 22, size: 76, solid: true })),
+    { x: 18, y: 9, kind: -1, size: 62, solid: false, label: {lodge:"Nurse Liora",shop:"Shopkeeper Finch",tailor:"Tailor Lark",barber:"Stylist Rue"}[interior] },
+    ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: ({lodge:"nurse",shop:"merchant",tailor:"clothier",barber:"stylist"}[interior]) as Interaction, label: {lodge:"Restore your team",shop:"Browse supplies",tailor:"Browse clothing",barber:"Change your hairstyle"}[interior] })),
+    ...[11,15,18].map(y => ({ x: 11, y, kind: interior === "lodge" ? 20 : interior === "tailor" ? 24 : interior === "barber" ? 25 : 22, size: 76, solid: true })),
     { x: 25, y: 11, kind: 22, size: 76, solid: true },
     { x: 25, y: 16, kind: interior === "lodge" ? 23 : 22, size: 76, solid: true },
     { x: 24, y: 20, kind: 13, size: 44, solid: true },
@@ -72,8 +75,9 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
         interact: "shop",
         label: "Supply shop",
       },
-      { x: 9, y: 18, kind: 4, size: 128, solid: true },
-      { x: 26, y: 7, kind: 4, size: 126, solid: true },
+      { x: 9, y: 18, kind: 4, size: 128, solid: true, interact: "tailor", label: "Thread & Thistle · Clothing" },
+      { x: 26, y: 7, kind: 4, size: 126, solid: true, interact: "barber", label: "The Tidy Tangle · Barber" },
+      { x: 28, y: 22, kind: 7, size: 140, solid: true, interact: "league", label: "Champions Hall" },
       {
         x: 18,
         y: 7,
@@ -115,6 +119,8 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
       },
     );
   }
+  const trainer=TRAINERS.find(t => t.region===region.id);
+  if(trainer) props.push({x:trainer.x,y:trainer.y,kind:-1,size:64,solid:false,interact:`trainer:${trainer.id}`,label:trainer.name});
   for (let y = 1; y < 25; y += 2)
     for (let x = 1; x < 35; x += 2) {
       if (Math.abs(x - 18) < 3 || Math.abs(y - 13) < 2) continue;
@@ -133,9 +139,9 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
           kind:
             region.id === "hollow"
               ? 3
-              : region.id === "frostmere"
+              : region.id === "frostmere" || region.biome === "storm"
                 ? 1
-                : region.id === "starfall"
+                : region.id === "starfall" || region.biome === "dream" || region.biome === "desert"
                   ? 2
                   : noise(x, y) > 0.85
                     ? 2
@@ -315,6 +321,8 @@ export function World({
     const art = makeImage("assets/world-atlas.png"),
       explorer = makeImage("assets/explorer-atlas.png"),
       creatures = makeImage("assets/nuvo-atlas.png");
+    const nuvoImages:Record<string,HTMLImageElement>={"nuvo-atlas.png":creatures};
+    const imageForNuvo=(id:string)=>{const path=nuvoAtlas(SPECIES_BY_ID[id]);return nuvoImages[path]??(nuvoImages[path]=makeImage(`assets/${path}`));};
     let route: [number, number][] = [],
       camera = { x: 0, y: 0, zoom: 1 };
     const tap = (event: PointerEvent) => {
@@ -344,14 +352,14 @@ export function World({
     });
     ro.observe(el);
     const drawCell = (
-      image: HTMLImageElement,
+      image: HTMLImageElement | HTMLCanvasElement,
       idx: number,
       cols: number,
       px: number,
       py: number,
       size: number,
     ) => {
-      if (!image.complete || !image.naturalWidth) return;
+      if (image instanceof HTMLImageElement && (!image.complete || !image.naturalWidth)) return;
       const cw = image.width / cols,
         ch = image.height / cols;
       ctx.drawImage(
@@ -391,7 +399,7 @@ export function World({
         lastKeeper = s?.started || "";
         x = s?.x || 560;
         y = s?.y || 496;
-        fx = x - 25;
+        fx = x - 30 - (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
         fy = y + 20;
         lastEncounter = elapsed;
         keys.current.clear();
@@ -484,12 +492,13 @@ export function World({
         }
       }
       const followDistance = Math.hypot(x - fx, y - fy);
-      if (followDistance > 34) {
+      const companionGap = 30 + (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
+      if (followDistance > companionGap + 7) {
         fx +=
-          ((x - fx) * Math.min(1, dt * 6) * (followDistance - 25)) /
+          ((x - fx) * Math.min(1, dt * 6) * (followDistance - companionGap)) /
           followDistance;
         fy +=
-          ((y - fy) * Math.min(1, dt * 6) * (followDistance - 25)) /
+          ((y - fy) * Math.min(1, dt * 6) * (followDistance - companionGap)) /
           followDistance;
       }
       if (now - lastEmit > 300) {
@@ -509,10 +518,10 @@ export function World({
       ctx.translate(-cx, -cy);
       ctx.imageSmoothingEnabled = false;
       const frost = r.id === "frostmere",
-        night = r.id === "starfall" || r.id === "hollow",
+        night = r.id === "starfall" || r.id === "hollow" || r.biome === "marsh" || r.biome === "dream" || r.biome === "storm",
         volcano = r.id === "emberfall",
         beach = r.id === "tideglass" || r.id === "sunwake";
-      const grass = frost
+      const grass = r.biome === "desert" ? "#d3b777" : r.biome === "dream" ? "#9280b8" : r.biome === "marsh" ? "#789784" : r.biome === "storm" ? "#8c99b2" : frost
         ? "#c0d9d4"
         : night
           ? "#607f82"
@@ -521,7 +530,7 @@ export function World({
             : beach
               ? "#a5c58b"
               : "#8fc786";
-      const grass2 = frost
+      const grass2 = r.biome === "desert" ? "#cfad6b" : r.biome === "dream" ? "#9b86be" : r.biome === "marsh" ? "#6e8e80" : r.biome === "storm" ? "#8492ac" : frost
         ? "#b6d1cd"
         : night
           ? "#59797c"
@@ -600,11 +609,13 @@ export function World({
             Math.PI * 2,
           );
           ctx.fill();
-          if (p.kind === -1) {
+          if (p.interact === "landmark" && drawFrontierLandmark(ctx,r.id,p.x*TILE,p.y*TILE,elapsed)) { /* Unique frontier monument. */ }
+          else if (p.kind === -1) {
             drawCell(explorer, 0, 4, p.x * TILE, p.y * TILE, 64);
-            text(s?.interior ? p.label! : "Elowen", p.x * TILE, p.y * TILE - 52, "#f4deb0");
+            text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 52, "#f4deb0");
           } else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
           else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
+          if (["tailor","barber","league"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size*.76,"#ffe3b0");
           if (
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < 85 &&
@@ -620,33 +631,11 @@ export function World({
         py: number,
         prismatic: boolean,
         walk: boolean,
+        direction = dir,
       ) => {
         const species = SPECIES_BY_ID[id];
         if (!species) return;
-        ctx.save();
-        ctx.filter = `hue-rotate(${prismatic ? 130 : species.stage ? species.branch * 22 : 0}deg)`;
-        ctx.fillStyle = "#1a493733";
-        ctx.beginPath();
-        ctx.ellipse(px, py, 13, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        drawCell(
-          creatures,
-          species.sprite,
-          5,
-          px,
-          py + (walk ? Math.sin(elapsed * 14) * 2 : Math.sin(elapsed * 3)),
-          54 + species.stage * 5,
-        );
-        ctx.restore();
-        if (prismatic) {
-          ctx.fillStyle = "#ffffcd";
-          ctx.fillRect(
-            px + Math.cos(elapsed * 3) * 20,
-            py - 25 + Math.sin(elapsed * 3) * 10,
-            3,
-            3,
-          );
-        }
+        drawCompanion(ctx,imageForNuvo(id),id,px,py,elapsed,walk,direction,prismatic);
       };
       const drawKeeper = (
         px: number,
@@ -655,19 +644,19 @@ export function World({
         isMoving: boolean,
         palette: number,
         name?: string,
+        look: Pick<Save["player"],"outfit"|"hair"|"hairColor"> = {},
       ) => {
         ctx.save();
         ctx.fillStyle = "#1e443533";
         ctx.beginPath();
         ctx.ellipse(px, py, 12, 5, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.filter = `hue-rotate(${[0, 140, 240, 60][palette] || 0}deg)`;
         const sprint = keys.current.has("shift");
         const frame = isMoving
           ? 1 + (Math.floor(elapsed * (sprint ? 14 : 8)) % 3)
           : 0;
         drawCell(
-          explorer,
+          keeperSheet(explorer,{palette,...look}) as HTMLCanvasElement,
           direction * 4 + frame,
           4,
           px,
@@ -678,6 +667,7 @@ export function World({
           68,
         );
         ctx.restore();
+        drawCustomization(ctx,px,py,68,look,direction,isMoving?elapsed*16:0);
         if (name) text(name, px, py - 55, "#fff7d9");
       };
       if (s) {
@@ -693,7 +683,7 @@ export function World({
                 moving,
               ),
           },
-          { y, draw: () => drawKeeper(x, y, dir, moving, s.player.palette) },
+          { y, draw: () => drawKeeper(x, y, dir, moving, s.player.palette,undefined,s.player) },
         );
       } else {
         sorted.push({ y, draw: () => drawKeeper(x, y, 0, false, 0) });
@@ -710,13 +700,15 @@ export function World({
               other.moving,
               other.palette,
               `${state.friendIds.includes(other.id) ? "★ " : ""}${other.name}`,
+              other,
             );
             drawNuvo(
               other.speciesId,
-              other.x - 24,
+              other.x - 30 - SPECIES_BY_ID[other.speciesId].stage * 16,
               other.y + 20,
               other.prismatic,
               other.moving,
+              other.direction,
             );
             if (other.emote)
               text(other.emote, other.x, other.y - 80, "#ffe08b");

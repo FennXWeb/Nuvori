@@ -727,6 +727,14 @@ export const SPECIES: Species[] = baseSpecs.flatMap((b, i) => {
   });
 });
 export const BASE_SPECIES = SPECIES.filter((s) => s.stage === 0);
+export const DREAM_SPECIES: Species = {
+  id: "oneirune", dex: 26, name: "Oneirune", types: ["Astral", "Shade"],
+  title: "The dream between heartbeats", habitat: "Dream Land", sprite: 25, stage: 0, branch: 0,
+  lore: "A mythical dream dragon that stitches fallen stars into sleeping skies. Only keepers who awaken beyond the veil can meet it.",
+  stats: { hp: 98, attack: 94, defense: 88, speed: 96 }, base: "oneirune", evolvesTo: [], evolveLevel: 50,
+  ...learnTable(["Astral", "Shade"], 2),
+};
+SPECIES.push(DREAM_SPECIES);
 export const SPECIES_BY_ID = Object.fromEntries(
   SPECIES.map((s) => [s.id, s]),
 ) as Record<string, Species>;
@@ -845,6 +853,8 @@ export interface Region {
   landmark: string;
   prop: number;
   pos: [number, number];
+  biome?: "meadow" | "desert" | "marsh" | "storm" | "dream";
+  hidden?: boolean;
 }
 export const REGIONS: Region[] = [
   {
@@ -947,7 +957,7 @@ export const REGIONS: Region[] = [
     color: "#c68765",
     level: [9, 15],
     pool: [1, 7, 16, 22],
-    links: { south: "sunwake", west: "crystal" },
+    links: { south: "sunwake", west: "crystal", east: "saffron" },
     landmark: "The Cinder Gate",
     prop: 9,
     pos: [83, 43],
@@ -962,7 +972,7 @@ export const REGIONS: Region[] = [
     color: "#a1c7d1",
     level: [10, 17],
     pool: [8, 11, 23],
-    links: { south: "crystal", west: "starfall" },
+    links: { south: "crystal", west: "starfall", east: "tempest" },
     landmark: "The Frozen Mirror",
     prop: 11,
     pos: [78, 20],
@@ -983,6 +993,18 @@ export const REGIONS: Region[] = [
     pos: [44, 13],
   },
 ];
+// Five connected frontier regions; Dream Land has no normal entrance.
+REGIONS.push(
+  { id: "saffron", name: "Saffron Expanse", kind: "Wild zone", subtitle: "Where the dunes remember", description: "Amber dunes circle a colossal half-buried sun dial. The east road leads to a caravan haven.", color: "#d9af66", level: [16,23], pool: [7,13,16,22], links: { west: "emberfall", east: "threadhaven", north: "tempest" }, landmark: "The Hourglass Colossus", prop: 8, pos: [78,57], biome: "desert" },
+  { id: "threadhaven", name: "Threadhaven", kind: "Town", subtitle: "Wear the story you want to tell", description: "Tailors and barbers gather beneath windmill sails. Its Champions Hall welcomes courageous crews.", color: "#d5a7b5", level: [18,24], pool: [4,10,20], links: { west: "saffron", north: "mirelight" }, landmark: "The Weaver’s Windmill", prop: 10, pos: [88,79], biome: "meadow" },
+  { id: "mirelight", name: "Mirelight Fen", kind: "Wild zone", subtitle: "A thousand lanterns beneath the reeds", description: "Luminous lilies and ancient lanterns float over violet water. The causeway winds west toward the storm-carved cliffs.", color: "#8dada0", level: [21,29], pool: [5,6,9,15,19,21], links: { south: "threadhaven", west: "tempest" }, landmark: "The Lantern Leviathan", prop: 9, pos: [88,39], biome: "marsh" },
+  { id: "tempest", name: "Tempest Shelf", kind: "Wild zone", subtitle: "Run where the thunder lands", description: "Wind-carved cliffs catch violet lightning. The Thunder Harp turns every storm into a song.", color: "#9b9bc4", level: [24,33], pool: [3,4,8,12,20,23], links: { west: "frostmere", south: "saffron", east: "mirelight", north: "crownspire" }, landmark: "The Thunder Harp", prop: 8, pos: [65,29], biome: "storm" },
+  { id: "crownspire", name: "Crownspire", kind: "Town", subtitle: "The summit of possibility", description: "A marble town above the clouds, home to the final Champions League guardian. Its bells ring for every victorious keeper.", color: "#c7b8df", level: [28,38], pool: [12,17,23,24], links: { south: "tempest" }, landmark: "The Crown of Auralis", prop: 10, pos: [86,12], biome: "storm" },
+  { id: "dreamland", name: "Dream Land", kind: "Landmark", subtitle: "Somewhere between a wish and waking", description: "Floating islands drift through a lavender sky. Seek Oneirune beyond the path; touch the Dreaming Gate to return to the Healing Lodge.", color: "#d0a5ec", level: [30,35], pool: [3,12,17], links: {}, landmark: "The Dreaming Gate", prop: 9, pos: [45,48], biome: "dream", hidden: true },
+);
+// Spread map labels across the expanded archipelago.
+const mapPositions: Record<string,[number,number]> = { mossbell:[13,77],verdant:[13,53],hollow:[12,29],tideglass:[38,87],sunwake:[59,78],crystal:[39,57],emberfall:[58,57],frostmere:[45,29],starfall:[29,13] };
+for (const r of REGIONS) if (mapPositions[r.id]) r.pos = mapPositions[r.id];
 export const REGION_BY_ID = Object.fromEntries(
   REGIONS.map((r) => [r.id, r]),
 ) as Record<string, Region>;

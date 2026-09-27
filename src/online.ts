@@ -69,6 +69,9 @@ export interface RemoteKeeper {
   x: number;
   y: number;
   palette: number;
+  outfit?: number;
+  hair?: number;
+  hairColor?: number;
   direction: number;
   moving: boolean;
   speciesId: string;
@@ -87,7 +90,8 @@ export function validRemote(p: unknown): p is RemoteKeeper {
     k.name.length <= 18 &&
     typeof k.region === "string" &&
     Boolean(REGION_BY_ID[k.region]) &&
-    (k.interior === undefined || k.interior === "lodge" || k.interior === "shop") &&
+    (k.interior === undefined || ["lodge","shop","tailor","barber"].includes(k.interior)) &&
+    [k.outfit,k.hair,k.hairColor].every(v => v === undefined || (Number.isInteger(v) && v >= 0 && v < 6)) &&
     Number.isFinite(k.x) &&
     Number.isFinite(k.y) &&
     k.x >= 0 &&

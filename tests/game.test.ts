@@ -39,8 +39,8 @@ const fight = (id = "bubbfin", level = 4): Battle => ({
 });
 test("25 unique families, two genuinely branching decisions and valid move tables", () => {
   assert.equal(BASE_SPECIES.length, 25);
-  assert.equal(SPECIES.length, 175);
-  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 175);
+  assert.equal(SPECIES.length, 176);
+  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 176);
   assert.equal(MOVES.length, 100);
   assert.equal(new Set(MOVES.map((m) => m.name)).size, 100);
   assert.equal(new Set(MOVES.map((m) => m.animation)).size, 100);
@@ -82,7 +82,7 @@ test("world graph is connected and spawn/exit paths are walkable", () => {
       ...Object.values(REGION_BY_ID[id].links).filter((x): x is string => !!x),
     );
   }
-  assert.equal(seen.size, REGIONS.length);
+  assert.equal(seen.size, REGIONS.filter(r=>!r.hidden).length);
   for (const r of REGIONS) {
     const props = getMap(r);
     assert.ok(canWalk(560, 496, r, props), r.id);
@@ -178,7 +178,7 @@ test("invalid actions do not spend items or turns", () => {
   assert.ok(battleTurn({ ...s, orbs: 0 }, b, { type: "catch" }).error);
   assert.ok(battleTurn(s, b, { type: "potion" }).error);
 });
-test("victory awards XP/coins and party knockout returns to a healing lodge", () => {
+test("victory awards XP/coins and knockout offers a last stand or lodge rescue", () => {
   const s = fresh(),
     b = fight();
   b.wild.hp = 1;
@@ -200,10 +200,13 @@ test("victory awards XP/coins and party knockout returns to a healing lodge", ()
     { type: "move", id: weak.party[0].moves[0] },
     () => 0,
   );
-  assert.equal(loss.battle.over, "lost");
-  assert.equal(loss.save.region, "mossbell");
-  assert.equal(loss.save.party[0].hp, maxHp(loss.save.party[0]));
-  assert.ok(validateSave(loss.save));
+  assert.equal(loss.battle.lastStand, "choice");
+  assert.equal(loss.battle.over, undefined);
+  const rescued=battleTurn(loss.save,loss.battle,{type:"retreat"});
+  assert.equal(rescued.save.region, "mossbell");
+  assert.equal(rescued.save.interior, "lodge");
+  assert.equal(rescued.save.party[0].hp, maxHp(rescued.save.party[0]));
+  assert.ok(validateSave(rescued.save));
 });
 test("healing restores health, PP and status without mutating original save", () => {
   const s = fresh();
