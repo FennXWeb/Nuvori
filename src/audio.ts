@@ -1,0 +1,174 @@
+import manifest from "./audioManifest.json";
+import { DEFAULT_MIX, validMix, creatureSound, moveSound, type AudioMix } from "./audioCues";
+
+interface Cue { title: string; kind: string; file: string; available: boolean; seconds: number; loopStart?: number | null; loopEnd?: number | null }
+export const AUDIO_CUES = manifest as Record<string, Cue>;
+const BASE = (import.meta.env ?? {}).BASE_URL || "./";
+type LoopBus = "music" | "ambience";
+interface Loop { id: string; source: AudioBufferSourceNode; gain: GainNode }
+
+/** One mixer for the whole game; assets load only when heard, never at app startup. */
+export class GameAudio {
+  private context?: AudioContext;
+  private master?: GainNode;
+  private buses?: Record<keyof AudioMix, GainNode>;
+  private buffers = new Map<string, AudioBuffer>();
+  private pending = new Map<string, Promise<AudioBuffer | null>>();
+  private loops: Partial<Record<LoopBus, Loop>> = {};
+  private desired: Record<LoopBus, string | null> = { music: null, ambience: null };
+  private generations = { music: 0, ambience: 0 };
+  private effects = new Set<AudioBufferSourceNode>();
+  private played = new Map<string, number>();
+  private enabled = false;
+  private paused = false;
+  private mix = DEFAULT_MIX;
+  private duckUntil = 0;
+
+  configure(enabled: boolean, mix = this.mix) {
+    this.enabled = enabled;
+    this.mix = validMix(mix);
+    this.applyVolumes();
+    if (!enabled) {
+      this.stopEffects();
+      for (const bus of ["music", "ambience"] as const) {
+        this.generations[bus]++;
+        this.loops[bus]?.source.stop(); delete this.loops[bus];
+      }
+    }
+    if (enabled && this.context?.state === "running") this.refreshLoops();
+  }
+
+  async unlock() {
+    if (!this.enabled || this.paused || typeof AudioContext === "undefined") return;
+    try {
+      if (!this.context) {
+        const context = this.context = new AudioContext();
+        const compressor = context.createDynamicsCompressor();
+        compressor.threshold.value = -8;
+        compressor.ratio.value = 4;
+        this.master = context.createGain();
+        this.master.connect(compressor); compressor.connect(context.destination);
+        this.buses = { music: context.createGain(), sfx: context.createGain(), ambience: context.createGain() };
+        Object.values(this.buses).forEach(bus => bus.connect(this.master!));
+      }
+      await this.context.resume();
+      this.applyVolumes(); this.refreshLoops();
+    } catch { /* Browser autoplay restrictions never block gameplay. */ }
+  }
+
+  setPaused(paused: boolean) {
+    this.paused = paused;
+    if (paused) { this.stopEffects(); void this.context?.suspend().catch(() => {}); }
+    else if (this.enabled) void this.unlock();
+  }
+
+  setScene(music: string | null, ambience: string | null) {
+    this.desired = { music, ambience };
+    this.refreshLoops();
+  }
+
+  private applyVolumes() {
+    if (!this.context || !this.master || !this.buses) return;
+    const now = this.context.currentTime;
+    this.master.gain.setTargetAtTime(this.enabled ? .8 : 0, now, .04);
+    for (const bus of ["music", "sfx", "ambience"] as const) {
+      const gain = this.buses[bus].gain;
+      const base = this.mix[bus] * (bus === "music" ? .65 : bus === "ambience" ? .55 : 1);
+      gain.cancelScheduledValues(now);
+      gain.setTargetAtTime(base * (bus === "music" && now < this.duckUntil ? .35 : 1), now, .05);
+      if (bus === "music" && now < this.duckUntil) gain.setTargetAtTime(base, this.duckUntil, .4);
+    }
+  }
+
+  private refreshLoops() {
+    if (!this.context || !this.enabled || this.paused) return;
+    for (const bus of ["music", "ambience"] as const) {
+      const id = this.mix[bus] > 0 ? this.desired[bus] : null;
+      if (this.loops[bus]?.id !== id) void this.changeLoop(bus, id);
+    }
+  }
+
+  private async buffer(id: string): Promise<AudioBuffer | null> {
+    if (!AUDIO_CUES[id]?.available || !this.context) return null;
+    const found = this.buffers.get(id);
+    if (found) { this.buffers.delete(id); this.buffers.set(id, found); return found; }
+    if (this.pending.has(id)) return this.pending.get(id)!;
+    const context = this.context;
+    const load = (async () => {
+      try {
+        const response = await fetch(BASE + AUDIO_CUES[id].file);
+        if (!response.ok) return null;
+        const result = await context.decodeAudioData(await response.arrayBuffer());
+        this.buffers.set(id, result);
+        const sameKind = [...this.buffers.keys()].filter(key => AUDIO_CUES[key].kind === AUDIO_CUES[id].kind);
+        const limit = AUDIO_CUES[id].kind === "music" ? 3 : AUDIO_CUES[id].kind === "ambience" ? 2 : 40;
+        while (sameKind.length > limit) this.buffers.delete(sameKind.shift()!);
+        return result;
+      } catch { return null; }
+      finally { this.pending.delete(id); }
+    })();
+    this.pending.set(id, load);
+    return load;
+  }
+
+  private async changeLoop(bus: LoopBus, id: string | null) {
+    const generation = ++this.generations[bus];
+    const buffer = id ? await this.buffer(id) : null;
+    if (generation !== this.generations[bus] || !this.enabled || this.paused || !this.context || !this.buses) return;
+    const now = this.context.currentTime, old = this.loops[bus];
+    if (old) {
+      old.gain.gain.cancelScheduledValues(now);
+      old.gain.gain.setTargetAtTime(0, now, .35);
+      old.source.stop(now + 1.5);
+      delete this.loops[bus];
+    }
+    if (!buffer || !id) return;
+    const source = this.context.createBufferSource(), gain = this.context.createGain();
+    source.buffer = buffer; source.loop = true;
+    source.loopStart = Math.max(0, Math.min(buffer.duration - .01, AUDIO_CUES[id].loopStart ?? 0));
+    source.loopEnd = Math.max(source.loopStart + .01, Math.min(buffer.duration, AUDIO_CUES[id].loopEnd ?? buffer.duration));
+    source.connect(gain); gain.connect(this.buses[bus]);
+    gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(1, now + 1.3);
+    source.onended = () => { source.disconnect(); gain.disconnect(); };
+    source.start(); this.loops[bus] = { id, source, gain };
+  }
+
+  play(id: string, options: { rate?: number; gain?: number; delay?: number } = {}) {
+    if (!this.enabled || this.paused || this.mix.sfx <= 0 || this.context?.state !== "running" || !AUDIO_CUES[id]?.available) return;
+    const timestamp = performance.now(), previous = this.played.get(id) ?? -Infinity;
+    if (timestamp - previous < (id.startsWith("step-") ? 230 : 90)) return;
+    this.played.set(id, timestamp);
+    void this.buffer(id).then(buffer => {
+      if (!buffer || !this.enabled || this.paused || !this.context || !this.buses || this.context.state !== "running" || performance.now() - timestamp > 2500 || this.effects.size >= 10) return;
+      const source = this.context.createBufferSource(), gain = this.context.createGain();
+      source.buffer = buffer;
+      source.playbackRate.value = Math.max(.65, Math.min(1.4, options.rate ?? 1));
+      gain.gain.value = Math.max(0, Math.min(1, options.gain ?? 1));
+      source.connect(gain); gain.connect(this.buses.sfx); this.effects.add(source);
+      source.onended = () => { this.effects.delete(source); source.disconnect(); gain.disconnect(); };
+      source.start(this.context.currentTime + (options.delay ?? 0));
+      if (["victory", "defeat", "evolve", "capture-success", "prismatic", "wheel-prize"].includes(id)) this.duck(buffer.duration);
+    });
+  }
+
+  private duck(duration: number) {
+    if (!this.context || !this.buses) return;
+    const now = this.context.currentTime, param = this.buses.music.gain, base = this.mix.music * .65;
+    this.duckUntil = Math.max(this.duckUntil, now + duration);
+    param.cancelScheduledValues(now); param.setTargetAtTime(base * .35, now, .08);
+    param.setTargetAtTime(base, this.duckUntil, .4);
+  }
+
+  private stopEffects() {
+    for (const effect of this.effects) { try { effect.stop(); } catch { /* Already ended. */ } }
+    this.effects.clear();
+  }
+
+  cry(speciesId: string, delay = 0) { const cue = creatureSound(speciesId); if (cue) this.play(cue.id, { rate: cue.rate, gain: .8, delay }); }
+  move(moveId: string) { const cue = moveSound(moveId); this.play(cue.id, { rate: cue.rate }); }
+}
+
+export const gameAudio = new GameAudio();
+export function sound(kind: "click" | "battle" | "catch" | "heal", enabled: boolean) {
+  if (enabled) gameAudio.play({ click: "ui-click", battle: "battle-start", catch: "capture-success", heal: "heal" }[kind]);
+}

@@ -1,8 +1,8 @@
 import { REGION_BY_ID, SPECIES_BY_ID, type Nuvo } from "./data";
 import type { Save } from "./game";
 
-export type Interior = "lodge" | "shop";
-export const interiorName = (room?: Interior) => room === "lodge" ? "Healing Lodge" : room === "shop" ? "Supply Shop" : "";
+export type Interior = "lodge" | "shop" | "tailor" | "barber";
+export const interiorName = (room?: Interior) => room ? { lodge: "Healing Lodge", shop: "Supply Shop", tailor: "Thread & Thistle", barber: "The Tidy Tangle" }[room] : "";
 export const cellKey = (region: string, interior?: Interior) => `${region}${interior ? `:${interior}` : ""}`;
 export const caughtBefore = (save: Save | null, species: string) => Boolean(save?.caught.includes(SPECIES_BY_ID[species]?.base));
 export const evolutionKey = (nuvo: Nuvo) => `${nuvo.uid}:${nuvo.speciesId}`;

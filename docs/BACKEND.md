@@ -9,7 +9,7 @@
 - Provider callback: `https://uvnlmfpqonmccbaqxyzt.supabase.co/auth/v1/callback`.
 - Google JavaScript origin: `https://fennxweb.github.io`.
 
-All three SQL migrations are installed, including the friends, chat, and daily wheel migration. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
+All five SQL migrations are installed, including friends, chat, the daily wheel, and Champions League. On 2026-09-27, `202609280001_frontiers.sql` and `202609280002_league_catalog.sql` were applied together in one transaction, then the API schema cache was refreshed. The live catalog contains five guardians, 100 moves, and 176 Nuvo forms. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
 
 Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in. Account cloud saving and loading have been verified. Two independent accounts, signed in through Google in Chrome and Discord in Codex's browser, both showed two online keepers, listed each other, and rendered their companions and live movement in Mossbell Village after the Broadcast fix. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
@@ -33,17 +33,25 @@ Secrets belong only in Supabase/provider settings. The app uses PKCE and permits
 - Sign out and verify that the device's guest adventure loads instead of the account save.
 - Confirm unauthenticated REST access cannot read `keeper_saves`; a user must be unable to read or update another user's row.
 
+## Champions League
+
+The frontier migrations create private, RLS-protected raid, member, action, and balance-catalog tables. Authenticated RPCs create/join rooms, transfer lobby hosting, start trials, apply moves, resume membership, and claim results. A room accepts up to four players from the guardian's town and expires after 90 minutes. Row locks serialize boss damage, a two-second per-player cooldown limits actions, and action nonces prevent duplicate execution. Users cannot read raids they have not joined. Blocks exclude room joins and public room listings.
+
+The server snapshots each entrant's cloud crew and validates equipped moves, levels, HP, and PP against its catalog. It calculates guardian damage, retaliation, fainting, switching, keeper last stands, and rewards. Finished claims update the owner's cloud save atomically and are idempotent. A save trigger prevents a stale device from erasing a completed claim. The frontend suspends ordinary autosaves while a raid is open and restores unclaimed trials after reload. Source crew progression and inventory remain client-controlled; the League is cooperative, not a competitive anti-cheat system.
+
+`npm test` runs `supabase/tests/league.sql` against PGlite with synthetic accounts, including room limits, membership authorization, cooldowns, duplicate actions/claims, shared damage, crew XP, host transfer, rescue, and table privileges. The same SQL file passed in the live SQL Editor on 2026-09-27. Its entire fixture transaction rolled back; no synthetic accounts, trials, chat messages, or rewards were retained.
+
 ## Security boundaries
 
 Community tables have RLS enabled and no direct client grants. The authenticated `nuvori_*` RPCs expose chosen keeper profiles, each participant's friendships, each user's block list, bounded chat history, and daily rewards. Function search paths are fixed and anonymous execution is revoked. Profiles never contain provider names, emails, or avatars. Friend requests require recipient acceptance; blocked pairs cannot request each other. Outgoing requests are limited to five per minute and 25 pending.
 
-Chat has global and local channels. Local uses the area ID plus an optional `:lodge` or `:shop` suffix, so different interiors have distinct feeds. These are public game spaces for signed-in players, not private conversations. The server limits messages to 240 characters and one message per two seconds across channels, using a per-user transaction lock. The UI polls visible chat every 2.5 seconds and friendships every five seconds. Blocking filters messages in both directions. History and relationships persist; no automatic retention job is installed.
+Chat has global and local channels. Local uses the area ID plus an optional `:lodge`, `:shop`, `:tailor`, or `:barber` suffix, so different interiors have distinct feeds. These are public game spaces for signed-in players, not private conversations. The server limits messages to 240 characters and one message per two seconds across channels, using a per-user transaction lock. The UI polls visible chat every 2.5 seconds and friendships every five seconds. Blocking filters messages in both directions. History and relationships persist; no automatic retention job is installed.
 
 Daily gifts are free and have no monetary value. Each of eight prizes has equal probability. Signed-in claims use a unique account/UTC-date row and a transaction on the account save, making retries idempotent. A save trigger preserves the latest gift when a stale device save is uploaded. Guests use a local day marker. Inventory remains client-controlled outside this claim mechanism.
 
 `supabase/tests/community.sql` checks friend authorization, blocking, channel isolation, message rate limits, duplicate claims, stale saves, and role privileges using transaction-scoped fixtures that roll back. These checks passed against the configured project.
 
-Authenticated players share their chosen keeper name, avatar palette, current game location, companion, and temporary greeting. No email address is transmitted through Realtime. Saves are visible only to their owner via RLS.
+Authenticated players share their chosen keeper name, avatar palette, outfit, hairstyle/color, current game location, companion, and temporary greeting. No email address is transmitted through Realtime. Saves are visible only to their owner via RLS.
 
 Presence registers membership once per subscription. Movement uses private Broadcast, at most once per 450 ms while changing and a five-second heartbeat while idle. Joining players trigger fresh snapshots. Do not send movement through `track()`: Supabase closes clients that exceed five Presence updates per 30 seconds. Both Presence and Broadcast have authenticated read/write policies restricted to `nuvori:auralis`.
 

@@ -6,14 +6,17 @@ import {
   createNuvo,
   maxHp,
   effectiveness,
-  gainXp,
   type Nuvo,
   type Move,
 } from "./data";
+import { ORBS, orbCount, orbAffinity, awardCrewXp, keeperDefeat, restoreAtLodge, type OrbKind } from "./expansion";
 export interface Player {
   name: string;
   palette: number;
   pronouns: string;
+  outfit?: number;
+  hair?: number;
+  hairColor?: number;
 }
 export interface Save {
   version: 1;
@@ -35,11 +38,17 @@ export interface Save {
   battles: number;
   started: string;
   updated: string;
-  interior?: "lodge" | "shop";
+  interior?: "lodge" | "shop" | "tailor" | "barber";
   outside?: { x: number; y: number };
   evolutionNotices?: string[];
   dailySpinDay?: string;
   dailySpinPrize?: number;
+  specialOrbs?: Partial<Record<Exclude<OrbKind, "binding">, number>>;
+  wardrobe?: number[];
+  defeatedTrainers?: string[];
+  leagueBadges?: string[];
+  leagueClaims?: string[];
+  lastLodge?: string;
 }
 export function newSave(player: Player, starter: string): Save {
   return {
@@ -99,8 +108,13 @@ export function validateSave(value: unknown): value is Save {
     finite(s.player.palette) &&
     s.player.palette >= 0 &&
     s.player.palette < 4 &&
+    ["outfit", "hair", "hairColor"].every(k => { const v = s.player[k as keyof Player]; return v === undefined || (Number.isInteger(v) && Number(v) >= 0 && Number(v) < 6); }) &&
+    (s.specialOrbs === undefined || (s.specialOrbs !== null && typeof s.specialOrbs === "object" && Object.entries(s.specialOrbs).every(([k,v]) => ORBS.some(o => o.id === k && k !== "binding") && Number.isInteger(v) && v >= 0 && v <= 100000))) &&
+    (s.wardrobe === undefined || (Array.isArray(s.wardrobe) && s.wardrobe.every(v => Number.isInteger(v) && v >= 0 && v < 6))) &&
+    ["defeatedTrainers", "leagueBadges", "leagueClaims"].every(k => s[k as keyof Save] === undefined || (Array.isArray(s[k as keyof Save]) && (s[k as keyof Save] as unknown[]).every(v => typeof v === "string"))) &&
+    (s.lastLodge === undefined || REGION_BY_ID[s.lastLodge]?.kind === "Town") &&
     Boolean(REGION_BY_ID[s.region]) &&
-    (s.interior === undefined || ((s.interior === "lodge" || s.interior === "shop") && REGION_BY_ID[s.region].kind === "Town")) &&
+    (s.interior === undefined || (["lodge", "shop", "tailor", "barber"].includes(s.interior) && REGION_BY_ID[s.region].kind === "Town")) &&
     (s.outside === undefined || (finite(s.outside.x) && finite(s.outside.y) && s.outside.x >= 24 && s.outside.x <= 1128 && s.outside.y >= 24 && s.outside.y <= 808)) &&
     (s.evolutionNotices === undefined || (Array.isArray(s.evolutionNotices) && s.evolutionNotices.length <= 2000 && s.evolutionNotices.every(v => typeof v === "string"))) &&
     (s.dailySpinDay === undefined || /^\d{4}-\d{2}-\d{2}$/.test(s.dailySpinDay)) &&
@@ -163,15 +177,23 @@ export interface Battle {
   over?: "won" | "caught" | "lost" | "fled";
   reward: number;
   animation?: { move: string; side: "player" | "wild"; key: number };
+  trainerId?: string;
+  trainerName?: string;
+  opponentQueue?: Nuvo[];
+  lastStand?: "choice" | "fighting";
+  keeperHp?: number;
+  keeperMaxHp?: number;
+  dreamAwakening?: boolean;
 }
 export function encounter(save: Save): Battle {
   const r = REGION_BY_ID[save.region];
   const index = r.pool[Math.floor(Math.random() * r.pool.length)];
   const level =
     r.level[0] + Math.floor(Math.random() * (r.level[1] - r.level[0] + 1));
-  const wild = createNuvo(BASE_SPECIES[index].id, level);
+  const wild = createNuvo(r.id === "dreamland" && Math.random() < .12 ? "oneirune" : BASE_SPECIES[index].id, level);
   return {
     wild,
+    lastStand: save.party.every(n => n.hp <= 0) ? "choice" : undefined,
     active: Math.max(
       0,
       save.party.findIndex((n) => n.hp > 0),
@@ -256,18 +278,19 @@ export function useMove(
   }
   return { attacker: a, defender: d, log };
 }
-export function catchChance(n: Nuvo) {
+export function catchChance(n: Nuvo, orb: OrbKind = "binding", turn = 0) {
   return Math.min(
     0.93,
-    0.24 + (1 - n.hp / maxHp(n)) * 0.58 + (n.status ? 0.1 : 0),
+    (0.24 + (1 - n.hp / maxHp(n)) * 0.58 + (n.status ? 0.1 : 0)) * orbAffinity(n, orb, turn) * (n.speciesId === "oneirune" ? .35 : 1),
   );
 }
 export type BattleAction =
   | { type: "move"; id: string }
-  | { type: "catch" }
+  | { type: "catch"; orb?: OrbKind }
   | { type: "potion" }
   | { type: "run" }
-  | { type: "switch"; index: number };
+  | { type: "switch"; index: number }
+  | { type: "stand" | "retreat" | "strike" | "brace" | "struggle" };
 export function battleTurn(
   save: Save,
   battle: Battle,
@@ -283,6 +306,34 @@ export function battleTurn(
   let playerActs = false;
   let playerMove = "";
   const fail = (error: string) => ({ save, battle, error });
+  if (b.lastStand === "choice") {
+    if (action.type === "stand") {
+      b.lastStand = "fighting";
+      b.keeperMaxHp = 80 + Math.floor(s.party.reduce((sum,n) => sum+n.level,0)/s.party.length)*3;
+      b.keeperHp = b.keeperMaxHp;
+      b.log.push(`${s.player.name} steps forward. Your companions are counting on you!`);
+      return { save: s, battle: b };
+    }
+    if (action.type === "retreat") return { save: restoreAtLodge(s), battle: { ...b, over: "lost", log: [...b.log, "You accepted the rescue and woke in the Healing Lodge."] } };
+    return fail("Choose to make a last stand or return to the lodge.");
+  }
+  if (["stand", "retreat"].includes(action.type)) return fail("Your crew is still fighting.");
+  if (b.lastStand === "fighting" && (action.type === "move" || action.type === "switch" || action.type === "struggle")) return fail("Your crew needs to rest. Use your keeper abilities.");
+  if (b.lastStand !== "fighting" && (action.type === "strike" || action.type === "brace")) return fail("Only a keeper making a last stand can use that ability.");
+  if (action.type === "strike") {
+    const damage = 10 + Math.floor(s.party.reduce((sum,n) => sum+n.level,0)/s.party.length*1.5);
+    b.wild.hp = Math.max(0,b.wild.hp-damage); logs.push(`${s.player.name} used Courage Strike! ${damage} damage.`);
+    b.animation = { move: "metal-1", side: "player", key: b.turn+1 };
+  }
+  if (action.type === "brace") { logs.push("You brace for impact. The next hit is reduced by 70%."); }
+  if (action.type === "struggle") {
+    if (p.hp <= 0 || p.moves.some(id => p.pp[id] > 0)) return fail("Struggle is available when all your moves are out of energy.");
+    const damage = 5 + p.level;
+    b.wild.hp = Math.max(0, b.wild.hp - damage);
+    p.hp = Math.max(0, p.hp - Math.max(1, Math.floor(maxHp(p) * .05)));
+    logs.push(`${SPECIES_BY_ID[p.speciesId].name} struggles for ${damage} damage, taking recoil.`);
+    b.animation = { move: "metal-1", side: "player", key: b.turn + 1 };
+  }
   if (action.type === "move") {
     if (
       !p.moves.includes(action.id) ||
@@ -296,11 +347,15 @@ export function battleTurn(
     playerMove = action.id;
   }
   if (action.type === "catch") {
-    if (s.orbs < 1)
+    if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
+    const orb = action.orb || "binding";
+    if (!ORBS.some(o => o.id === orb)) return fail("Unknown orb type.");
+    if (s.box.length >= 500 && s.party.length >= 6) return fail("Your reserve is full. Make room before catching another Nuvo.");
+    if (orbCount(s,orb) < 1)
       return fail("You need a binding orb. Buy more at a town shop.");
-    s.orbs--;
-    logs.push("You tossed a binding orb…");
-    if (random() < catchChance(b.wild)) {
+    if (orb === "binding") s.orbs--; else s.specialOrbs = { ...s.specialOrbs, [orb]: orbCount(s,orb)-1 };
+    logs.push(`You tossed a ${ORBS.find(o => o.id === orb)!.name.toLowerCase()}…`);
+    if (random() < catchChance(b.wild,orb,b.turn)) {
       b.over = "caught";
       wildActs = false;
       const caught = { ...b.wild, guard: false, boost: false };
@@ -316,13 +371,19 @@ export function battleTurn(
   }
   if (action.type === "potion") {
     if (s.potions < 1) return fail("No healing tonics left.");
+    if (b.lastStand === "fighting") {
+      if (b.keeperHp === b.keeperMaxHp) return fail("You are already at full health.");
+      s.potions--; b.keeperHp = Math.min(b.keeperMaxHp!, b.keeperHp!+50); logs.push("You recovered 50 HP.");
+    } else {
     if (p.hp === maxHp(p)) return fail("Your Nuvo is already at full health.");
     s.potions--;
     p.hp = Math.min(maxHp(p), p.hp + 50);
     p.status = undefined;
     logs.push(`${SPECIES_BY_ID[p.speciesId].name} recovered 50 HP.`);
+    }
   }
   if (action.type === "run") {
+    if (b.trainerId) return fail("Finish the trainer battle or accept rescue after your crew falls.");
     if (random() < 0.82 || p.level >= b.wild.level) {
       b.over = "fled";
       wildActs = false;
@@ -352,7 +413,11 @@ export function battleTurn(
       (MOVE_BY_ID[wildMove].priority === MOVE_BY_ID[playerMove].priority &&
         speed(b.wild) > speed(p)));
   const attackPlayer = () => {
-    if (!wildActs || p.hp <= 0 || b.wild.hp <= 0) return;
+    if (!wildActs || (p.hp <= 0 && b.lastStand !== "fighting") || b.wild.hp <= 0) return;
+    if (b.lastStand === "fighting") {
+      const hit = Math.max(1,Math.floor((8+b.wild.level*1.1)*(action.type === "brace" ? .3 : 1)));
+      b.keeperHp = Math.max(0,b.keeperHp!-hit); logs.push(`${SPECIES_BY_ID[b.wild.speciesId].name} hits you for ${hit} HP.`); return;
+    }
     if (wildMove) {
       const res = useMove(b.wild, p, wildMove, random);
       b.wild = res.attacker;
@@ -386,28 +451,32 @@ export function battleTurn(
   }
   s.party[b.active] = p;
   if (!b.over && b.wild.hp <= 0) {
-    b.over = "won";
     const reward = 45 + b.wild.level * 12;
-    b.reward = reward;
-    const res = gainXp(p, reward);
-    s.party[b.active] = res.nuvo;
+    b.reward += reward;
+    s.party = awardCrewXp(s.party, b.active, reward);
     s.coins += 20 + b.wild.level * 5;
     s.battles++;
     logs.push(
-      `Victory! +${reward} XP · +${20 + b.wild.level * 5} coins${res.levels ? ` · Level ${res.nuvo.level}!` : ""}`,
+      `Victory! +${reward} XP · Crew +${Math.floor(reward*.2)} XP each · +${20 + b.wild.level * 5} coins`,
     );
+    if (b.opponentQueue?.length) { b.wild = b.opponentQueue.shift()!; logs.push(`${b.trainerName} sends out ${SPECIES_BY_ID[b.wild.speciesId].name}!`); }
+    else { b.over = "won"; if (b.trainerId) s.defeatedTrainers = [...new Set([...(s.defeatedTrainers || []), b.trainerId])]; }
   }
-  if (!b.over && p.hp <= 0) {
+  if (!b.over && b.lastStand === "fighting" && b.keeperHp! <= 0) {
+    const result = keeperDefeat(s,random); s = result.save; b.over = "lost"; b.dreamAwakening = result.dream;
+    logs.push(result.dream ? "The world fades… You awaken in Dream Land. Something mythical waits beyond the trail." : "Your courage is remembered. You awaken, fully rested, in the Healing Lodge.");
+  }
+  if (!b.over && p.hp <= 0 && !b.lastStand) {
     const next = s.party.findIndex((n) => n.hp > 0);
     if (next < 0) {
-      b.over = "lost";
-      logs.push("Your team needs a rest. You return safely to Mossbell.");
-      s = healParty({ ...s, region: "mossbell", x: 560, y: 496 });
+      b.lastStand = "choice";
+      logs.push("Your crew has fallen. Step in yourself, or accept a rescue to the Healing Lodge.");
     } else {
       b.active = next;
       logs.push(`Go, ${SPECIES_BY_ID[s.party[next].speciesId].name}!`);
     }
   }
+  if (b.over && b.lastStand === "fighting" && b.over !== "lost") s.party = s.party.map(n => ({ ...n, hp: Math.max(1,n.hp) }));
   s.seen = [...new Set([...s.seen, SPECIES_BY_ID[b.wild.speciesId].base])];
   b.turn++;
   b.log = [...b.log, ...logs].slice(-40);

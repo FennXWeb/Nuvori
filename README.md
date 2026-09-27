@@ -7,11 +7,16 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 ## Included
 
 - Character creation, four outfit palettes, five starters, animated four-direction walking/sprinting, and a following lead Nuvo.
-- Nine connected locations: three towns, four wild zones, and two landmark areas, with healing lodges, shops, discoveries, and a field journal.
-- 25 original illustrated Nuvo families. Every family has two choices at level 12 and another two choices at level 26: **175 named playable forms** total.
+- Fourteen connected regions with five towns, unique landmarks, trainers, and a hidden Dream Land. The new frontier includes Saffron Expanse, Threadhaven, Mirelight Fen, Tempest Shelf, and Crownspire.
+- 25 original illustrated Nuvo families. Every family has two choices at level 12 and another two choices at level 26: **175 named playable forms**, plus the mythical Oneirune. All 150 evolved forms have distinct, larger artwork and animated follower gaits.
 - 100 moves across 10 elemental types, with unique particle configurations, physical/special/status classifications, power, accuracy, PP, priority, status effects, healing, and draining.
 - Per-species starting moves, level-up learnsets, and tutor compatibility in the Nuvopedia and the downloadable [catalog](public/data/nuvori-catalog.json).
-- Turn-based wild battles, six-Nuvo parties, reserve storage, capturing, experience, progression, items, and move tutoring.
+- Turn-based wild and trainer battles, six-Nuvo parties, reserve storage, capturing, progression, items, and move tutoring. Drag the bottom crew to reorder it; the far-left member leads. Other crew members receive 20% of active-member battle XP.
+- Five Champions League guardians with 900–3,400 HP. Sign in and battle solo or in four-player rooms, with shared boss health, individual crew actions, room codes, resumable trials, and crest rewards.
+- Six orb types: Binding, Verdant, Tide, Dusk, Swift, and Prism, with different capture affinities.
+- Walkable clothing stores and barbers with six owned outfits, six hairstyles, and six hair colors.
+- A keeper last stand when the entire crew faints. Keeper defeat normally restores the crew at the last Healing Lodge; a 1-in-10,000 roll instead awakens them in Dream Land, where Oneirune can appear and be caught.
+- New-release detection with a save-and-apply popup, deferred until the current battle or activity ends.
 - Rare **Prismatic** color variants at a 1/512 wild-encounter probability. Rarity persists through capture, saves, and evolution.
 - Local guest saves; Supabase OAuth, per-account cloud saves, authenticated shared-world presence, visible remote keepers and companions, and greetings when the backend/providers are configured.
 - Keyboard and touch controls, responsive layouts, optional synthesized sound effects, and reduced-motion styling.
@@ -21,7 +26,7 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 - Walkable Healing Lodge and Supply Shop interiors with counters, NPCs, furniture, exits, and your following Nuvo.
 - A free daily wheel with eight rewards, midnight UTC reset, and account-wide claim enforcement.
 
-This is an early-access game. Online play is cooperative shared-world exploration; battles and inventory are local simulations, not authoritative competitive gameplay. It does not include PvP, trading, or shared battles. Evolution forms currently use transformed family artwork and stage effects rather than 150 additional individual illustrations.
+This is an early-access cooperative game. Champions League rooms, battle actions, shared boss health, and reward claims run in PostgreSQL. Ordinary battles and inventory remain client-controlled, so this is not an authoritative competitive economy. PvP and trading are not included.
 
 ## Controls
 
@@ -33,8 +38,9 @@ This is an early-access game. Online play is cooperative shared-world exploratio
 | M / B / J              | Map / satchel / journal              |
 | Escape                 | Close a panel                        |
 | Click / tap the ground | Walk there, routing around obstacles |
+| Drag crew / Alt + arrows | Reorder the crew; far left is active |
 
-Walk along the signed exits to change areas. Step off the paths in wild zones to encounter Nuvo. Weaken a wild Nuvo before using a binding orb. The first healthy team member can be selected as your following companion. Town healing lodges are free.
+Walk along the signed exits to change areas. Step off the paths in wild zones to encounter Nuvo. Weaken a wild Nuvo before using a binding orb. The far-left crew member is your following companion; battles use the first healthy member. Town healing lodges are free.
 
 ## Development
 
@@ -50,7 +56,7 @@ npm run build
 
 The production bundle uses a relative base so GitHub Pages project URLs work. `.github/workflows/deploy.yml` runs the gameplay/data checks, exports the catalog, builds, and publishes Pages on updates to `main`.
 
-Local visual test fixtures are available at `/qa.html` on the Vite development server. They replace only the localhost guest save and are excluded from the production build. Database regression checks are in `supabase/tests/community.sql` and roll back all fixtures.
+Local visual test fixtures are available at `/qa.html` on the Vite development server. They replace only the localhost guest save and are excluded from the production build. Database regression checks are in `supabase/tests/community.sql` and `supabase/tests/league.sql`; both roll back their fixtures. `npm test` runs the League migrations and integration checks against an isolated PGlite PostgreSQL database. Regenerate the server species/move/guardian catalog with `npx tsx scripts/export-league.ts` when balance data changes, then apply the generated migration.
 
 ## Accounts and online world
 
@@ -60,7 +66,7 @@ The database migration enforces ownership with row-level security; guests cannot
 
 ## Art
 
-Logo, 25-creature atlas, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [art-prompts.json](docs/art-prompts.json). PNG alpha was verified, and atlas cells are normalized rather than rounded to an integer cell width. All source artwork is included in `public/assets`.
+Logo, 25-creature atlas, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [art-prompts.json](docs/art-prompts.json). PNG alpha was verified, and atlas cells are normalized rather than rounded to an integer cell width. The 150 individual evolution illustrations and Oneirune were also generated with the built-in Imagegen tool; prompts are in [expansion art](docs/EXPANSION-ART.md) and [final evolution art](docs/EXPANSION-ART-FINALS.md). All source artwork is included in `public/assets`.
 
 ## Save data
 

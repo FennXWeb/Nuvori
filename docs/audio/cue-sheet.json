@@ -1,0 +1,986 @@
+{
+  "project": "Nuvori",
+  "direction": "Original warm orchestral/chiptune adventure score and tactile magical effects",
+  "cues": [
+    {
+      "id": "title",
+      "title": "Your Path, Their Evolution",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/title.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. The main title: hopeful, curious and magical. 112 BPM, D major, celesta and flute lead a rising four-note motif, pizzicato strings, warm horn answer, soft brushed percussion. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "The main title: hopeful, curious and magical. 112 BPM, D major, celesta and flute lead a rising four-note motif, pizzicato strings, warm horn answer, soft brushed percussion.",
+      "provider": "Suno",
+      "use": "Title screen and keeper creation",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "mossbell",
+      "title": "A Pocketful of Morning",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/mossbell.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Mossbell Village. Gentle 100 BPM village pastoral, nylon guitar, flute, marimba, a tender playful melody and cozy strings. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Mossbell Village. Gentle 100 BPM village pastoral, nylon guitar, flute, marimba, a tender playful melody and cozy strings.",
+      "provider": "Suno",
+      "use": "Mossbell Village exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "verdant",
+      "title": "The Trail Wakes Up",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/verdant.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Verdant Wilds. Lively 120 BPM woodland exploration, woody mallets, pizzicato cello, bright flute, light hand percussion and adventurous wonder. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Verdant Wilds. Lively 120 BPM woodland exploration, woody mallets, pizzicato cello, bright flute, light hand percussion and adventurous wonder.",
+      "provider": "Suno",
+      "use": "Verdant Wilds exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "tideglass",
+      "title": "Sea Glass in Your Shoes",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/tideglass.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Tideglass Coast. Breezy 108 BPM seaside journey, glistening piano, steelpan touches, ukulele, rounded bass, small rolling percussion, sunlight and salt air. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Tideglass Coast. Breezy 108 BPM seaside journey, glistening piano, steelpan touches, ukulele, rounded bass, small rolling percussion, sunlight and salt air.",
+      "provider": "Suno",
+      "use": "Tideglass Coast exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "sunwake",
+      "title": "Lanterns in the Harbor",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/sunwake.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Sunwake Harbor. Buoyant 110 BPM maritime town, concertina, plucked strings, clarinet, gentle waltzing nautical rhythm, friendly and bustling. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Sunwake Harbor. Buoyant 110 BPM maritime town, concertina, plucked strings, clarinet, gentle waltzing nautical rhythm, friendly and bustling.",
+      "provider": "Suno",
+      "use": "Sunwake Harbor exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "hollow",
+      "title": "Whispers Under the Canopy",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/hollow.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Hollow Grove. Mysterious gentle 90 BPM enchanted woods, bass clarinet, muted plucks, celesta, soft woodblock, minor-to-major turns, curious not frightening. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Hollow Grove. Mysterious gentle 90 BPM enchanted woods, bass clarinet, muted plucks, celesta, soft woodblock, minor-to-major turns, curious not frightening.",
+      "provider": "Suno",
+      "use": "Hollow Grove exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "crystal",
+      "title": "Stairway of Glass",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/crystal.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Crystal Steps. Shimmering 96 BPM crystal ruins, glass marimba and harp with warm string swells, twinkling arpeggios, a quietly majestic climbing melody. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Crystal Steps. Shimmering 96 BPM crystal ruins, glass marimba and harp with warm string swells, twinkling arpeggios, a quietly majestic climbing melody.",
+      "provider": "Suno",
+      "use": "Crystal Steps exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "emberfall",
+      "title": "Where the Mountain Glows",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/emberfall.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Emberfall. Driving 124 BPM volcanic trail, low drums, staccato strings, muted brass and ember-like synth ostinato. Courage and motion without harsh distortion. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Emberfall. Driving 124 BPM volcanic trail, low drums, staccato strings, muted brass and ember-like synth ostinato. Courage and motion without harsh distortion.",
+      "provider": "Suno",
+      "use": "Emberfall exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "frostmere",
+      "title": "Snow Between the Stars",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/frostmere.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Frostmere. Cozy 88 BPM snow town, soft piano, celesta and bassoon, warm sustained strings and brushed bells, luminous winter lullaby with a lilting pulse. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Frostmere. Cozy 88 BPM snow town, soft piano, celesta and bassoon, warm sustained strings and brushed bells, luminous winter lullaby with a lilting pulse.",
+      "provider": "Suno",
+      "use": "Frostmere exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "starfall",
+      "title": "A Wish Finds Its Way",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/starfall.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Starfall Reach. Cosmic 92 BPM wonder, harp harmonics, felt piano, soft analog pads, sparkling celesta and delicate arpeggiator, wide but intimate, a melody of discovery. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Starfall Reach. Cosmic 92 BPM wonder, harp harmonics, felt piano, soft analog pads, sparkling celesta and delicate arpeggiator, wide but intimate, a melody of discovery.",
+      "provider": "Suno",
+      "use": "Starfall Reach exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "saffron",
+      "title": "Sands That Remember",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/saffron.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Saffron Expanse. Curious 114 BPM desert expedition, oud-like acoustic plucks, warm reed melody, frame drum, shimmering mallet accents, shifting golden sands. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Saffron Expanse. Curious 114 BPM desert expedition, oud-like acoustic plucks, warm reed melody, frame drum, shimmering mallet accents, shifting golden sands.",
+      "provider": "Suno",
+      "use": "Saffron Expanse exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "threadhaven",
+      "title": "A Stitch in the Breeze",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/threadhaven.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Threadhaven. Playful 116 BPM artisan town, pizzicato strings, accordion, small music-box accents and brushed drums, dancing windmill rhythm and bright cozy melody. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Threadhaven. Playful 116 BPM artisan town, pizzicato strings, accordion, small music-box accents and brushed drums, dancing windmill rhythm and bright cozy melody.",
+      "provider": "Suno",
+      "use": "Threadhaven exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "mirelight",
+      "title": "A Thousand Little Lanterns",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/mirelight.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Mirelight Fen. Dreamy 94 BPM moonlit marsh, hollow wooden mallets, bass clarinet, soft liquid synth pulses and distant glass tones, gentle mystery and floating lanterns. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Mirelight Fen. Dreamy 94 BPM moonlit marsh, hollow wooden mallets, bass clarinet, soft liquid synth pulses and distant glass tones, gentle mystery and floating lanterns.",
+      "provider": "Suno",
+      "use": "Mirelight Fen exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "tempest",
+      "title": "The Thunder Harp",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/tempest.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Tempest Shelf. Energetic 132 BPM high cliffs, rushing string arpeggios, harp glissandi, toms, airy flute and bright synth counterpoint, exhilarating wind and courage. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Tempest Shelf. Energetic 132 BPM high cliffs, rushing string arpeggios, harp glissandi, toms, airy flute and bright synth counterpoint, exhilarating wind and courage.",
+      "provider": "Suno",
+      "use": "Tempest Shelf exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "crownspire",
+      "title": "Above Every Cloud",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/crownspire.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Crownspire. Noble 106 BPM summit town, lyrical French horn, harp and strings, restrained timpani, bright chimes, peaceful heroic grandeur and welcoming bells. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Crownspire. Noble 106 BPM summit town, lyrical French horn, harp and strings, restrained timpani, bright chimes, peaceful heroic grandeur and welcoming bells.",
+      "provider": "Suno",
+      "use": "Crownspire exploration",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "dreamland",
+      "title": "Between a Wish and Waking",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/dreamland.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Dream Land. Weightless 76 BPM mythical dimension, reversed piano swells, soft music box, luminous glass pads, sparse harp, bittersweet suspended harmonies and an unforgettable delicate theme. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Dream Land. Weightless 76 BPM mythical dimension, reversed piano swells, soft music box, luminous glass pads, sparse harp, bittersweet suspended harmonies and an unforgettable delicate theme.",
+      "provider": "Suno",
+      "use": "Dream Land and the search for Oneirune",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "lodge",
+      "title": "A Light Left On",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/lodge.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Healing Lodge. Reassuring 80 BPM felt piano and soft celesta with acoustic guitar, gentle soothing pulse and a comforting small melody. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Healing Lodge. Reassuring 80 BPM felt piano and soft celesta with acoustic guitar, gentle soothing pulse and a comforting small melody.",
+      "provider": "Suno",
+      "use": "Healing Lodge interior",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "shops",
+      "title": "Little Treasures",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/shops.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Supply shop, clothing boutique and barber. Light 116 BPM cozy shopping theme, brushed jazz drums, upright bass, clarinet and marimba, playful and tasteful. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Supply shop, clothing boutique and barber. Light 116 BPM cozy shopping theme, brushed jazz drums, upright bass, clarinet and marimba, playful and tasteful.",
+      "provider": "Suno",
+      "use": "Supply Shop, clothing store and barber",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "battle-wild",
+      "title": "A Spark in the Grass",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/battle-wild.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Wild Nuvo battle. Exciting 150 BPM turn-based combat, bouncing bass, quick strings, punchy light drums, playful brass responses, agile synth arpeggios, adventurous not grim. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Wild Nuvo battle. Exciting 150 BPM turn-based combat, bouncing bass, quick strings, punchy light drums, playful brass responses, agile synth arpeggios, adventurous not grim.",
+      "provider": "Suno",
+      "use": "Wild Nuvo encounters",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "battle-trainer",
+      "title": "The Bond We Bring",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/battle-trainer.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Trainer duel. Spirited 158 BPM, tight drums, bright staccato brass, nimble strings, syncopated bass, determined melodic call and response, friendly competitive excitement. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Trainer duel. Spirited 158 BPM, tight drums, bright staccato brass, nimble strings, syncopated bass, determined melodic call and response, friendly competitive excitement.",
+      "provider": "Suno",
+      "use": "Trainer duels",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "battle-league",
+      "title": "Four Keepers, One Legend",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/battle-league.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Champions League guardian raid. Epic 144 BPM, powerful orchestral percussion, soaring horns, fast strings, electric synth bass, formidable boss theme balanced by a heroic hopeful counter-melody. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Champions League guardian raid. Epic 144 BPM, powerful orchestral percussion, soaring horns, fast strings, electric synth bass, formidable boss theme balanced by a heroic hopeful counter-melody.",
+      "provider": "Suno",
+      "use": "Champions League cooperative guardian battles",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": true,
+      "targetSeconds": 120
+    },
+    {
+      "id": "last-stand",
+      "title": "Still Standing",
+      "kind": "music",
+      "seconds": 120,
+      "file": "audio/music/last-stand.mp3",
+      "prompt": "Instrumental fantasy adventure game soundtrack. Keeper last stand. Resolute 132 BPM, urgent low strings, heartbeat-like drums, rising solo horn, sparse chiptune pulse, vulnerable but intensely courageous, build hope without becoming noisy. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
+      "musicalDirection": "Keeper last stand. Resolute 132 BPM, urgent low strings, heartbeat-like drums, rising solo horn, sparse chiptune pulse, vulnerable but intensely courageous, build hope without becoming noisy.",
+      "provider": "Suno",
+      "use": "Keeper last stand after the crew falls",
+      "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
+      "priority": false,
+      "targetSeconds": 120
+    },
+    {
+      "id": "ui-click",
+      "title": "Leaf tap",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/ui-click.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A soft wooden tick with one tiny glass sparkle, gentle menu selection."
+    },
+    {
+      "id": "ui-confirm",
+      "title": "A little yes",
+      "kind": "sfx",
+      "seconds": 0.6,
+      "file": "audio/sfx/ui-confirm.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Two bright ascending soft mallet notes, friendly confirmation."
+    },
+    {
+      "id": "ui-back",
+      "title": "Fold the page",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/ui-back.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Soft parchment swish with a low wooden tap, close menu."
+    },
+    {
+      "id": "ui-error",
+      "title": "Not this time",
+      "kind": "sfx",
+      "seconds": 0.6,
+      "file": "audio/sfx/ui-error.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Two quiet rounded low blips, gentle invalid action, never harsh."
+    },
+    {
+      "id": "ui-notify",
+      "title": "Trail message",
+      "kind": "sfx",
+      "seconds": 0.8,
+      "file": "audio/sfx/ui-notify.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A delicate two-note bell notification with a small airy tail."
+    },
+    {
+      "id": "ui-reorder",
+      "title": "Crew shuffle",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/ui-reorder.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A soft quick shuffle of cards and tiny landing pop."
+    },
+    {
+      "id": "purchase",
+      "title": "Pocket treasure",
+      "kind": "sfx",
+      "seconds": 0.8,
+      "file": "audio/sfx/purchase.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A small pouch of gold coins clinks with a cheerful subtle chime."
+    },
+    {
+      "id": "customize",
+      "title": "A fresh look",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/customize.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Gentle cloth swoosh, quick magical sparkle, satisfying small flourish."
+    },
+    {
+      "id": "step-grass",
+      "title": "Grass footstep",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/step-grass.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. One soft shoe footfall into short grass with tiny leaf rustle."
+    },
+    {
+      "id": "step-stone",
+      "title": "Stone footstep",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/step-stone.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. One gentle boot footfall on stone, dry rounded tap."
+    },
+    {
+      "id": "step-sand",
+      "title": "Sand footstep",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/step-sand.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. One soft shoe step into loose sand, fine grain crunch."
+    },
+    {
+      "id": "step-snow",
+      "title": "Snow footstep",
+      "kind": "sfx",
+      "seconds": 0.5,
+      "file": "audio/sfx/step-snow.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. One soft boot step into powder snow, muffled crisp crunch."
+    },
+    {
+      "id": "door",
+      "title": "Welcome inside",
+      "kind": "sfx",
+      "seconds": 0.9,
+      "file": "audio/sfx/door.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Small wooden cottage door opening with a delicate hanging bell."
+    },
+    {
+      "id": "travel",
+      "title": "A new path",
+      "kind": "sfx",
+      "seconds": 1.2,
+      "file": "audio/sfx/travel.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A light wind swish resolving into a tiny glockenspiel discovery note."
+    },
+    {
+      "id": "battle-start",
+      "title": "A challenger appears",
+      "kind": "sfx",
+      "seconds": 1.5,
+      "file": "audio/sfx/battle-start.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A quick suspenseful rising magical sweep into a rounded drum hit, encounter transition."
+    },
+    {
+      "id": "capture-throw",
+      "title": "Orb cast",
+      "kind": "sfx",
+      "seconds": 0.8,
+      "file": "audio/sfx/capture-throw.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Small crystal orb spinning through air, airy swoosh with glass glint."
+    },
+    {
+      "id": "capture-shake",
+      "title": "Bonding pulse",
+      "kind": "sfx",
+      "seconds": 0.7,
+      "file": "audio/sfx/capture-shake.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Three soft hollow crystal ticks with pulsing magical energy."
+    },
+    {
+      "id": "capture-break",
+      "title": "Burst of freedom",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/capture-break.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Small crystal energy shell pops open, airy burst and falling sparkles."
+    },
+    {
+      "id": "capture-success",
+      "title": "A new friendship",
+      "kind": "sfx",
+      "seconds": 2.4,
+      "file": "audio/sfx/capture-success.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A joyful original four-note bell and flute fanfare with a sparkling magical seal, warm and cute."
+    },
+    {
+      "id": "faint",
+      "title": "Time to rest",
+      "kind": "sfx",
+      "seconds": 1.1,
+      "file": "audio/sfx/faint.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Gentle descending magical tones and soft thump, a tired creature resting, no voice."
+    },
+    {
+      "id": "victory",
+      "title": "Stronger together",
+      "kind": "sfx",
+      "seconds": 3.0,
+      "file": "audio/sfx/victory.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Short joyful original orchestral game victory fanfare, bright brass, snare flourish, sparkling bells, resolved major chord."
+    },
+    {
+      "id": "defeat",
+      "title": "The journey continues",
+      "kind": "sfx",
+      "seconds": 2.5,
+      "file": "audio/sfx/defeat.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Soft bittersweet descending piano and woodwind phrase resolving hopefully, brief game defeat sting."
+    },
+    {
+      "id": "heal",
+      "title": "Restored",
+      "kind": "sfx",
+      "seconds": 2.4,
+      "file": "audio/sfx/heal.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Gentle upward cascade of clear glass bells, warm magical shimmer, restoring health."
+    },
+    {
+      "id": "evolution-ready",
+      "title": "A new possibility",
+      "kind": "sfx",
+      "seconds": 2.5,
+      "file": "audio/sfx/evolution-ready.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Mysterious rising crystalline sparkle and heartbeat-like magical pulse, a creature ready to evolve."
+    },
+    {
+      "id": "evolve",
+      "title": "Becoming",
+      "kind": "sfx",
+      "seconds": 4.0,
+      "file": "audio/sfx/evolve.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Swirling magical energy grows brighter into a powerful shining transformation, resonant bells and a triumphant warm shimmer."
+    },
+    {
+      "id": "level-up",
+      "title": "A little stronger",
+      "kind": "sfx",
+      "seconds": 1.5,
+      "file": "audio/sfx/level-up.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Three quick ascending bright plucked notes and one gentle bell accent, concise level-up."
+    },
+    {
+      "id": "prismatic",
+      "title": "A rare light",
+      "kind": "sfx",
+      "seconds": 3.0,
+      "file": "audio/sfx/prismatic.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Dazzling iridescent star chimes, airy shimmering bloom, rare magical creature discovery, delicate and wondrous."
+    },
+    {
+      "id": "discovery",
+      "title": "Wonder found",
+      "kind": "sfx",
+      "seconds": 2.0,
+      "file": "audio/sfx/discovery.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Warm flute and harp discovery flourish ending in a soft sparkling chime."
+    },
+    {
+      "id": "wheel-spin",
+      "title": "Circle of fortune",
+      "kind": "sfx",
+      "seconds": 2.0,
+      "file": "audio/sfx/wheel-spin.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A wooden prize wheel spinning and ticking rapidly, slowing slightly, soft mechanical clicks."
+    },
+    {
+      "id": "wheel-prize",
+      "title": "Today is a gift",
+      "kind": "sfx",
+      "seconds": 2.5,
+      "file": "audio/sfx/wheel-prize.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Cheerful small treasure chest pop, coins jingling and glittering bell flourish."
+    },
+    {
+      "id": "keeper-strike",
+      "title": "Courage strike",
+      "kind": "sfx",
+      "seconds": 0.9,
+      "file": "audio/sfx/keeper-strike.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Quick cloth movement and energetic rounded punch impact with a small heroic magic spark."
+    },
+    {
+      "id": "guard",
+      "title": "Hold your ground",
+      "kind": "sfx",
+      "seconds": 1.2,
+      "file": "audio/sfx/guard.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A crystalline magical shield blooms with a low warm hum and clean glass ring."
+    },
+    {
+      "id": "status",
+      "title": "Lingering magic",
+      "kind": "sfx",
+      "seconds": 1.2,
+      "file": "audio/sfx/status.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Small swirling magical bubbling pulse, strange but gentle, status spell."
+    },
+    {
+      "id": "learn",
+      "title": "A new trick",
+      "kind": "sfx",
+      "seconds": 1.7,
+      "file": "audio/sfx/learn.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A parchment flutter followed by a bright rising glass and wood melody, a new ability learned."
+    },
+    {
+      "id": "move-bloom",
+      "title": "Bloom attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-bloom.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Whipping leaves, crisp vine snap and soft leafy impact, living plant magic."
+    },
+    {
+      "id": "ultimate-bloom",
+      "title": "Bloom ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-bloom.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Whipping leaves, crisp vine snap and soft leafy impact, living plant magic. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-flame",
+      "title": "Flame attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-flame.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Quick fire ignition, rushing flames and warm crackling impact."
+    },
+    {
+      "id": "ultimate-flame",
+      "title": "Flame ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-flame.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Quick fire ignition, rushing flames and warm crackling impact. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-tide",
+      "title": "Tide attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-tide.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Rushing watery swoosh and crisp liquid splash impact, clean ocean magic."
+    },
+    {
+      "id": "ultimate-tide",
+      "title": "Tide ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-tide.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Rushing watery swoosh and crisp liquid splash impact, clean ocean magic. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-gale",
+      "title": "Gale attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-gale.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Tight spiraling wind gust, feather-like swish and airy impact."
+    },
+    {
+      "id": "ultimate-gale",
+      "title": "Gale ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-gale.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Tight spiraling wind gust, feather-like swish and airy impact. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-volt",
+      "title": "Volt attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-volt.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Sharp but comfortable electric zap, energetic crackle, bright buzzing impact."
+    },
+    {
+      "id": "ultimate-volt",
+      "title": "Volt ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-volt.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Sharp but comfortable electric zap, energetic crackle, bright buzzing impact. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-stone",
+      "title": "Stone attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-stone.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Deep rounded stone thud with scattering pebbles and short earth rumble."
+    },
+    {
+      "id": "ultimate-stone",
+      "title": "Stone ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-stone.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Deep rounded stone thud with scattering pebbles and short earth rumble. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-frost",
+      "title": "Frost attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-frost.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Cold airy whoosh, crystalline ice chinks and sharp delicate frost shatter."
+    },
+    {
+      "id": "ultimate-frost",
+      "title": "Frost ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-frost.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Cold airy whoosh, crystalline ice chinks and sharp delicate frost shatter. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-shade",
+      "title": "Shade attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-shade.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Low shadowy reversed whisper-like air sweep and hollow magical impact, no voice."
+    },
+    {
+      "id": "ultimate-shade",
+      "title": "Shade ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-shade.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Low shadowy reversed whisper-like air sweep and hollow magical impact, no voice. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-astral",
+      "title": "Astral attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-astral.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Sparkling cosmic chimes and luminous descending star impact, soft resonant space magic."
+    },
+    {
+      "id": "ultimate-astral",
+      "title": "Astral ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-astral.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Sparkling cosmic chimes and luminous descending star impact, soft resonant space magic. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "move-metal",
+      "title": "Metal attack",
+      "kind": "sfx",
+      "seconds": 1.4,
+      "file": "audio/sfx/move-metal.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Clean ringing metal strike with a fast blade swish and short steel resonance."
+    },
+    {
+      "id": "ultimate-metal",
+      "title": "Metal ultimate",
+      "kind": "sfx",
+      "seconds": 2.2,
+      "file": "audio/sfx/ultimate-metal.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A powerful charged-up ultimate attack: Clean ringing metal strike with a fast blade swish and short steel resonance. Build a short rising charge, then a satisfying larger impact and short decay."
+    },
+    {
+      "id": "cry-spriglet",
+      "title": "Spriglet call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-spriglet.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Spriglet is an original Bloom fantasy companion. A curious forest fox. The leaf on its head turns toward anyone it trusts. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-cindlet",
+      "title": "Cindlet call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-cindlet.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Cindlet is an original Flame fantasy companion. This tiny red panda keeps a warm coal in its tail. It glows brighter when friends are near. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-bubbfin",
+      "title": "Bubbfin call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-bubbfin.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Bubbfin is an original Tide fantasy companion. It collects tiny treasures in floating bubbles and gives its favorite to its keeper. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-wisplet",
+      "title": "Wisplet call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-wisplet.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Wisplet is an original Gale/Astral fantasy companion. A cloud-soft owlet that navigates by constellations visible only to Nuvo. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-voltik",
+      "title": "Voltik call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-voltik.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Voltik is an original Volt fantasy companion. Its ears hum before thunderstorms. One happy hop can light a whole room. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-mushbur",
+      "title": "Mushbur call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-mushbur.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Mushbur is an original Bloom/Stone fantasy companion. Mushrooms grow along its back. It shares them with lost travelers. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-axolily",
+      "title": "Axolily call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-axolily.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Axolily is an original Tide/Bloom fantasy companion. A shy axolotl that tends coral gardens in warm pools. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-dunillo",
+      "title": "Dunillo call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-dunillo.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Dunillo is an original Stone fantasy companion. It curls into a ball and rolls across sand, leaving perfect spirals. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-chillip",
+      "title": "Chillip call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-chillip.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Chillip is an original Frost/Tide fantasy companion. Slides down glaciers on its belly. Its laughter sounds like tiny bells. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-duskbat",
+      "title": "Duskbat call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-duskbat.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Duskbat is an original Shade/Gale fantasy companion. Sleeps inside folded leaves and guides wandering keepers home after dark. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-humbear",
+      "title": "Humbear call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-humbear.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Humbear is an original Bloom/Volt fantasy companion. A fuzzy bee-bear whose wingbeats make flowers release extra nectar. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-crystail",
+      "title": "Crystail call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-crystail.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Crystail is an original Stone/Astral fantasy companion. Its crystal shell stores memories of every place it has ever visited. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-lunamoth",
+      "title": "Lunamoth call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-lunamoth.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Lunamoth is an original Astral/Gale fantasy companion. Its delicate wings trace silver constellations in the evening air. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-ferrunt",
+      "title": "Ferrunt call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-ferrunt.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Ferrunt is an original Metal fantasy companion. This stubborn rhino polishes its little horn on boulders every morning. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-kelpie",
+      "title": "Kelpie call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-kelpie.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Kelpie is an original Tide/Shade fantasy companion. It braids kelp into little crowns and leaves them along the shore. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-orchik",
+      "title": "Orchik call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-orchik.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Orchik is an original Bloom/Gale fantasy companion. This tiny mantis disguises itself as an orchid and dances in warm rain. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-scorcko",
+      "title": "Scorcko call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-scorcko.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Scorcko is an original Flame/Stone fantasy companion. Its little feet never burn, even on the hottest obsidian. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-stellawn",
+      "title": "Stellawn call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-stellawn.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Stellawn is an original Astral fantasy companion. Stars gather around its antlers when it finds a kind-hearted keeper. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-mosshell",
+      "title": "Mosshell call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-mosshell.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Mosshell is an original Bloom/Stone fantasy companion. Every mossy shell is a tiny ecosystem. Some carry century-old flowers. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-veiljell",
+      "title": "Veiljell call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-veiljell.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Veiljell is an original Shade/Tide fantasy companion. Its gentle glow reveals hidden paths over misty marshes. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-whiflet",
+      "title": "Whiflet call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-whiflet.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Whiflet is an original Gale fantasy companion. A playful weasel that rides wind currents between the islands. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-venopip",
+      "title": "Venopip call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-venopip.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Venopip is an original Shade/Bloom fantasy companion. It sings low notes beside moonlit ponds. Its spots glow when it is nervous. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-solcub",
+      "title": "Solcub call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-solcub.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Solcub is an original Flame/Astral fantasy companion. A lion cub born at daybreak. Its mane brightens with every brave act. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-rumblewool",
+      "title": "Rumblewool call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-rumblewool.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Rumblewool is an original Volt/Stone fantasy companion. Rainclouds cling to its fleece, rumbling softly when it falls asleep. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-jadeling",
+      "title": "Jadeling call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-jadeling.mp3",
+      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A tiny endearing nonverbal creature call. Jadeling is an original Stone/Astral fantasy companion. A rare dragon hatchling said to remember the islands before they rose from the sea. One expressive chirp, growl or trill matching this creature. Animal-like and magical, no words or human voice."
+    },
+    {
+      "id": "cry-oneirune",
+      "title": "Oneirune call",
+      "kind": "sfx",
+      "seconds": 1.0,
+      "file": "audio/sfx/cry-oneirune.mp3",
+      "prompt": "Original fantasy creature cry for Oneirune, a mythical dream serpent with luminous antlers. A soft breathy birdlike trill rising into a resonant glass chime and a gentle otherworldly purr. Magical, rare and friendly, no human voice or words, no music, clean isolated game sound."
+    },
+    {
+      "id": "ambience-forest",
+      "title": "Breeze through Auralis",
+      "kind": "ambience",
+      "seconds": 6,
+      "file": "audio/ambience/ambience-forest.mp3",
+      "prompt": "Gentle leaves stirring in a woodland breeze with a few distant small bird chirps, soft natural outdoor ambience. Seamless quiet looping background, no speech or music, no sharp loud events."
+    },
+    {
+      "id": "ambience-coast",
+      "title": "The breathing sea",
+      "kind": "ambience",
+      "seconds": 6,
+      "file": "audio/ambience/ambience-coast.mp3",
+      "prompt": "Gentle ocean waves lapping a shore, soft breeze, one very distant seabird, peaceful seaside ambience. Seamless quiet looping background, no speech or music, no sharp loud events."
+    },
+    {
+      "id": "ambience-storm",
+      "title": "Distant thunder",
+      "kind": "ambience",
+      "seconds": 6,
+      "file": "audio/ambience/ambience-storm.mp3",
+      "prompt": "High gentle wind, light rain texture and distant soft thunder rumbles, atmospheric not frightening. Seamless quiet looping background, no speech or music, no sharp loud events."
+    },
+    {
+      "id": "ambience-dream",
+      "title": "Beyond the veil",
+      "kind": "ambience",
+      "seconds": 6,
+      "file": "audio/ambience/ambience-dream.mp3",
+      "prompt": "Subtle ethereal airy shimmer, faint crystalline drifting tones and soft cosmic wind, no melody, dreamy magical ambience. Seamless quiet looping background, no speech or music, no sharp loud events."
+    }
+  ]
+}
