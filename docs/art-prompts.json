@@ -1,0 +1,63 @@
+{
+  "project": "Nuvori",
+  "tool": "built-in image_gen",
+  "generatedAt": "2026-09-26",
+  "assets": [
+    {
+      "name": "nuvori-logo",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01d-1283-7343-9030-86ef8926caea\\exec-0fce16f7-d7f0-4ccd-bc54-996a661d83ce.png",
+      "width": 1774,
+      "height": 887,
+      "transparentPixels": 970701,
+      "totalPixels": 1573538,
+      "trueAlphaVerified": true,
+      "prompt": "Use case: logo-brand\nAsset type: transparent raster logo for the original pixel-art creature-collector adventure game Nuvori.\nPrimary request: a wide horizontal game logo, bold hand-crafted adventure game lettering cream and mint with a deep midnight outline and a turquoise luminous orbital leaf/star mark.\nText (verbatim): \"NUVORI\" — exactly these six uppercase letters, N U V O R I. No subtitle or other text.\nComposition/framing: centered wide logo, clear legible lettering, generous transparent padding, all elements inside canvas.\nStyle/medium: polished pixel-art adventure-game logo with crisp stepped edges and beautiful dimensional highlights.\nScene/backdrop: genuinely transparent background, alpha channel, no colored background or fake checkerboard.\nConstraints: original identity, no existing game branding, no watermark."
+    },
+    {
+      "name": "nuvori-creatures",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01d-1283-7343-9030-86ef8926caea\\exec-8e9e71dd-30dd-4b1e-bb4d-5c404aaf2dfb.png",
+      "width": 1254,
+      "height": 1254,
+      "gridColumns": 5,
+      "gridRows": 5,
+      "transparentPixels": 1212599,
+      "totalPixels": 1572516,
+      "trueAlphaVerified": true,
+      "prompt": "Use case: stylized-concept\nAsset type: game-ready transparent 5 columns by 5 rows sprite atlas for original creature-collector game Nuvori.\nPrimary request: exactly 25 ORIGINAL cute collectible monsters, one per equal square cell. All full bodies centered evenly inside cells with generous transparent gaps. No labels, text, borders, or grid lines.\nStyle/medium: crisp polished pixel-art sprites, dark outlines, vibrant but harmonious colors, facing front slightly right, consistent lighting and scale, readable at small sizes.\nGrid contents, exactly in this row-major order:\nRow 1: mint leaf fox (Spriglet); orange coal red panda (Cindlet); blue bubble otter (Bubbfin); lavender cloud owl (Wisplet); yellow electric bunny (Voltik).\nRow 2: mushroom badger; pink coral axolotl; sandy armadillo; icy penguin; plum shadow bat.\nRow 3: honey bee bear; crystal snail; moth with moon wings; baby iron rhino; teal kelp seahorse.\nRow 4: orchid mantis; black volcanic gecko; white star deer; moss turtle; pale ghost jellyfish.\nRow 5: teal wind weasel; purple venom frog; orange sun lion cub; blue thunder ram; mint jade dragon hatchling.\nComposition/framing: square canvas divided invisibly into exactly 25 identical cells. Each sprite occupies the central 65 percent of its cell. No element crosses cell boundaries. No extra creatures.\nScene/backdrop: genuinely transparent background with actual alpha channel, not a fake checkerboard or solid background.\nConstraints: all characters are original designs; no franchise characters, no cropped ears, tails or feet; no ground platforms.",
+      "editPrompt": "Use case: precise-object-edit\nAsset type: game-ready transparent monster sprite atlas.\nInput image: edit target containing 25 creature designs to preserve exactly.\nChange ONLY the layout spacing and sprite scale: shrink each individual creature to at most 60 percent of its invisible cell width and height, centered exactly in that cell. Create five equal columns and five equal rows. Preserve all 25 designs, colors, poses, full bodies, and exact row-major order. Every sprite including tail, wings, horns, bubbles, flames, sparkles and decorative effects must fit entirely in the central 60 percent of its own square cell. There must be large completely transparent horizontal and vertical gutters between every row and column. Each row must have exactly 5 sprites. Each column must have exactly 5 sprites. No pixel from any creature may reach the boundary of its cell. More empty transparent padding is essential.\nDo not change character identities or replace any creature. Keep polished pixel-art treatment. No text, no borders, no labels, no ground. Preserve genuinely transparent background with actual alpha. Square canvas.",
+      "editReferencePath": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01d-1283-7343-9030-86ef8926caea\\exec-832cef6a-a9b6-48fd-badd-0f1d2fd08bd4.png"
+    },
+    {
+      "name": "nuvori-world-props",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01d-1283-7343-9030-86ef8926caea\\exec-937ea62d-abd6-40c2-aeba-ea7f105a5cb6.png",
+      "width": 1254,
+      "height": 1254,
+      "gridColumns": 4,
+      "gridRows": 4,
+      "transparentPixels": 759669,
+      "totalPixels": 1572516,
+      "trueAlphaVerified": true,
+      "prompt": "Use case: stylized-concept\nAsset type: transparent 4 columns by 4 rows equal-cell atlas of overhead RPG world props for original pixel-art game Nuvori.\nPrimary request: exactly 16 props, one full prop centered per square cell with generous transparent separation, no labels or grid lines.\nStyle/medium: crisp polished pixel art, dark outlines, consistent top-down three-quarter perspective and light from upper left.\nGrid contents in exact row-major order:\nRow 1: round leafy tree; tall pine tree; pink blossom tree; turquoise giant mushroom.\nRow 2: red terracotta cottage front roof with door bottom center; blue roof healing lodge with white plus sign and door bottom center; yellow roof shop with door bottom center; teal roof research lab with door bottom center.\nRow 3: glowing blue crystal cluster; old stone arch gate; ancient tall obelisk; broad wishing fountain.\nRow 4: mossy rock; flower bed; wooden direction sign; wooden crate.\nComposition/framing: square canvas divided invisibly into exactly 16 equal square cells. Each prop fully inside the central 72 percent of its cell. All details contained within own cell.\nScene/backdrop: genuinely transparent background with actual alpha, no ground tiles or fake checkerboard.\nConstraints: no text other than the white plus symbol on healing lodge; no cell borders; no shadow spilling toward neighbors; no cropping."
+    },
+    {
+      "name": "nuvori-explorer",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01d-1283-7343-9030-86ef8926caea\\exec-e744ce93-0fd6-43b0-8d3a-8db829dd17f0.png",
+      "width": 1254,
+      "height": 1254,
+      "gridColumns": 4,
+      "gridRows": 4,
+      "transparentPixels": 1179773,
+      "totalPixels": 1572516,
+      "trueAlphaVerified": true,
+      "prompt": "Use case: stylized-concept\nAsset type: transparent pixel-art human explorer sprite sheet, 4 columns by 4 rows, for original game Nuvori.\nPrimary request: 16 full-body sprites of the same small cute adventurer, mint jacket, dark trousers, purple hair and small backpack.\nGrid directions by row: row 1 faces DOWN toward viewer; row 2 faces LEFT in profile; row 3 faces RIGHT in profile; row 4 faces UP away from viewer with backpack visible.\nAnimation phases by column in each row: column 1 idle; column 2 left-foot-forward walking; column 3 passing walking pose; column 4 right-foot-forward walking.\nStyle/medium: crisp polished pixel art with dark outlines, overhead three-quarter RPG perspective.\nComposition/framing: exactly 16 equal square cells in a square canvas, one sprite centered in each invisible cell, same character, same scale, same anchor, full body including feet fully contained. Generous transparent gaps. No sprite overlaps another cell.\nScene/backdrop: genuinely transparent background, actual alpha channel, no solid background or fake checkerboard.\nConstraints: no text, no cell borders, no ground or shadow; visually consistent identity and outfit in all 16 cells."
+    }
+  ],
+  "validationNotes": [
+    "All 4 images visually inspected. Logo spells NUVORI exactly.",
+    "Creature sheet contains all 25 requested original creatures in exact row-major order. An imagegen edit reduced sprite scale and increased spacing after original failed cell-boundary check.",
+    "Final creature sheet and both 4x4 sheets have 0 pixels with alpha >100 along each equal-cell split line.",
+    "All assets have genuine alpha transparency. Original generated alpha preserved without image postprocessing.",
+    "Sprite sheets are 1254x1254 rather than divisible-by-grid integer sizes. Use normalized equal-cell source rectangles or nearest-neighbor resample if integer cell size is needed.",
+    "Explorer rows visibly face down, left, right, up. Phases vary, but precise animation phase semantics are approximate as generated."
+  ]
+}
