@@ -9,14 +9,14 @@
 - Provider callback: `https://uvnlmfpqonmccbaqxyzt.supabase.co/auth/v1/callback`.
 - Google JavaScript origin: `https://fennxweb.github.io`.
 
-The initial SQL migration is installed. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
+Both SQL migrations are installed. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
 
-Google and Discord credentials have been entered by the project owner and both providers are enabled. Never put those secrets in chat, source control, or the frontend environment. End-to-end sign-in, cloud-save, and two-player verification is in progress. Google's audience also needs to be published for public sign-in. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
+Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in, and account cloud saving has been verified. Two-player verification is in progress. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
 ## Supabase
 
 1. Create a free Supabase project. Enable the Data API and row-level security.
-2. Run `supabase/migrations/202609260001_nuvori.sql` in its SQL Editor.
+2. Run both files in `supabase/migrations/`, in filename order, in its SQL Editor.
 3. Under Authentication → URL Configuration, set the site URL to `https://fennxweb.github.io/Nuvori/` and allow that exact redirect URL. For local development, additionally allow `http://127.0.0.1:5173/`. In Realtime settings, disable **Allow public access** so channels require authorization.
 4. In Authentication → Sign In / Providers, configure Google and Discord using provider-owned OAuth applications.
 5. Google: create a web OAuth client and consent screen. Set its authorized redirect URI to `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`. Enter the client ID and secret in Supabase's Google provider settings. In testing mode, add the intended test users; publish the consent screen for public availability.
@@ -35,7 +35,9 @@ Secrets belong only in Supabase/provider settings. The app uses PKCE and permits
 
 ## Security boundaries
 
-Authenticated players share their chosen keeper name, avatar palette, current game location, companion, and temporary greeting. No email address is transmitted through Realtime presence. Saves are visible only to their owner via RLS.
+Authenticated players share their chosen keeper name, avatar palette, current game location, companion, and temporary greeting. No email address is transmitted through Realtime. Saves are visible only to their owner via RLS.
+
+Presence registers membership once per subscription. Movement uses private Broadcast, at most once per 450 ms while changing and a five-second heartbeat while idle. Joining players trigger fresh snapshots. Do not send movement through `track()`: Supabase closes clients that exceed five Presence updates per 30 seconds. Both Presence and Broadcast have authenticated read/write policies restricted to `nuvori:auralis`.
 
 The current presence protocol is for friendly shared exploration and is not a trusted authority for player identity, movement, inventory, or battle outcomes. Add server-side validation and anti-abuse controls before competitive or transactional features.
 

@@ -6,13 +6,14 @@ import {
 } from "@supabase/supabase-js";
 import { validateSave, type Save } from "./game";
 import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
+const env = import.meta.env ?? {};
 export const backendConfigured = Boolean(
-  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
+  env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
 );
 export const supabase: SupabaseClient | null = backendConfigured
   ? createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      env.VITE_SUPABASE_URL,
+      env.VITE_SUPABASE_ANON_KEY,
       {
         auth: {
           flowType: "pkce",
@@ -78,6 +79,7 @@ export function validRemote(p: unknown): p is RemoteKeeper {
   const k = p as RemoteKeeper;
   return (
     typeof k.id === "string" &&
+    k.id.length > 0 &&
     k.id.length <= 64 &&
     typeof k.name === "string" &&
     k.name.length <= 18 &&
@@ -99,48 +101,139 @@ export function validRemote(p: unknown): p is RemoteKeeper {
     Boolean(SPECIES_BY_ID[k.speciesId]) &&
     typeof k.moving === "boolean" &&
     typeof k.prismatic === "boolean" &&
+    Number.isFinite(k.seenAt) &&
     (k.emote === undefined || k.emote === "Hello! 👋")
   );
 }
 export class OnlineWorld {
   channel: RealtimeChannel | null = null;
   connected = false;
+  private generation = 0;
+  private tracked = false;
+  private sending = false;
+  private nextTrackAt = 0;
+  private lastSent = -Infinity;
+  private lastPayload = "";
+  private retryTimer: ReturnType<typeof setTimeout> | undefined;
+  private clearPlayers: (() => void) | undefined;
+
+  constructor(private client: SupabaseClient | null = supabase) {}
+
   async join(
     user: User,
     onPlayers: (p: RemoteKeeper[]) => void,
     onStatus: (s: string) => void,
   ) {
-    if (!supabase) return;
-    const session = await supabase.auth.getSession();
-    await supabase.realtime.setAuth(session.data.session?.access_token);
-    this.channel = supabase.channel("nuvori:auralis", {
-      config: { private: true, presence: { key: user.id } },
-    });
-    this.channel
-      .on("presence", { event: "sync" }, () => {
-        const state = this.channel!.presenceState<RemoteKeeper>();
-        const players = Object.values(state).flat().filter((p) => validRemote(p) && p.id !== user.id);
-        onPlayers([...new Map(players.map(p => [p.id, p])).values()].slice(0, 100));
-      })
-      .subscribe((status) => {
-        this.connected = status === "SUBSCRIBED";
-        onStatus(
-          this.connected
-            ? "Connected"
-            : status === "CHANNEL_ERROR"
-              ? "Connection unavailable"
-              : status === "TIMED_OUT"
-                ? "Connection timed out"
-                : "Connecting",
-        );
-      });
+    this.close();
+    const client = this.client;
+    if (!client) return;
+    const generation = this.generation;
+    this.clearPlayers = () => onPlayers([]);
+    const connect = async () => {
+      try {
+        const session = await client.auth.getSession();
+        if (generation !== this.generation) return;
+        if (session.error || !session.data.session) {
+          onStatus("Sign in to reconnect");
+          return;
+        }
+        await client.realtime.setAuth(session.data.session.access_token);
+        if (generation !== this.generation) return;
+        const channel = client.channel("nuvori:auralis", {
+          config: { private: true, presence: { key: user.id } },
+        });
+        this.channel = channel;
+        let players = new Map<string, RemoteKeeper>();
+        const current = () => generation === this.generation && this.channel === channel;
+        const publish = () => onPlayers([...players.values()].slice(0, 100));
+        channel
+          .on("presence", { event: "sync" }, () => {
+            if (!current()) return;
+            const members = new Map<string, RemoteKeeper>();
+            for (const [id, entries] of Object.entries(channel.presenceState<RemoteKeeper>())) {
+              const keeper = entries.find(p => validRemote(p) && p.id === id && id !== user.id);
+              if (keeper) members.set(id, players.get(id) ?? keeper);
+            }
+            players = members;
+            // A newly joined keeper needs everyone's current position, not their join position.
+            this.lastSent = -Infinity;
+            publish();
+          })
+          .on("broadcast", { event: "keeper" }, ({ payload }) => {
+            if (!current() || !validRemote(payload) || !players.has(payload.id)) return;
+            players.set(payload.id, payload);
+            publish();
+          })
+          .subscribe(status => {
+            if (!current()) return;
+            this.connected = status === "SUBSCRIBED";
+            this.tracked = false;
+            this.nextTrackAt = 0;
+            this.lastSent = -Infinity;
+            if (!this.connected) {
+              players.clear();
+              publish();
+            }
+            onStatus(this.connected ? "Connected" : "Reconnecting");
+            // The SDK retries network errors; a server-closed channel needs a fresh subscription.
+            if (status === "CLOSED" && !this.retryTimer) {
+              this.channel = null;
+              this.retryTimer = setTimeout(() => {
+                this.retryTimer = undefined;
+                if (generation === this.generation) void connect();
+              }, 30_000);
+            }
+          });
+      } catch {
+        if (generation === this.generation) onStatus("Connection unavailable");
+      }
+    };
+    await connect();
   }
   async update(keeper: RemoteKeeper) {
-    if (this.connected) await this.channel?.track(keeper);
+    const channel = this.channel;
+    if (!this.connected || !channel || this.sending || !validRemote(keeper)) return;
+    const generation = this.generation;
+    this.sending = true;
+    try {
+      // Presence is limited to five changes per 30 seconds. Register once per subscription.
+      if (!this.tracked) {
+        if (Date.now() < this.nextTrackAt) return;
+        this.nextTrackAt = Date.now() + 30_000;
+        const result = await channel.track(keeper);
+        if (generation !== this.generation || channel !== this.channel) return;
+        if (result !== "ok") return;
+        this.tracked = true;
+      }
+      const { seenAt: _seenAt, ...state } = keeper;
+      const payload = JSON.stringify(state);
+      if (payload === this.lastPayload && Date.now() - this.lastSent < 5_000) return;
+      const result = await channel.send({ type: "broadcast", event: "keeper", payload: keeper });
+      if (generation !== this.generation || channel !== this.channel) return;
+      if (result === "ok") {
+        this.lastPayload = payload;
+        this.lastSent = Date.now();
+      }
+    } catch {
+      // A transient transport error should not reject the game's fire-and-forget update loop.
+    } finally {
+      if (generation === this.generation) this.sending = false;
+    }
   }
   close() {
-    if (this.channel && supabase) supabase.removeChannel(this.channel);
+    this.generation++;
+    if (this.retryTimer) clearTimeout(this.retryTimer);
+    this.retryTimer = undefined;
+    const channel = this.channel;
     this.channel = null;
     this.connected = false;
+    this.tracked = false;
+    this.sending = false;
+    this.nextTrackAt = 0;
+    this.lastSent = -Infinity;
+    this.lastPayload = "";
+    this.clearPlayers?.();
+    this.clearPlayers = undefined;
+    if (channel && this.client) void this.client.removeChannel(channel);
   }
 }
