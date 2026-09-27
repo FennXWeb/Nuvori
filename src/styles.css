@@ -2320,7 +2320,7 @@ kbd {
   letter-spacing: 1px;
 }
 .battle-arena {
-  height: 320px;
+  height: 350px;
   position: relative;
   overflow: hidden;
   background: radial-gradient(
@@ -2395,7 +2395,7 @@ kbd {
 .wild-nuvo {
   position: absolute;
   right: 58px;
-  top: 13px;
+  top: -20px;
   animation: keeper-float 3s ease-in-out infinite;
   z-index: 1;
 }
@@ -3588,7 +3588,7 @@ kbd {
   }
   .wild-nuvo {
     right: 3px;
-    top: 46px;
+    top: 0;
   }
   .wild-nuvo .nuvo-art {
     width: 155px !important;
