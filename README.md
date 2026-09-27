@@ -57,4 +57,4 @@ Logo, 25-creature atlas, world props, and explorer frames were generated with Op
 
 ## Save data
 
-Guest saves remain in this browser. Signing into an account loads a separate account adventure. Use Settings → Export adventure for a JSON backup. Clearing browser storage removes device-only saves. Connected accounts sync every 12 seconds and can save immediately from Settings.
+Guest saves remain in this browser. Signing into an account loads a separate account adventure. Use Settings → Export adventure for a JSON backup. Clearing browser storage removes device-only saves. Connected accounts sync every 12 seconds and can save immediately from Settings. Opening the same adventure in another tab pauses the older tab to prevent stale autosaves from overwriting progress.

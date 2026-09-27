@@ -1337,6 +1337,19 @@ kbd {
   color: #8b9680;
   font-size: 13px;
 }
+.save-conflict-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #173b31cc;
+  backdrop-filter: blur(6px);
+}
+.save-conflict-backdrop .account-loading { max-width: 540px; }
+.save-conflict-backdrop .primary-button { margin-top: 24px; white-space: normal; }
 .guide-toolbar {
   display: flex;
   align-items: center;

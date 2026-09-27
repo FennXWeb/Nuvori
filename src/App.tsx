@@ -151,6 +151,7 @@ export default function App() {
     ),
     [user, setUser] = useState<User | null>(null),
     [authReady, setAuthReady] = useState(!supabase),
+    [otherTab, setOtherTab] = useState(false),
     [onlineStatus, setOnlineStatus] = useState("Solo adventure"),
     [remote, setRemote] = useState<RemoteKeeper[]>([]),
     [saveStatus, setSaveStatus] = useState("Saved on this device"),
@@ -171,6 +172,7 @@ export default function App() {
     cloudReady = useRef(false),
     lastCloud = useRef(""),
     activeAuth = useRef<string | undefined>(undefined),
+    pausedByOtherTab = useRef(false),
     toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined),
     battleLock = useRef(false),
     emoteUntil = useRef(0);
@@ -182,6 +184,21 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(""), 5500);
   }, []);
   const closePanel = useCallback(() => setPanel(null), []);
+  // A newer tab owns this device save. Older tabs stop writing until reloaded.
+  useEffect(() => {
+    const changedElsewhere = (event: StorageEvent) => {
+      if (event.key !== `nuvori-save:${userRef.current?.id || "guest"}` || !event.newValue) return;
+      pausedByOtherTab.current = true;
+      keys.current.clear();
+      world.current?.close();
+      setPanel(null);
+      setDialog(null);
+      setBattle(null);
+      setOtherTab(true);
+    };
+    window.addEventListener("storage", changedElsewhere);
+    return () => window.removeEventListener("storage", changedElsewhere);
+  }, []);
   useEffect(() => {
     if (!supabase) return;
     let stopped = false;
@@ -249,7 +266,7 @@ export default function App() {
     };
   }, [notify]);
   useEffect(() => {
-    if (!save || !authReady) return;
+    if (!save || !authReady || pausedByOtherTab.current) return;
     try {
       writeSave(save, user?.id || "guest");
       if (!user) setSaveStatus("Saved on this device");
@@ -261,7 +278,7 @@ export default function App() {
     const timer = setInterval(() => {
       const s = state.current,
         u = userRef.current;
-      if (!s) return;
+      if (!s || pausedByOtherTab.current) return;
       const merged = { ...s, x: position.current.x, y: position.current.y };
       try {
         writeSave(merged, u?.id || "guest");
@@ -286,7 +303,7 @@ export default function App() {
     const timer = setInterval(() => {
       const s = state.current,
         u = userRef.current;
-      if (s && u) {
+      if (s && u && !pausedByOtherTab.current) {
         const p = position.current;
         void world.current?.update({
           id: u.id,
@@ -308,6 +325,7 @@ export default function App() {
   }, []);
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
+      if (pausedByOtherTab.current) return;
       if (
         ["INPUT", "SELECT", "TEXTAREA"].includes(
           (e.target as HTMLElement).tagName,
@@ -359,6 +377,7 @@ export default function App() {
   };
   const onMove = useCallback(
     (x: number, y: number, dir: number, moving: boolean, steps: number) => {
+      if (pausedByOtherTab.current) return;
       position.current = { x, y, dir, moving };
       if (steps)
         setSave((s) => (s ? { ...s, x, y, steps: s.steps + steps } : s));
@@ -432,7 +451,7 @@ export default function App() {
     [audio, notify],
   );
   const takeTurn = (action: BattleAction) => {
-    if (!save || !battle || busy) return;
+    if (!save || !battle || busy || pausedByOtherTab.current) return;
     const result = battleTurn(save, battle, action);
     if (result.error) {
       notify(result.error);
@@ -457,6 +476,7 @@ export default function App() {
     battleLock.current = false;
   };
   const login = async (provider: "google" | "discord") => {
+    if (pausedByOtherTab.current) return;
     try {
       if (save)
         writeSave(
@@ -482,7 +502,7 @@ export default function App() {
     sound("click", audio);
   };
   const saveNow = async () => {
-    if (!save) return;
+    if (!save || pausedByOtherTab.current) return;
     const s = { ...save, x: position.current.x, y: position.current.y };
     try {
       writeSave(s, user?.id || "guest");
@@ -624,6 +644,7 @@ export default function App() {
               <World
                 save={save}
                 paused={
+                  otherTab ||
                   !save ||
                   Boolean(panel) ||
                   Boolean(battle) ||
@@ -911,6 +932,7 @@ export default function App() {
           })}
         </nav>
       </main>
+      {otherTab && <div className="save-conflict-backdrop"><div className="account-loading" role="alertdialog" aria-modal="true" aria-label="Adventure continued in another tab"><BookOpen size={32}/><h2>Your adventure moved to another tab.</h2><p>This tab is paused to keep your latest progress safe.</p><button className="primary-button" onClick={()=>window.location.reload()}>Continue here with the latest save</button></div></div>}
       {!authReady && (
         <div className="modal-backdrop">
           <div className="account-loading">
