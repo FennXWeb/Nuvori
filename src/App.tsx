@@ -103,6 +103,9 @@ import { CrewStrip, SpecialtyOrbs, StyleShop, UpdateNotice } from "./ExpansionUI
 import { useLeague, LeaguePanel } from "./League";
 import { TRAINERS, trainerBattle, ORBS, orbCount, restoreAtLodge, type OrbKind } from "./expansion";
 import "./expansion.css";
+import { gameAudio } from "./audio";
+import { footstepSound, soundscape } from "./audioCues";
+import { AudioSettings, readAudioMix } from "./AudioSettings";
 type Panel =
   | "guide"
   | "map"
@@ -178,6 +181,32 @@ export default function App() {
     [busy, setBusy] = useState(false);
   const [evolutionNotice, setEvolutionNotice] = useState<Nuvo | null>(null);
   const league = useLeague(user?.id,authReady);
+  const [audioMix, setAudioMix] = useState(readAudioMix);
+  const enableAudio = (enabled: boolean) => {
+    gameAudio.configure(enabled, audioMix);
+    if (enabled) void gameAudio.unlock();
+    setAudio(enabled);
+  };
+  useEffect(() => {
+    gameAudio.configure(audio, audioMix);
+    localStorage.setItem("nuvori-audio", String(audio));
+    localStorage.setItem("nuvori-audio-mix", JSON.stringify(audioMix));
+  }, [audio, audioMix]);
+  useEffect(() => {
+    const unlock = () => { void gameAudio.unlock(); };
+    const visibility = () => gameAudio.setPaused(otherTab || document.visibilityState !== "visible");
+    visibility();
+    document.addEventListener("pointerdown", unlock);
+    document.addEventListener("keydown", unlock);
+    document.addEventListener("visibilitychange", visibility);
+    return () => { document.removeEventListener("pointerdown", unlock); document.removeEventListener("keydown", unlock); document.removeEventListener("visibilitychange", visibility); };
+  }, [otherTab]);
+  const raidPhase = league.raid?.members.find(m => m.user_id === user?.id)?.phase;
+  const battleMusic = league.raid?.status === "active" ? (raidPhase === "keeper" ? "keeper" : "league") : battle && !battle.over ? (battle.lastStand === "fighting" ? "keeper" : battle.trainerId ? "trainer" : "wild") : undefined;
+  useEffect(() => {
+    const scene = soundscape(save?.region, save?.interior, battleMusic);
+    gameAudio.setScene(scene.music, scene.ambience);
+  }, [save?.region, save?.interior, battleMusic]);
   const [updateOpen,setUpdateOpen] = useState(false);
   const [trainerOffer,setTrainerOffer] = useState<string|null>(null);
   const { social, error: socialError, refresh: refreshSocial } = useSocial(user?.id, authReady ? save?.player.name : undefined, save?.player.palette);
@@ -211,7 +240,7 @@ export default function App() {
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(""), 5500);
   }, []);
-  const closePanel = useCallback(() => setPanel(null), []);
+  const closePanel = useCallback(() => { gameAudio.play("ui-back"); setPanel(null); }, []);
   useEffect(()=>{if(league.raid){keys.current.clear();setPanel("league");}},[league.raid?.id]);
   // A newer tab owns this device save. Older tabs stop writing until reloaded.
   useEffect(() => {
@@ -361,7 +390,7 @@ export default function App() {
   useEffect(() => {
     if (!save || !authReady || otherTab || battle || panel || dialog || evolutionNotice || trainerOffer || league.raid || updateOpen) return;
     const next = [...save.party, ...save.box].find(n => readyToEvolve(n) && !save.evolutionNotices?.includes(evolutionKey(n)));
-    if (next) { keys.current.clear(); setEvolutionNotice(next); sound("catch", audio); }
+    if (next) { keys.current.clear(); setEvolutionNotice(next); gameAudio.play("evolution-ready"); }
   }, [save, authReady, otherTab, battle, panel, dialog, evolutionNotice, audio,trainerOffer,league.raid,updateOpen]);
   const dismissEvolution = useCallback(() => {
     if (!evolutionNotice) return;
@@ -421,18 +450,21 @@ export default function App() {
     position.current = { x: s.x, y: s.y, dir: 0, moving: false };
     setSave(s);
     sound("catch", audio);
+    gameAudio.cry(starter, .4);
     notify(`${SPECIES_BY_ID[starter].name} is ready. Your adventure begins!`);
   };
   const onMove = useCallback(
     (x: number, y: number, dir: number, moving: boolean, steps: number) => {
       if (pausedByOtherTab.current) return;
       position.current = { x, y, dir, moving };
+      if (moving && state.current) gameAudio.play(footstepSound(state.current.region, state.current.interior), { gain: .22 });
       if (steps)
         setSave((s) => (s ? { ...s, x, y, steps: s.steps + steps } : s));
     },
     [],
   );
   const onTravel = useCallback((region: string, x: number, y: number) => {
+    gameAudio.play("travel");
     position.current = { x, y, dir: 0, moving: false };
     setSave((s) =>
       s
@@ -459,12 +491,15 @@ export default function App() {
         : v,
     );
     sound("battle", audio);
+    gameAudio.cry(b.wild.speciesId, .4);
+    if (b.wild.prismatic) gameAudio.play("prismatic", { delay: .6 });
   }, [audio]);
   const onInteract = useCallback(
     (kind: Interaction) => {
       const s = state.current;
       if (!s) return;
       if (kind === "heal" || kind === "shop" || kind === "tailor" || kind === "barber" || kind === "exit") {
+        gameAudio.play("door");
         const next = kind === "exit" ? leaveInterior(s) : enterInterior(s, kind === "heal" ? "lodge" : kind, position.current.x, position.current.y);
         position.current = { x: next.x, y: next.y, dir: 0, moving: false };
         keys.current.clear(); setNearby(""); setSave(next);
@@ -492,6 +527,7 @@ export default function App() {
             " Use the signed paths at the edges of the area to travel. Wild Nuvo appear as you walk off the paths.",
         });
       if (kind === "landmark") {
+        gameAudio.play("discovery");
         if(s.region==="dreamland") {const next=restoreAtLodge(s);position.current={x:next.x,y:next.y,dir:0,moving:false};setSave(next);notify("You wake beneath the warm lights of the Healing Lodge. Your dream companions are still with you.");return;}
         const r = REGION_BY_ID[s.region],
           first = !s.landmarks.includes(s.region);
@@ -512,6 +548,7 @@ export default function App() {
     if (!save || !battle || busy || pausedByOtherTab.current) return;
     const result = battleTurn(save, battle, action);
     if (result.error) {
+      gameAudio.play("ui-error");
       notify(result.error);
       return;
     }
@@ -519,14 +556,20 @@ export default function App() {
     if(result.save.region!==save.region||result.save.interior!==save.interior)position.current={x:result.save.x,y:result.save.y,dir:0,moving:false};
     setSave(result.save);
     setBattle(result.battle);
-    sound(
-      action.type === "catch"
-        ? "catch"
-        : action.type === "potion"
-          ? "heal"
-          : "battle",
-      audio,
-    );
+    if (action.type === "move") gameAudio.move(action.id);
+    if (action.type === "catch") {
+      gameAudio.play("capture-throw");
+      gameAudio.play("capture-shake", { delay: .25 });
+      gameAudio.play(result.battle.over === "caught" ? "capture-success" : "capture-break", { delay: .65 });
+    }
+    if (action.type === "potion") gameAudio.play("heal");
+    if (action.type === "switch") gameAudio.cry(result.save.party[result.battle.active].speciesId);
+    if (action.type === "strike" || action.type === "struggle") gameAudio.play("keeper-strike");
+    if (action.type === "brace") gameAudio.play("guard");
+    if (result.save.party.some((n,i) => n.hp <= 0 && save.party[i]?.hp > 0)) gameAudio.play("faint", { delay: .35 });
+    if (result.save.party.some((n,i) => n.level > (save.party[i]?.level ?? n.level))) gameAudio.play("level-up", { delay: .6 });
+    if (result.battle.over === "won" || result.battle.over === "lost") gameAudio.play(result.battle.over === "won" ? "victory" : "defeat", { delay: .3 });
+    if (result.battle.dreamAwakening) gameAudio.play("prismatic", { delay: .8 });
     setTimeout(() => setBusy(false), 1000);
   };
   const finishBattle = () => {
@@ -597,7 +640,6 @@ export default function App() {
       }
       writeSave(current, account?.id || "guest");
       state.current = current; setSave(current);
-      sound("catch", audio);
       return { prize, day };
     } finally { dailyBusy.current = false; }
   };
@@ -698,10 +740,7 @@ export default function App() {
             <SoundButton
               enabled={audio}
               toggle={() => {
-                setAudio((v) => {
-                  localStorage.setItem("nuvori-audio", String(!v));
-                  return !v;
-                });
+                enableAudio(!audio);
               }}
             />
             <button className="online-pill" onClick={() => open("online")}>
@@ -891,7 +930,7 @@ export default function App() {
               </button>
             </div>
             {save && <ChatDock userId={user?.id} cell={cellKey(save.region, save.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} onSignIn={() => open("online")} notify={notify} refresh={refreshSocial}/>}
-            {save && <CrewStrip save={save} disabled={Boolean(battle)||Boolean(league.raid)||otherTab} onChange={setSave} onManage={()=>open("team")}/>}
+            {save && <CrewStrip save={save} disabled={Boolean(battle)||Boolean(league.raid)||otherTab} onChange={next=>{setSave(next);gameAudio.play("ui-reorder");if(next.party[0].uid!==save.party[0].uid)gameAudio.cry(next.party[0].speciesId);}} onManage={()=>open("team")}/>}
 
           </section>
           <aside className="adventure-aside">
@@ -1324,6 +1363,7 @@ export default function App() {
                       [item.id]: item.qty + 1,
                     });
                     notify(`${item.name} added to your satchel.`);
+                    gameAudio.play("purchase");
                   }}
                 >
                   Buy · {item.cost}
@@ -1547,21 +1587,7 @@ export default function App() {
               <p>{save?.player.pronouns || "Your adventure is waiting."}</p>
             </div>
           </div>
-          <div className="setting-row">
-            <span>
-              <strong>Sound effects</strong>
-              <small>Gentle sounds for battles and discoveries</small>
-            </span>
-            <button
-              className="secondary-button"
-              onClick={() => {
-                setAudio(!audio);
-                localStorage.setItem("nuvori-audio", String(!audio));
-              }}
-            >
-              {audio ? "On" : "Off"}
-            </button>
-          </div>
+          <AudioSettings enabled={audio} setEnabled={enableAudio} mix={audioMix} setMix={setAudioMix}/>
           <div className="setting-row">
             <span>
               <strong>{user ? "Account save" : "Device save"}</strong>
@@ -1652,7 +1678,7 @@ export default function App() {
         const key = evolutionKey(evolutionNotice);
         setSave(s => s ? { ...s, party: s.party.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), box: s.box.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), evolutionNotices: [...new Set([...(s.evolutionNotices || []),key])] } : s);
         notify(`${SPECIES_BY_ID[evolutionNotice.speciesId].name} evolved into ${SPECIES_BY_ID[id].name}!`);
-        setEvolutionNotice(null); sound("catch",audio);
+        setEvolutionNotice(null); gameAudio.play("evolve"); gameAudio.cry(id, 1.5);
       }}/>}
       {toast && (
         <div className="toast" role="status">
@@ -2179,6 +2205,7 @@ function Team({
                       ),
                     });
                     setTutor("");
+                    gameAudio.play("learn");
                     notify(`${s.name} learned ${MOVE_BY_ID[tutor].name}!`);
                   }}
                 >
@@ -2203,6 +2230,7 @@ function Team({
                     disabled={n.level < s.evolveLevel}
                     onClick={() => {
                       update(evolve(n, id));
+                      gameAudio.play("evolve"); gameAudio.cry(id, 1.5);
                       notify(
                         `${s.name} evolved into ${SPECIES_BY_ID[id].name}!`,
                       );

@@ -280,42 +280,7 @@ export function MoveAnimation({
   }, [moveId, animationKey]);
   return <canvas ref={ref} className="move-animation" aria-hidden="true" />;
 }
-let context: AudioContext | null = null;
-export function sound(
-  kind: "click" | "battle" | "catch" | "heal",
-  enabled: boolean,
-) {
-  if (!enabled) return;
-  try {
-    context ??= new AudioContext();
-    void context.resume();
-    const notes =
-      kind === "catch"
-        ? [523, 659, 784, 1047]
-        : kind === "heal"
-          ? [392, 523, 659]
-          : kind === "battle"
-            ? [165, 220, 330]
-            : [660];
-    notes.forEach((freq, i) => {
-      const osc = context!.createOscillator(),
-        gain = context!.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.05, context!.currentTime + i * 0.09);
-      gain.gain.exponentialRampToValueAtTime(
-        0.001,
-        context!.currentTime + i * 0.09 + 0.2,
-      );
-      osc.connect(gain);
-      gain.connect(context!.destination);
-      osc.start(context!.currentTime + i * 0.09);
-      osc.stop(context!.currentTime + i * 0.09 + 0.21);
-    });
-  } catch {
-    /* Audio is optional. */
-  }
-}
+export { sound } from "./audio";
 export function SoundButton({
   enabled,
   toggle,

@@ -1,3 +1,4 @@
+import { gameAudio } from "./audio";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Crown, Shield, Swords, Users, ArrowRight, RefreshCw } from "lucide-react";
 import { supabase } from "./online";
@@ -27,12 +28,14 @@ export function useLeague(userId?:string,ready=false) {
 
 export function LeaguePanel({save,userId,raid,onRaid,onBeforeJoin,onResult,onClose,notify,error}:{save:Save;userId?:string;raid:Raid|null;onRaid:(r:Raid|null)=>void;onBeforeJoin:()=>Promise<void>;onResult:(s:Save)=>void;onClose:()=>void;notify:(s:string)=>void;error:string}) {
   const [rooms,setRooms]=useState<Room[]>([]),[code,setCode]=useState(""),[busy,setBusy]=useState(false),[localError,setError]=useState(""),[animation,setAnimation]=useState<{id:string;key:number}|null>(null);
+  const lastStatus=useRef(raid?.status);
+  useEffect(()=>{if(lastStatus.current!==raid?.status){if(raid?.status==="active")gameAudio.play("battle-start");if(raid?.status==="won")gameAudio.play("victory");if(raid?.status==="lost")gameAudio.play("defeat");}lastStatus.current=raid?.status;},[raid?.status]);
   const lock=useRef(false);const selected=LEAGUE_GUARDIANS.find(g=>g.id===raid?.guardian);
   const me=raid?.members.find(m=>m.user_id===userId);const leader=me?.party[me.active];
   useEffect(()=>{if(!userId||raid)return;let alive=true;const load=()=>rpc<Room[]>("nuvori_league_rooms",{area:save.region}).then(r=>{if(alive)setRooms(r);}).catch(e=>{if(alive)setError(e.message);});void load();const timer=setInterval(()=>void load(),6000);return()=>{alive=false;clearInterval(timer);};},[userId,save.region,raid?.id]);
   const run=async(work:()=>Promise<void>)=>{if(lock.current)return;lock.current=true;setBusy(true);setError("");try{await work();}catch(e){setError((e as Error).message);}finally{lock.current=false;setBusy(false);}};
   const join=(trial?:string,room?:string)=>void run(async()=>{await onBeforeJoin();onRaid(await rpc<Raid>("nuvori_league_open",{trial:trial||null,room_code:room||null}));});
-  const act=(action:string,choice="")=>void run(async()=>{const result=await rpc<Raid>("nuvori_league_action",{raid:raid!.id,action,choice,nonce:crypto.randomUUID()});onRaid(result);if(action==="move"||action==="strike")setAnimation({id:choice||"metal-1",key:result.revision});});
+  const act=(action:string,choice="")=>void run(async()=>{const result=await rpc<Raid>("nuvori_league_action",{raid:raid!.id,action,choice,nonce:crypto.randomUUID()});onRaid(result);if(action==="move")gameAudio.move(choice);if(action==="strike")gameAudio.play("keeper-strike");if(action==="brace")gameAudio.play("guard");if(action==="switch")gameAudio.cry(result.members.find(m=>m.user_id===userId)!.party[Number(choice)].speciesId);if(action==="move"||action==="strike")setAnimation({id:choice||"metal-1",key:result.revision});});
   const close=()=>{if(raid){notify("Leave the lobby or finish your Champions trial before exploring.");return;}onClose();};
   const finished=raid&&(raid.status==="won"||raid.status==="lost"||me?.phase==="out");
   return <Modal title="Champions League" eyebrow="ONE GUARDIAN. FOUR KEEPERS. A SHARED LEGEND." onClose={close} wide>

@@ -1,0 +1,956 @@
+{
+  "title": {
+    "title": "Your Path, Their Evolution",
+    "kind": "music",
+    "file": "audio/music/title.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "mossbell": {
+    "title": "A Pocketful of Morning",
+    "kind": "music",
+    "file": "audio/music/mossbell.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "verdant": {
+    "title": "The Trail Wakes Up",
+    "kind": "music",
+    "file": "audio/music/verdant.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "tideglass": {
+    "title": "Sea Glass in Your Shoes",
+    "kind": "music",
+    "file": "audio/music/tideglass.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "sunwake": {
+    "title": "Lanterns in the Harbor",
+    "kind": "music",
+    "file": "audio/music/sunwake.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "hollow": {
+    "title": "Whispers Under the Canopy",
+    "kind": "music",
+    "file": "audio/music/hollow.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "crystal": {
+    "title": "Stairway of Glass",
+    "kind": "music",
+    "file": "audio/music/crystal.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "emberfall": {
+    "title": "Where the Mountain Glows",
+    "kind": "music",
+    "file": "audio/music/emberfall.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "frostmere": {
+    "title": "Snow Between the Stars",
+    "kind": "music",
+    "file": "audio/music/frostmere.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "starfall": {
+    "title": "A Wish Finds Its Way",
+    "kind": "music",
+    "file": "audio/music/starfall.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "saffron": {
+    "title": "Sands That Remember",
+    "kind": "music",
+    "file": "audio/music/saffron.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "threadhaven": {
+    "title": "A Stitch in the Breeze",
+    "kind": "music",
+    "file": "audio/music/threadhaven.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "mirelight": {
+    "title": "A Thousand Little Lanterns",
+    "kind": "music",
+    "file": "audio/music/mirelight.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "tempest": {
+    "title": "The Thunder Harp",
+    "kind": "music",
+    "file": "audio/music/tempest.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "crownspire": {
+    "title": "Above Every Cloud",
+    "kind": "music",
+    "file": "audio/music/crownspire.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "dreamland": {
+    "title": "Between a Wish and Waking",
+    "kind": "music",
+    "file": "audio/music/dreamland.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "lodge": {
+    "title": "A Light Left On",
+    "kind": "music",
+    "file": "audio/music/lodge.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "shops": {
+    "title": "Little Treasures",
+    "kind": "music",
+    "file": "audio/music/shops.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "battle-wild": {
+    "title": "A Spark in the Grass",
+    "kind": "music",
+    "file": "audio/music/battle-wild.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "battle-trainer": {
+    "title": "The Bond We Bring",
+    "kind": "music",
+    "file": "audio/music/battle-trainer.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "battle-league": {
+    "title": "Four Keepers, One Legend",
+    "kind": "music",
+    "file": "audio/music/battle-league.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "last-stand": {
+    "title": "Still Standing",
+    "kind": "music",
+    "file": "audio/music/last-stand.mp3",
+    "seconds": 120,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": false
+  },
+  "ui-click": {
+    "title": "Leaf tap",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-click.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ui-confirm": {
+    "title": "A little yes",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-confirm.mp3",
+    "seconds": 0.6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ui-back": {
+    "title": "Fold the page",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-back.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ui-error": {
+    "title": "Not this time",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-error.mp3",
+    "seconds": 0.6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ui-notify": {
+    "title": "Trail message",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-notify.mp3",
+    "seconds": 0.8,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ui-reorder": {
+    "title": "Crew shuffle",
+    "kind": "sfx",
+    "file": "audio/sfx/ui-reorder.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "purchase": {
+    "title": "Pocket treasure",
+    "kind": "sfx",
+    "file": "audio/sfx/purchase.mp3",
+    "seconds": 0.8,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "customize": {
+    "title": "A fresh look",
+    "kind": "sfx",
+    "file": "audio/sfx/customize.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass": {
+    "title": "Grass footstep",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-stone": {
+    "title": "Stone footstep",
+    "kind": "sfx",
+    "file": "audio/sfx/step-stone.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-sand": {
+    "title": "Sand footstep",
+    "kind": "sfx",
+    "file": "audio/sfx/step-sand.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-snow": {
+    "title": "Snow footstep",
+    "kind": "sfx",
+    "file": "audio/sfx/step-snow.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "door": {
+    "title": "Welcome inside",
+    "kind": "sfx",
+    "file": "audio/sfx/door.mp3",
+    "seconds": 0.9,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "travel": {
+    "title": "A new path",
+    "kind": "sfx",
+    "file": "audio/sfx/travel.mp3",
+    "seconds": 1.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "battle-start": {
+    "title": "A challenger appears",
+    "kind": "sfx",
+    "file": "audio/sfx/battle-start.mp3",
+    "seconds": 1.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "capture-throw": {
+    "title": "Orb cast",
+    "kind": "sfx",
+    "file": "audio/sfx/capture-throw.mp3",
+    "seconds": 0.8,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "capture-shake": {
+    "title": "Bonding pulse",
+    "kind": "sfx",
+    "file": "audio/sfx/capture-shake.mp3",
+    "seconds": 0.7,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "capture-break": {
+    "title": "Burst of freedom",
+    "kind": "sfx",
+    "file": "audio/sfx/capture-break.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "capture-success": {
+    "title": "A new friendship",
+    "kind": "sfx",
+    "file": "audio/sfx/capture-success.mp3",
+    "seconds": 2.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "faint": {
+    "title": "Time to rest",
+    "kind": "sfx",
+    "file": "audio/sfx/faint.mp3",
+    "seconds": 1.1,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "victory": {
+    "title": "Stronger together",
+    "kind": "sfx",
+    "file": "audio/sfx/victory.mp3",
+    "seconds": 3.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "defeat": {
+    "title": "The journey continues",
+    "kind": "sfx",
+    "file": "audio/sfx/defeat.mp3",
+    "seconds": 2.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "heal": {
+    "title": "Restored",
+    "kind": "sfx",
+    "file": "audio/sfx/heal.mp3",
+    "seconds": 2.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "evolution-ready": {
+    "title": "A new possibility",
+    "kind": "sfx",
+    "file": "audio/sfx/evolution-ready.mp3",
+    "seconds": 2.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "evolve": {
+    "title": "Becoming",
+    "kind": "sfx",
+    "file": "audio/sfx/evolve.mp3",
+    "seconds": 4.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "level-up": {
+    "title": "A little stronger",
+    "kind": "sfx",
+    "file": "audio/sfx/level-up.mp3",
+    "seconds": 1.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "prismatic": {
+    "title": "A rare light",
+    "kind": "sfx",
+    "file": "audio/sfx/prismatic.mp3",
+    "seconds": 3.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "discovery": {
+    "title": "Wonder found",
+    "kind": "sfx",
+    "file": "audio/sfx/discovery.mp3",
+    "seconds": 2.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "wheel-spin": {
+    "title": "Circle of fortune",
+    "kind": "sfx",
+    "file": "audio/sfx/wheel-spin.mp3",
+    "seconds": 2.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "wheel-prize": {
+    "title": "Today is a gift",
+    "kind": "sfx",
+    "file": "audio/sfx/wheel-prize.mp3",
+    "seconds": 2.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "keeper-strike": {
+    "title": "Courage strike",
+    "kind": "sfx",
+    "file": "audio/sfx/keeper-strike.mp3",
+    "seconds": 0.9,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "guard": {
+    "title": "Hold your ground",
+    "kind": "sfx",
+    "file": "audio/sfx/guard.mp3",
+    "seconds": 1.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "status": {
+    "title": "Lingering magic",
+    "kind": "sfx",
+    "file": "audio/sfx/status.mp3",
+    "seconds": 1.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "learn": {
+    "title": "A new trick",
+    "kind": "sfx",
+    "file": "audio/sfx/learn.mp3",
+    "seconds": 1.7,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-bloom": {
+    "title": "Bloom attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-bloom.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-bloom": {
+    "title": "Bloom ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-bloom.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-flame": {
+    "title": "Flame attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-flame.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-flame": {
+    "title": "Flame ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-flame.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-tide": {
+    "title": "Tide attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-tide.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-tide": {
+    "title": "Tide ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-tide.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-gale": {
+    "title": "Gale attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-gale.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-gale": {
+    "title": "Gale ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-gale.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-volt": {
+    "title": "Volt attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-volt.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-volt": {
+    "title": "Volt ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-volt.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-stone": {
+    "title": "Stone attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-stone.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-stone": {
+    "title": "Stone ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-stone.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-frost": {
+    "title": "Frost attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-frost.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-frost": {
+    "title": "Frost ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-frost.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-shade": {
+    "title": "Shade attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-shade.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-shade": {
+    "title": "Shade ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-shade.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-astral": {
+    "title": "Astral attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-astral.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-astral": {
+    "title": "Astral ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-astral.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "move-metal": {
+    "title": "Metal attack",
+    "kind": "sfx",
+    "file": "audio/sfx/move-metal.mp3",
+    "seconds": 1.4,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ultimate-metal": {
+    "title": "Metal ultimate",
+    "kind": "sfx",
+    "file": "audio/sfx/ultimate-metal.mp3",
+    "seconds": 2.2,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-spriglet": {
+    "title": "Spriglet call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-spriglet.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-cindlet": {
+    "title": "Cindlet call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-cindlet.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-bubbfin": {
+    "title": "Bubbfin call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-bubbfin.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-wisplet": {
+    "title": "Wisplet call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-wisplet.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-voltik": {
+    "title": "Voltik call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-voltik.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-mushbur": {
+    "title": "Mushbur call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-mushbur.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-axolily": {
+    "title": "Axolily call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-axolily.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-dunillo": {
+    "title": "Dunillo call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-dunillo.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-chillip": {
+    "title": "Chillip call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-chillip.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-duskbat": {
+    "title": "Duskbat call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-duskbat.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-humbear": {
+    "title": "Humbear call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-humbear.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-crystail": {
+    "title": "Crystail call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-crystail.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-lunamoth": {
+    "title": "Lunamoth call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-lunamoth.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-ferrunt": {
+    "title": "Ferrunt call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-ferrunt.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-kelpie": {
+    "title": "Kelpie call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-kelpie.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-orchik": {
+    "title": "Orchik call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-orchik.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-scorcko": {
+    "title": "Scorcko call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-scorcko.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-stellawn": {
+    "title": "Stellawn call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-stellawn.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-mosshell": {
+    "title": "Mosshell call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-mosshell.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-veiljell": {
+    "title": "Veiljell call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-veiljell.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-whiflet": {
+    "title": "Whiflet call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-whiflet.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-venopip": {
+    "title": "Venopip call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-venopip.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-solcub": {
+    "title": "Solcub call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-solcub.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-rumblewool": {
+    "title": "Rumblewool call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-rumblewool.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-jadeling": {
+    "title": "Jadeling call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-jadeling.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "cry-oneirune": {
+    "title": "Oneirune call",
+    "kind": "sfx",
+    "file": "audio/sfx/cry-oneirune.mp3",
+    "seconds": 1.0,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ambience-forest": {
+    "title": "Breeze through Auralis",
+    "kind": "ambience",
+    "file": "audio/ambience/ambience-forest.mp3",
+    "seconds": 6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ambience-coast": {
+    "title": "The breathing sea",
+    "kind": "ambience",
+    "file": "audio/ambience/ambience-coast.mp3",
+    "seconds": 6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ambience-storm": {
+    "title": "Distant thunder",
+    "kind": "ambience",
+    "file": "audio/ambience/ambience-storm.mp3",
+    "seconds": 6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "ambience-dream": {
+    "title": "Beyond the veil",
+    "kind": "ambience",
+    "file": "audio/ambience/ambience-dream.mp3",
+    "seconds": 6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  }
+}

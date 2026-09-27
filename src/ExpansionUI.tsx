@@ -1,3 +1,4 @@
+import { gameAudio } from "./audio";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, GripVertical, RefreshCw, Scissors, Shirt, Shield } from "lucide-react";
 import { Health, Modal, NuvoArt, PlayerArt } from "./components";
@@ -32,12 +33,12 @@ export function StyleShop({save,kind,onChange,onClose,notify}:{save:Save;kind:"t
     <div className="style-preview"><div className="style-halo"/><PlayerArt palette={save.player.palette} size={210} look={{outfit:kind==="tailor"?outfit:save.player.outfit,hair:kind==="barber"?hair:save.player.hair,hairColor:kind==="barber"?hairColor:save.player.hairColor}}/><div><span className="eyebrow">{save.player.name}</span><h3>{kind==="tailor"?OUTFITS[outfit].name:HAIRSTYLES[hair]}</h3><p>{save.coins} keeper coins</p></div></div>
     <div className="style-options">{(kind==="tailor"?OUTFITS.map(o=>o.name):HAIRSTYLES).map((name,i)=><button key={name} className={(kind==="tailor"?outfit:hair)===i?"chosen":""} aria-pressed={(kind==="tailor"?outfit:hair)===i} onClick={()=>kind==="tailor"?setOutfit(i):setHair(i)}>{kind==="tailor"?<Shirt size={19}/>:<Scissors size={19}/>}<strong>{name}</strong>{kind==="tailor"&&<small>{i===0||save.wardrobe?.includes(i)?"Owned":`${OUTFITS[i].price} coins`}</small>}</button>)}</div>
     {kind==="barber"&&<div className="hair-swatches" aria-label="Hair color">{HAIR_COLORS.map((c,i)=><button key={c} aria-label={`Hair color ${i+1}`} aria-pressed={hairColor===i} onClick={()=>setColor(i)} style={{background:c}}>{hairColor===i?"✓":""}</button>)}</div>}
-    <footer className="expansion-footer"><p>{kind==="tailor"?"Owned clothing is free to wear again.":"A cut and color costs 40 keeper coins."}</p><button className="primary-button" disabled={!changed||save.coins<cost} onClick={()=>{onChange({...save,coins:save.coins-cost,wardrobe:kind==="tailor"?[...new Set([0,...(save.wardrobe||[]),outfit])]:save.wardrobe,player:{...save.player,...(kind==="tailor"?{outfit}:{hair,hairColor})}});notify("Your new look is ready for the world.");}}>{!changed?"Currently wearing":cost?`Apply · ${cost} coins`:"Wear this outfit"}</button></footer>
+    <footer className="expansion-footer"><p>{kind==="tailor"?"Owned clothing is free to wear again.":"A cut and color costs 40 keeper coins."}</p><button className="primary-button" disabled={!changed||save.coins<cost} onClick={()=>{onChange({...save,coins:save.coins-cost,wardrobe:kind==="tailor"?[...new Set([0,...(save.wardrobe||[]),outfit])]:save.wardrobe,player:{...save.player,...(kind==="tailor"?{outfit}:{hair,hairColor})}});gameAudio.play("customize");notify("Your new look is ready for the world.");}}>{!changed?"Currently wearing":cost?`Apply · ${cost} coins`:"Wear this outfit"}</button></footer>
   </Modal>;
 }
 
 export function SpecialtyOrbs({save,shop,onChange}:{save:Save;shop:boolean;onChange:(s:Save)=>void}) {
- return <>{ORBS.slice(1).map(orb=><div className="item-row" key={orb.id}><span className="item-icon" style={{background:orb.color}}>◈</span><div><h3>{orb.name}<small>×{orbCount(save,orb.id)}</small></h3><p>{orb.description}</p></div>{shop?<button className="secondary-button" disabled={save.coins<orb.cost} onClick={()=>onChange({...save,coins:save.coins-orb.cost,specialOrbs:{...save.specialOrbs,[orb.id]:orbCount(save,orb.id)+1}})}>Buy · {orb.cost}</button>:<span className="muted">Use in battle</span>}</div>)}</>;
+ return <>{ORBS.slice(1).map(orb=><div className="item-row" key={orb.id}><span className="item-icon" style={{background:orb.color}}>◈</span><div><h3>{orb.name}<small>×{orbCount(save,orb.id)}</small></h3><p>{orb.description}</p></div>{shop?<button className="secondary-button" disabled={save.coins<orb.cost} onClick={()=>{onChange({...save,coins:save.coins-orb.cost,specialOrbs:{...save.specialOrbs,[orb.id]:orbCount(save,orb.id)+1}});gameAudio.play("purchase");}}>Buy · {orb.cost}</button>:<span className="muted">Use in battle</span>}</div>)}</>;
 }
 
 declare const __BUILD_ID__: string;

@@ -4,6 +4,7 @@ import { Modal, NuvoArt, TypeBadge } from "./components";
 import { SPECIES_BY_ID, type Nuvo } from "./data";
 import { WHEEL_PRIZES, utcDay } from "./adventure";
 import type { Save } from "./game";
+import { gameAudio } from "./audio";
 
 export function EvolutionReady({ nuvo, onEvolve, onLater }: { nuvo: Nuvo; onEvolve: (id: string) => void; onLater: () => void }) {
   const s = SPECIES_BY_ID[nuvo.speciesId];
@@ -40,8 +41,9 @@ export function DailyWheel({ save, account, onSpin, onClose }: { save: Save; acc
     try {
       const result = await onSpin();
       if (!alive.current) return;
+      gameAudio.play("wheel-spin", { rate: .75 });
       setRotation(old => old + 1800 + ((360 - result.prize * 45 - 22.5 - old % 360 + 360) % 360));
-      timer.current = setTimeout(() => { setPrize(result.prize); setSpinning(false); }, 5200);
+      timer.current = setTimeout(() => { setPrize(result.prize); setSpinning(false); gameAudio.play("wheel-prize"); }, 5200);
     } catch(e) { if (alive.current) { setError((e as Error).message); setSpinning(false); } }
   };
   return <Modal title="A little luck for the trail" eyebrow="THE DAILY WISHING WHEEL" onClose={close}>
