@@ -36,4 +36,4 @@ FFmpeg must be on PATH or `imageio-ffmpeg` installed in `.sites-runtime/audio-to
 
 ## Release status
 
-Audio is part of the current draft expansion branch. The public GitHub Pages game has not received this change. The expansion's Supabase migrations remain a separate release prerequisite; see `docs/BACKEND.md`.
+Audio ships with the frontier expansion through the main-branch GitHub Pages workflow. The required Supabase migrations were installed and the live League checks passed on 2026-09-27; see `docs/BACKEND.md`. Suno music remains awaiting user-supplied tracks; the generated effects and ambience are included in this release.

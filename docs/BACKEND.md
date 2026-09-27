@@ -9,7 +9,7 @@
 - Provider callback: `https://uvnlmfpqonmccbaqxyzt.supabase.co/auth/v1/callback`.
 - Google JavaScript origin: `https://fennxweb.github.io`.
 
-The original three SQL migrations are installed, including friends, chat, and the daily wheel. The frontier release adds `202609280001_frontiers.sql` and its generated `202609280002_league_catalog.sql`; apply both before deploying the Champions League client. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
+All five SQL migrations are installed, including friends, chat, the daily wheel, and Champions League. On 2026-09-27, `202609280001_frontiers.sql` and `202609280002_league_catalog.sql` were applied together in one transaction, then the API schema cache was refreshed. The live catalog contains five guardians, 100 moves, and 176 Nuvo forms. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
 
 Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in. Account cloud saving and loading have been verified. Two independent accounts, signed in through Google in Chrome and Discord in Codex's browser, both showed two online keepers, listed each other, and rendered their companions and live movement in Mossbell Village after the Broadcast fix. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
@@ -39,7 +39,7 @@ The frontier migrations create private, RLS-protected raid, member, action, and 
 
 The server snapshots each entrant's cloud crew and validates equipped moves, levels, HP, and PP against its catalog. It calculates guardian damage, retaliation, fainting, switching, keeper last stands, and rewards. Finished claims update the owner's cloud save atomically and are idempotent. A save trigger prevents a stale device from erasing a completed claim. The frontend suspends ordinary autosaves while a raid is open and restores unclaimed trials after reload. Source crew progression and inventory remain client-controlled; the League is cooperative, not a competitive anti-cheat system.
 
-`npm test` runs `supabase/tests/league.sql` against PGlite with synthetic accounts, including room limits, membership authorization, cooldowns, duplicate actions/claims, shared damage, crew XP, host transfer, rescue, and table privileges. The same SQL file can be run in the live SQL Editor; its entire fixture transaction rolls back.
+`npm test` runs `supabase/tests/league.sql` against PGlite with synthetic accounts, including room limits, membership authorization, cooldowns, duplicate actions/claims, shared damage, crew XP, host transfer, rescue, and table privileges. The same SQL file passed in the live SQL Editor on 2026-09-27. Its entire fixture transaction rolled back; no synthetic accounts, trials, chat messages, or rewards were retained.
 
 ## Security boundaries
 
