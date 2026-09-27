@@ -15988,8 +15988,8 @@
       "landmark": "The Wishing Fountain",
       "prop": 11,
       "pos": [
-        24,
-        65
+        20,
+        72
       ]
     },
     {
@@ -16018,8 +16018,8 @@
       "landmark": "The Heartwood Arch",
       "prop": 9,
       "pos": [
-        27,
-        43
+        20,
+        48
       ]
     },
     {
@@ -16047,7 +16047,7 @@
       "prop": 10,
       "pos": [
         48,
-        73
+        86
       ]
     },
     {
@@ -16073,8 +16073,8 @@
       "landmark": "The Sunwake Beacon",
       "prop": 10,
       "pos": [
-        72,
-        65
+        80,
+        72
       ]
     },
     {
@@ -16102,8 +16102,8 @@
       "landmark": "The Whispering Ring",
       "prop": 3,
       "pos": [
-        22,
-        21
+        15,
+        23
       ]
     },
     {
@@ -16133,7 +16133,7 @@
       "prop": 8,
       "pos": [
         50,
-        43
+        48
       ]
     },
     {
@@ -16160,8 +16160,8 @@
       "landmark": "The Cinder Gate",
       "prop": 9,
       "pos": [
-        77,
-        40
+        83,
+        43
       ]
     },
     {
@@ -16187,8 +16187,8 @@
       "landmark": "The Frozen Mirror",
       "prop": 11,
       "pos": [
-        58,
-        18
+        78,
+        20
       ]
     },
     {
@@ -16215,7 +16215,7 @@
       "landmark": "The Observatory of Echoes",
       "prop": 10,
       "pos": [
-        40,
+        44,
         13
       ]
     }

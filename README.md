@@ -20,13 +20,14 @@ This is an early-access game. Online play is cooperative shared-world exploratio
 
 ## Controls
 
-| Input | Action |
-| --- | --- |
-| WASD / arrows | Walk |
-| Hold Shift | Sprint |
-| E / Space | Talk, heal, shop, examine |
-| M / B / J | Map / satchel / journal |
-| Escape | Close a panel |
+| Input                  | Action                               |
+| ---------------------- | ------------------------------------ |
+| WASD / arrows          | Walk                                 |
+| Hold Shift             | Sprint                               |
+| E / Space              | Talk, heal, shop, examine            |
+| M / B / J              | Map / satchel / journal              |
+| Escape                 | Close a panel                        |
+| Click / tap the ground | Walk there, routing around obstacles |
 
 Walk along the signed exits to change areas. Step off the paths in wild zones to encounter Nuvo. Weaken a wild Nuvo before using a binding orb. The first healthy team member can be selected as your following companion. Town healing lodges are free.
 

@@ -4,7 +4,7 @@
 
 1. Create a free Supabase project. Enable the Data API and row-level security.
 2. Run `supabase/migrations/202609260001_nuvori.sql` in its SQL Editor.
-3. Under Authentication → URL Configuration, set the site URL to `https://fennxweb.github.io/Nuvori/` and allow that exact redirect URL. For local development, additionally allow `http://127.0.0.1:5173/`.
+3. Under Authentication → URL Configuration, set the site URL to `https://fennxweb.github.io/Nuvori/` and allow that exact redirect URL. For local development, additionally allow `http://127.0.0.1:5173/`. In Realtime settings, disable **Allow public access** so channels require authorization.
 4. In Authentication → Sign In / Providers, configure Google and Discord using provider-owned OAuth applications.
 5. Google: create a web OAuth client and consent screen. Set its authorized redirect URI to `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`. Enter the client ID and secret in Supabase's Google provider settings. In testing mode, add the intended test users; publish the consent screen for public availability.
 6. Discord: create an application in the Discord Developer Portal. Add the same Supabase callback URL under OAuth2 → Redirects. Enter that application's client ID and secret into Supabase's Discord provider settings.
