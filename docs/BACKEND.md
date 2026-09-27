@@ -9,14 +9,14 @@
 - Provider callback: `https://uvnlmfpqonmccbaqxyzt.supabase.co/auth/v1/callback`.
 - Google JavaScript origin: `https://fennxweb.github.io`.
 
-Both SQL migrations are installed. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
+All three SQL migrations are installed, including the friends, chat, and daily wheel migration. The production site URL and exact redirect allowlist are configured. Realtime public channels are disabled. The project URL and public publishable key are set in the GitHub Actions repository variables and the ignored local `.env.local`. Unauthenticated REST access to player saves returns HTTP 401.
 
 Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in. Account cloud saving and loading have been verified. Two independent accounts, signed in through Google in Chrome and Discord in Codex's browser, both showed two online keepers, listed each other, and rendered their companions and live movement in Mossbell Village after the Broadcast fix. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
 ## Supabase
 
 1. Create a free Supabase project. Enable the Data API and row-level security.
-2. Run both files in `supabase/migrations/`, in filename order, in its SQL Editor.
+2. Run all files in `supabase/migrations/`, in filename order, in its SQL Editor.
 3. Under Authentication → URL Configuration, set the site URL to `https://fennxweb.github.io/Nuvori/` and allow that exact redirect URL. For local development, additionally allow `http://127.0.0.1:5173/`. In Realtime settings, disable **Allow public access** so channels require authorization.
 4. In Authentication → Sign In / Providers, configure Google and Discord using provider-owned OAuth applications.
 5. Google: create a web OAuth client and consent screen. Set its authorized redirect URI to `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`. Enter the client ID and secret in Supabase's Google provider settings. In testing mode, add the intended test users; publish the consent screen for public availability.
@@ -34,6 +34,14 @@ Secrets belong only in Supabase/provider settings. The app uses PKCE and permits
 - Confirm unauthenticated REST access cannot read `keeper_saves`; a user must be unable to read or update another user's row.
 
 ## Security boundaries
+
+Community tables have RLS enabled and no direct client grants. The authenticated `nuvori_*` RPCs expose chosen keeper profiles, each participant's friendships, each user's block list, bounded chat history, and daily rewards. Function search paths are fixed and anonymous execution is revoked. Profiles never contain provider names, emails, or avatars. Friend requests require recipient acceptance; blocked pairs cannot request each other. Outgoing requests are limited to five per minute and 25 pending.
+
+Chat has global and local channels. Local uses the area ID plus an optional `:lodge` or `:shop` suffix, so different interiors have distinct feeds. These are public game spaces for signed-in players, not private conversations. The server limits messages to 240 characters and one message per two seconds across channels, using a per-user transaction lock. The UI polls visible chat every 2.5 seconds and friendships every five seconds. Blocking filters messages in both directions. History and relationships persist; no automatic retention job is installed.
+
+Daily gifts are free and have no monetary value. Each of eight prizes has equal probability. Signed-in claims use a unique account/UTC-date row and a transaction on the account save, making retries idempotent. A save trigger preserves the latest gift when a stale device save is uploaded. Guests use a local day marker. Inventory remains client-controlled outside this claim mechanism.
+
+`supabase/tests/community.sql` checks friend authorization, blocking, channel isolation, message rate limits, duplicate claims, stale saves, and role privileges using transaction-scoped fixtures that roll back. These checks passed against the configured project.
 
 Authenticated players share their chosen keeper name, avatar palette, current game location, companion, and temporary greeting. No email address is transmitted through Realtime. Saves are visible only to their owner via RLS.
 

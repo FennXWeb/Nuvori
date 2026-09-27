@@ -15,6 +15,11 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 - Rare **Prismatic** color variants at a 1/512 wild-encounter probability. Rarity persists through capture, saves, and evolution.
 - Local guest saves; Supabase OAuth, per-account cloud saves, authenticated shared-world presence, visible remote keepers and companions, and greetings when the backend/providers are configured.
 - Keyboard and touch controls, responsive layouts, optional synthesized sound effects, and reduced-motion styling.
+- Previously caught badges in wild encounters and the Nuvopedia; animated evolution-ready choices that can be deferred.
+- Persistent friend requests, friend codes, blocking, and direction markers for off-screen friends in the same area.
+- Global and area-local text chat, including separate lodge/shop channels, message limits, and blocked-user filtering.
+- Walkable Healing Lodge and Supply Shop interiors with counters, NPCs, furniture, exits, and your following Nuvo.
+- A free daily wheel with eight rewards, midnight UTC reset, and account-wide claim enforcement.
 
 This is an early-access game. Online play is cooperative shared-world exploration; battles and inventory are local simulations, not authoritative competitive gameplay. It does not include PvP, trading, or shared battles. Evolution forms currently use transformed family artwork and stage effects rather than 150 additional individual illustrations.
 
@@ -44,6 +49,8 @@ npm run build
 ```
 
 The production bundle uses a relative base so GitHub Pages project URLs work. `.github/workflows/deploy.yml` runs the gameplay/data checks, exports the catalog, builds, and publishes Pages on updates to `main`.
+
+Local visual test fixtures are available at `/qa.html` on the Vite development server. They replace only the localhost guest save and are excluded from the production build. Database regression checks are in `supabase/tests/community.sql` and roll back all fixtures.
 
 ## Accounts and online world
 

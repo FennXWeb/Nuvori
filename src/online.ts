@@ -6,6 +6,7 @@ import {
 } from "@supabase/supabase-js";
 import { validateSave, type Save } from "./game";
 import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
+import type { Interior } from "./adventure";
 const env = import.meta.env ?? {};
 export const backendConfigured = Boolean(
   env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
@@ -64,6 +65,7 @@ export interface RemoteKeeper {
   id: string;
   name: string;
   region: string;
+  interior?: Interior;
   x: number;
   y: number;
   palette: number;
@@ -85,6 +87,7 @@ export function validRemote(p: unknown): p is RemoteKeeper {
     k.name.length <= 18 &&
     typeof k.region === "string" &&
     Boolean(REGION_BY_ID[k.region]) &&
+    (k.interior === undefined || k.interior === "lodge" || k.interior === "shop") &&
     Number.isFinite(k.x) &&
     Number.isFinite(k.y) &&
     k.x >= 0 &&

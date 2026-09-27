@@ -35,6 +35,11 @@ export interface Save {
   battles: number;
   started: string;
   updated: string;
+  interior?: "lodge" | "shop";
+  outside?: { x: number; y: number };
+  evolutionNotices?: string[];
+  dailySpinDay?: string;
+  dailySpinPrize?: number;
 }
 export function newSave(player: Player, starter: string): Save {
   return {
@@ -95,6 +100,11 @@ export function validateSave(value: unknown): value is Save {
     s.player.palette >= 0 &&
     s.player.palette < 4 &&
     Boolean(REGION_BY_ID[s.region]) &&
+    (s.interior === undefined || ((s.interior === "lodge" || s.interior === "shop") && REGION_BY_ID[s.region].kind === "Town")) &&
+    (s.outside === undefined || (finite(s.outside.x) && finite(s.outside.y) && s.outside.x >= 24 && s.outside.x <= 1128 && s.outside.y >= 24 && s.outside.y <= 808)) &&
+    (s.evolutionNotices === undefined || (Array.isArray(s.evolutionNotices) && s.evolutionNotices.length <= 2000 && s.evolutionNotices.every(v => typeof v === "string"))) &&
+    (s.dailySpinDay === undefined || /^\d{4}-\d{2}-\d{2}$/.test(s.dailySpinDay)) &&
+    (s.dailySpinPrize === undefined || (Number.isInteger(s.dailySpinPrize) && s.dailySpinPrize >= 0 && s.dailySpinPrize < 8)) &&
     finite(s.x) &&
     s.x >= 32 &&
     s.x <= 1120 &&

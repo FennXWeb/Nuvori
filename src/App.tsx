@@ -39,6 +39,7 @@ import {
   Download,
   ChevronLeft,
   LoaderCircle,
+  Gift,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 import {
@@ -91,6 +92,11 @@ import {
   OnlineWorld,
   type RemoteKeeper,
 } from "./online";
+import { caughtBefore, cellKey, interiorName, enterInterior, leaveInterior, readyToEvolve, evolutionKey, applyDailyPrize, utcDay } from "./adventure";
+import { useSocial, claimWheel } from "./social";
+import { FriendsPanel, ChatDock } from "./Community";
+import { EvolutionReady, DailyWheel } from "./Celebrations";
+import "./community.css";
 type Panel =
   | "guide"
   | "map"
@@ -100,6 +106,8 @@ type Panel =
   | "online"
   | "settings"
   | "shop"
+  | "friends"
+  | "wheel"
   | null;
 const objectives = [
   {
@@ -159,6 +167,10 @@ export default function App() {
       null,
     ),
     [busy, setBusy] = useState(false);
+  const [evolutionNotice, setEvolutionNotice] = useState<Nuvo | null>(null);
+  const { social, error: socialError, refresh: refreshSocial } = useSocial(user?.id, authReady ? save?.player.name : undefined, save?.player.palette);
+  const friendIds = social.friends.filter(f => f.status === "accepted").map(f => f.profile.user_id);
+  const blockedIds = social.blocked.map(p => p.user_id);
   const [creationName, setCreationName] = useState(""),
     [palette, setPalette] = useState(0),
     [pronouns, setPronouns] = useState("They / them"),
@@ -175,6 +187,8 @@ export default function App() {
     pausedByOtherTab = useRef(false),
     toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined),
     battleLock = useRef(false),
+    dailyBusy = useRef(false),
+    pendingCloud = useRef<Promise<void> | null>(null),
     emoteUntil = useRef(0);
   state.current = save;
   userRef.current = user;
@@ -191,6 +205,7 @@ export default function App() {
       pausedByOtherTab.current = true;
       keys.current.clear();
       world.current?.close();
+      setEvolutionNotice(null);
       setPanel(null);
       setDialog(null);
       setBattle(null);
@@ -213,6 +228,7 @@ export default function App() {
       world.current?.close();
       setRemote([]);
       setUser(next);
+      setEvolutionNotice(null);
       if (!next) {
         setSave(readSave());
         setOnlineStatus("Solo adventure");
@@ -285,10 +301,10 @@ export default function App() {
       } catch {
         /* Status is set by the primary save effect. */
       }
-      if (u && cloudReady.current) {
+      if (u && cloudReady.current && !dailyBusy.current) {
         const hash = JSON.stringify(merged);
         if (hash !== lastCloud.current) {
-          saveCloud(u, merged)
+          pendingCloud.current = saveCloud(u, merged)
             .then(() => {
               lastCloud.current = hash;
               setSaveStatus("Saved to cloud");
@@ -309,6 +325,7 @@ export default function App() {
           id: u.id,
           name: s.player.name,
           region: s.region,
+          interior: s.interior,
           x: p.x,
           y: p.y,
           direction: p.dir,
@@ -324,8 +341,20 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
   useEffect(() => {
+    if (!save || !authReady || otherTab || battle || panel || dialog || evolutionNotice) return;
+    const next = [...save.party, ...save.box].find(n => readyToEvolve(n) && !save.evolutionNotices?.includes(evolutionKey(n)));
+    if (next) { keys.current.clear(); setEvolutionNotice(next); sound("catch", audio); }
+  }, [save, authReady, otherTab, battle, panel, dialog, evolutionNotice, audio]);
+  const dismissEvolution = useCallback(() => {
+    if (!evolutionNotice) return;
+    const key = evolutionKey(evolutionNotice);
+    setSave(s => s ? { ...s, evolutionNotices: [...new Set([...(s.evolutionNotices || []), key])] } : s);
+    setEvolutionNotice(null);
+  }, [evolutionNotice]);
+  useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (pausedByOtherTab.current) return;
+      if ((e.target as HTMLElement).closest('[role="dialog"]')) return;
       if (
         ["INPUT", "SELECT", "TEXTAREA"].includes(
           (e.target as HTMLElement).tagName,
@@ -388,7 +417,7 @@ export default function App() {
     position.current = { x, y, dir: 0, moving: false };
     setSave((s) =>
       s
-        ? { ...s, region, x, y, visited: [...new Set([...s.visited, region])] }
+        ? { ...s, interior: undefined, outside: undefined, region, x, y, visited: [...new Set([...s.visited, region])] }
         : s,
     );
     setNearby("");
@@ -416,12 +445,17 @@ export default function App() {
     (kind: Interaction) => {
       const s = state.current;
       if (!s) return;
-      if (kind === "heal") {
+      if (kind === "heal" || kind === "shop" || kind === "exit") {
+        const next = kind === "exit" ? leaveInterior(s) : enterInterior(s, kind === "heal" ? "lodge" : "shop", position.current.x, position.current.y);
+        position.current = { x: next.x, y: next.y, dir: 0, moving: false };
+        keys.current.clear(); setNearby(""); setSave(next);
+      }
+      if (kind === "nurse") {
         setSave(healParty(s));
         sound("heal", audio);
         notify("Your whole team is rested. HP, energy, and status restored.");
       }
-      if (kind === "shop") setPanel("shop");
+      if (kind === "merchant") setPanel("shop");
       if (kind === "professor")
         setDialog({
           title: "Ranger Elowen",
@@ -502,7 +536,7 @@ export default function App() {
     sound("click", audio);
   };
   const saveNow = async () => {
-    if (!save || pausedByOtherTab.current) return;
+    if (!save || pausedByOtherTab.current || dailyBusy.current) return;
     const s = { ...save, x: position.current.x, y: position.current.y };
     try {
       writeSave(s, user?.id || "guest");
@@ -515,6 +549,33 @@ export default function App() {
       notify(`Could not save: ${(e as Error).message}`);
     }
   };
+  const spinDaily = async () => {
+    if (dailyBusy.current || pausedByOtherTab.current || !state.current) throw new Error("Please wait for your adventure to finish saving.");
+    dailyBusy.current = true;
+    try {
+      let current = { ...state.current, x: position.current.x, y: position.current.y };
+      const account = userRef.current;
+      let prize: number, day: string;
+      if (account) {
+        if (!cloudReady.current) throw new Error("Reconnect your cloud save before spinning.");
+        await pendingCloud.current;
+        await saveCloud(account, current);
+        const result = await claimWheel();
+        if (account.id !== userRef.current?.id) throw new Error("Your account changed. The gift is saved to the original account.");
+        current = result.save; prize = result.prize; day = result.day;
+        lastCloud.current = JSON.stringify(current);
+        setSaveStatus("Saved to cloud");
+      } else {
+        prize = Math.floor(Math.random()*8); day = utcDay();
+        current = applyDailyPrize(current, prize, day);
+      }
+      writeSave(current, account?.id || "guest");
+      state.current = current; setSave(current);
+      sound("catch", audio);
+      return { prize, day };
+    } finally { dailyBusy.current = false; }
+  };
+  const placeName = save?.interior ? interiorName(save.interior) : region.name;
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -543,17 +604,20 @@ export default function App() {
               { id: "map", label: "World map", icon: Map },
               { id: "bag", label: "Satchel", icon: Backpack },
               { id: "journal", label: "Field journal", icon: NotebookPen },
+              { id: "friends", label: "Friends", icon: Users },
+              { id: "wheel", label: "Daily wheel", icon: Gift },
             ] as const
           ).map((item) => (
             <button
               key={item.label}
               disabled={!save}
               className={`nav-item ${panel === item.id ? "selected" : ""}`}
-              onClick={() => open(item.id)}
+              onClick={() => open(item.id === "friends" && !user ? "online" : item.id)}
             >
               <item.icon size={19} />
               <span>{item.label}</span>
               {item.id === "team" && save && <small>{save.party.length}</small>}
+              {item.id === "friends" && social.friends.some(f => f.status === "pending" && f.incoming) && <small className="request-dot">!</small>}
               {item.id === "guide" && save && (
                 <small>{save.caught.length}/25</small>
               )}
@@ -591,6 +655,8 @@ export default function App() {
             <span className="region-tag">{region.kind}</span>
           </div>
           <div className="top-actions">
+            <button className="icon-button top-gift" aria-label="Daily wheel" disabled={!save} onClick={() => open("wheel")}><Gift size={20}/></button>
+            <button className="icon-button top-friends" aria-label="Friends" disabled={!save} onClick={() => open(user ? "friends" : "online")}><Users size={20}/></button>
             <span className="time-of-day">
               <Sun size={17} /> A little after sunrise
             </span>
@@ -625,10 +691,10 @@ export default function App() {
                   <Leaf size={13} /> CHAPTER ONE · A NEW POSSIBILITY
                 </div>
                 <h1>
-                  {region.name}
+                  {placeName}
                   <span>✦</span>
                 </h1>
-                <p>{region.subtitle}</p>
+                <p>{save?.interior ? `${region.name} · ${save.interior === "lodge" ? "Warm lights. Rested companions." : "Everything for the road ahead."}` : region.subtitle}</p>
               </div>
               <button
                 className="map-button"
@@ -649,9 +715,11 @@ export default function App() {
                   Boolean(panel) ||
                   Boolean(battle) ||
                   Boolean(dialog) ||
+                  Boolean(evolutionNotice) ||
                   !authReady
                 }
-                remote={remote}
+                remote={remote.filter(p => !blockedIds.includes(p.id))}
+                friendIds={friendIds}
                 onMove={onMove}
                 onTravel={onTravel}
                 onEncounter={onEncounter}
@@ -665,15 +733,15 @@ export default function App() {
                   <Compass size={20} />
                 </span>
                 <span>
-                  <strong>{region.name}</strong>
+                  <strong>{placeName}</strong>
                   <small>
-                    {region.kind === "Town"
+                    {save?.interior ? "Walk to the counter · E to interact" : region.kind === "Town"
                       ? "A place to rest and reconnect"
                       : `Wild Nuvo · Lv. ${region.level[0]}–${region.level[1]}`}
                   </small>
                 </span>
               </div>
-              <button
+              {!save?.interior && <button
                 className="mini-map"
                 aria-label="Open Auralis map"
                 onClick={() => open("map")}
@@ -691,7 +759,8 @@ export default function App() {
                   }}
                 />
                 <span className="mini-label">N</span>
-              </button>
+              </button>}
+              {save?.interior && <button className="room-exit" onClick={() => onInteract("exit")}><LogOut size={15}/> Return outside</button>}
               {nearby && save && !panel && !battle && (
                 <button
                   className="interact-prompt"
@@ -785,6 +854,7 @@ export default function App() {
                 {saveStatus}
               </button>
             </div>
+            {save && <ChatDock userId={user?.id} cell={cellKey(save.region, save.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} onSignIn={() => open("online")} notify={notify} refresh={refreshSocial}/>}
             <section className="team-strip">
               <div className="team-strip-title">
                 <span className="eyebrow">BY YOUR SIDE</span>
@@ -1122,6 +1192,8 @@ export default function App() {
         </div>
       )}
       {panel === "guide" && <Guide onClose={closePanel} save={save} />}
+      {panel === "friends" && user && <FriendsPanel social={social} error={socialError} remote={remote} refresh={refreshSocial} notify={notify} onClose={closePanel}/>}
+      {panel === "wheel" && save && <DailyWheel save={save} account={Boolean(user)} onSpin={spinDaily} onClose={closePanel}/>}
       {panel === "map" && (
         <Modal
           title="The Auralis archipelago"
@@ -1374,13 +1446,14 @@ export default function App() {
                 <strong>{onlineStatus}</strong>
                 <small>{saveStatus}</small>
               </div>
+              <button className="secondary-button full-width" onClick={() => setPanel("friends")}><Users size={17}/> Friends & requests {social.friends.filter(f => f.status === "pending" && f.incoming).length || ""}</button>
               {remote.length ? (
                 <div className="online-players">
-                  {remote.map((p) => (
+                  {remote.filter(p => !blockedIds.includes(p.id)).map((p) => (
                     <div key={p.id}>
                       <PlayerArt palette={p.palette} size={54} />
                       <span>
-                        <strong>{p.name}</strong>
+                        <strong>{friendIds.includes(p.id) ? "★ " : ""}{p.name}</strong>
                         <small>
                           {REGION_BY_ID[p.region]?.name || "Exploring"}
                         </small>
@@ -1580,6 +1653,12 @@ export default function App() {
           onFinish={finishBattle}
         />
       )}
+      {evolutionNotice && !battle && !otherTab && <EvolutionReady nuvo={evolutionNotice} onLater={dismissEvolution} onEvolve={id => {
+        const key = evolutionKey(evolutionNotice);
+        setSave(s => s ? { ...s, party: s.party.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), box: s.box.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), evolutionNotices: [...new Set([...(s.evolutionNotices || []),key])] } : s);
+        notify(`${SPECIES_BY_ID[evolutionNotice.speciesId].name} evolved into ${SPECIES_BY_ID[id].name}!`);
+        setEvolutionNotice(null); sound("catch",audio);
+      }}/>}
       {toast && (
         <div className="toast" role="status">
           <Sparkles size={17} />
@@ -1784,7 +1863,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                   <div className="dex-number">
                     <span>#{String(s.dex).padStart(3, "0")}</span>
                     {save?.caught.includes(s.id) ? (
-                      <Check size={14} />
+                      <span className="caught-badge" title="Previously caught"><Check size={12}/> Caught</span>
                     ) : save?.seen.includes(s.id) ? (
                       <span>Seen</span>
                     ) : null}
@@ -1968,6 +2047,7 @@ function Team({
                   Lv. {p.level}
                   {i === 0 ? " · Following you" : ""}
                   {p.prismatic ? " · Prismatic" : ""}
+                  {readyToEvolve(p) ? " · ✦ Ready to evolve" : ""}
                 </small>
                 <Health nuvo={p} />
               </span>
@@ -2241,6 +2321,7 @@ function BattleView({
               {ws.types.map((t) => (
                 <TypeBadge key={t} type={t} />
               ))}
+              {caughtBefore(save, ws.id) && <span className="caught-badge"><Check size={12}/> Already caught</span>}
             </div>
             <Health nuvo={battle.wild} />
             {battle.wild.status && (

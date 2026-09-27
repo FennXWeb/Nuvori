@@ -2,14 +2,17 @@ import { useEffect, useRef } from "react";
 import { REGION_BY_ID, SPECIES_BY_ID, type Region } from "./data";
 import type { Save } from "./game";
 import type { RemoteKeeper } from "./online";
+import { cellKey, edgeMarker, type Interior } from "./adventure";
+import { drawInterior, drawFurniture } from "./interiors";
 export const TILE = 32,
   WORLD_W = 36,
   WORLD_H = 26;
-export type Interaction = "professor" | "heal" | "shop" | "landmark" | "sign";
+export type Interaction = "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit";
 export interface WorldProps {
   save: Save | null;
   paused: boolean;
   remote: RemoteKeeper[];
+  friendIds?: string[];
   onMove: (
     x: number,
     y: number,
@@ -37,8 +40,17 @@ const noise = (x: number, y: number, seed = 1) => {
   const n = Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453;
   return n - Math.floor(n);
 };
-export function getMap(region: Region) {
+export function getMap(region: Region, interior?: Interior): Prop[] {
   const props: Prop[] = [];
+  if (interior) return [
+    { x: 18, y: 9, kind: -1, size: 62, solid: false, label: interior === "lodge" ? "Nurse Liora" : "Shopkeeper Finch" },
+    ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: (interior === "lodge" ? "nurse" : "merchant") as Interaction, label: interior === "lodge" ? "Restore your team" : "Browse supplies" })),
+    ...[11,15,18].map(y => ({ x: 11, y, kind: interior === "lodge" ? 20 : 22, size: 76, solid: true })),
+    { x: 25, y: 11, kind: 22, size: 76, solid: true },
+    { x: 25, y: 16, kind: interior === "lodge" ? 23 : 22, size: 76, solid: true },
+    { x: 24, y: 20, kind: 13, size: 44, solid: true },
+    { x: 18, y: 21, kind: -2, size: 28, solid: false, interact: "exit" as Interaction, label: "Return outside" },
+  ];
   const town = region.kind === "Town";
   if (town) {
     props.push(
@@ -170,17 +182,19 @@ export function canWalk(
   y: number,
   region: Region,
   props = getMap(region),
+  interior?: Interior,
 ) {
+  if (interior && (x < 280 || x > 872 || y < 240 || y > 678)) return false;
   if (x < 24 || x > WORLD_W * TILE - 24 || y < 24 || y > WORLD_H * TILE - 24)
     return false;
   const tx = x / TILE,
     ty = y / TILE;
-  if (isWater(tx, ty, region)) return false;
+  if (!interior && isWater(tx, ty, region)) return false;
   return !props.some(
     (p) =>
       p.solid &&
-      Math.abs(p.x * TILE - x) < (p.kind >= 4 && p.kind <= 7 ? 38 : 18) &&
-      y > p.y * TILE - 24 &&
+      Math.abs(p.x * TILE - x) < ((p.kind >= 4 && p.kind <= 7) || p.kind >= 20 ? 38 : 18) &&
+      y > p.y * TILE - (p.kind >= 20 ? 65 : 24) &&
       y < p.y * TILE + 9,
   );
 }
@@ -190,12 +204,13 @@ export function findPath(
   goalX: number,
   goalY: number,
   region: Region,
+  interior?: Interior,
 ): [number, number][] {
-  const props = getMap(region),
+  const props = getMap(region, interior),
     start = [Math.floor(x / 32), Math.floor(y / 32)],
     goal = [Math.floor(goalX / 32), Math.floor(goalY / 32)],
     key = (a: number, b: number) => `${a},${b}`;
-  if (!canWalk(goal[0] * 32 + 16, goal[1] * 32 + 16, region, props)) return [];
+  if (!canWalk(goal[0] * 32 + 16, goal[1] * 32 + 16, region, props, interior)) return [];
   const queue = [start],
     parents = new Map<string, number[] | null>([
       [key(...(start as [number, number])), null],
@@ -216,7 +231,7 @@ export function findPath(
       const nx = point[0] + dx,
         ny = point[1] + dy,
         k = key(nx, ny);
-      if (parents.has(k) || !canWalk(nx * 32 + 16, ny * 32 + 16, region, props))
+      if (parents.has(k) || !canWalk(nx * 32 + 16, ny * 32 + 16, region, props, interior))
         continue;
       parents.set(k, point);
       queue.push([nx, ny]);
@@ -240,6 +255,7 @@ export function World({
   save,
   paused,
   remote,
+  friendIds = [],
   onMove,
   onTravel,
   onEncounter,
@@ -253,6 +269,7 @@ export function World({
       save,
       paused,
       remote,
+      friendIds,
       onMove,
       onTravel,
       onEncounter,
@@ -264,6 +281,7 @@ export function World({
     save,
     paused,
     remote,
+    friendIds,
     onMove,
     onTravel,
     onEncounter,
@@ -308,6 +326,7 @@ export function World({
         (event.clientX - rect.left) / camera.zoom + camera.x,
         (event.clientY - rect.top) / camera.zoom + camera.y,
         REGION_BY_ID[latest.current.save.region],
+        latest.current.save.interior,
       );
     };
     el.addEventListener("pointerdown", tap);
@@ -366,8 +385,9 @@ export function World({
       const state = latest.current;
       const s = state.save,
         r = REGION_BY_ID[s?.region || "mossbell"];
-      if (lastRegion !== r.id || lastKeeper !== (s?.started || "")) {
-        lastRegion = r.id;
+      const cell = cellKey(r.id, s?.interior);
+      if (lastRegion !== cell || lastKeeper !== (s?.started || "")) {
+        lastRegion = cell;
         lastKeeper = s?.started || "";
         x = s?.x || 560;
         y = s?.y || 496;
@@ -377,7 +397,7 @@ export function World({
         keys.current.clear();
         route = [];
       }
-      const props = getMap(r);
+      const props = getMap(r, s?.interior);
       let dx = 0,
         dy = 0;
       moving = false;
@@ -404,8 +424,8 @@ export function World({
           const speed = keys.current.has("shift") ? 175 : 103;
           const ox = x,
             oy = y;
-          if (canWalk(x + dx * speed * dt, y, r, props)) x += dx * speed * dt;
-          if (canWalk(x, y + dy * speed * dt, r, props)) y += dy * speed * dt;
+          if (canWalk(x + dx * speed * dt, y, r, props, s.interior)) x += dx * speed * dt;
+          if (canWalk(x, y + dy * speed * dt, r, props, s.interior)) y += dy * speed * dt;
           moving = Math.abs(x - ox) + Math.abs(y - oy) > 0.05;
           distance += Math.hypot(x - ox, y - oy);
           if (Math.abs(dx) > Math.abs(dy)) dir = dx < 0 ? 1 : 2;
@@ -414,7 +434,7 @@ export function World({
             steps++;
             distance = 0;
             if (
-              !isPath(x / 32, y / 32) &&
+              !s.interior && !isPath(x / 32, y / 32) &&
               r.kind !== "Town" &&
               elapsed - lastEncounter > 5 &&
               Math.random() < 0.22
@@ -435,8 +455,12 @@ export function World({
           state.onNearby(label);
         }
         const interact = keys.current.has("e") || keys.current.has(" ");
-        if (interact && !pressed && nearby?.interact)
+        if (interact && !pressed && nearby?.interact) {
+          pressed = true;
           state.onInteract(nearby.interact);
+          raf = requestAnimationFrame(frame);
+          return;
+        }
         pressed = interact;
         let next: string | undefined,
           tx = x,
@@ -454,7 +478,7 @@ export function World({
           next = r.links.east;
           tx = 72;
         }
-        if (next) {
+        if (next && !s.interior) {
           keys.current.clear();
           state.onTravel(next, tx, ty);
         }
@@ -506,7 +530,8 @@ export function World({
             : beach
               ? "#9fc186"
               : "#88c180";
-      for (let gy = 0; gy < WORLD_H; gy++)
+      if (s?.interior) drawInterior(ctx, s.interior, elapsed);
+      else for (let gy = 0; gy < WORLD_H; gy++)
         for (let gx = 0; gx < WORLD_W; gx++) {
           const n = noise(gx, gy, r.name.length);
           ctx.fillStyle = n > 0.5 ? grass : grass2;
@@ -549,7 +574,7 @@ export function World({
           }
         }
       // Functional trail exits are signed directly on the walkable route.
-      for (const [side, id] of Object.entries(r.links)) {
+      for (const [side, id] of Object.entries(s?.interior ? {} : r.links)) {
         const px = side === "west" ? 85 : side === "east" ? 1066 : 576,
           py = side === "north" ? 56 : side === "south" ? 785 : 417;
         text(
@@ -577,8 +602,9 @@ export function World({
           ctx.fill();
           if (p.kind === -1) {
             drawCell(explorer, 0, 4, p.x * TILE, p.y * TILE, 64);
-            text("Elowen", p.x * TILE, p.y * TILE - 52, "#f4deb0");
-          } else drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
+            text(s?.interior ? p.label! : "Elowen", p.x * TILE, p.y * TILE - 52, "#f4deb0");
+          } else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
+          else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
           if (
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < 85 &&
@@ -672,7 +698,8 @@ export function World({
       } else {
         sorted.push({ y, draw: () => drawKeeper(x, y, 0, false, 0) });
       }
-      for (const other of state.remote.filter((p) => p.region === r.id)) {
+      const neighbors = state.remote.filter(p => cellKey(p.region, p.interior) === cell);
+      for (const other of neighbors) {
         sorted.push({
           y: other.y,
           draw: () => {
@@ -682,7 +709,7 @@ export function World({
               other.direction,
               other.moving,
               other.palette,
-              other.name,
+              `${state.friendIds.includes(other.id) ? "★ " : ""}${other.name}`,
             );
             drawNuvo(
               other.speciesId,
@@ -718,6 +745,15 @@ export function World({
       shade.addColorStop(1, "#183d3840");
       ctx.fillStyle = shade;
       ctx.fillRect(0, 0, w, h);
+      for (const friend of neighbors.filter(p => state.friendIds.includes(p.id))) {
+        const marker = edgeMarker((friend.x-cx)*zoom, (friend.y-cy)*zoom, w, h);
+        if (!marker) continue;
+        ctx.save(); ctx.translate(marker.x,marker.y); ctx.rotate(marker.angle);
+        ctx.fillStyle="#ecd392";ctx.strokeStyle="#233d35";ctx.lineWidth=3;
+        ctx.beginPath();ctx.moveTo(15,0);ctx.lineTo(-9,-10);ctx.lineTo(-5,0);ctx.lineTo(-9,10);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+        const distance = Math.round(Math.hypot(friend.x-x,friend.y-y)/32);
+        text(`★ ${friend.name} · ${distance}m`, Math.max(85,Math.min(w-85,marker.x)), marker.y+25, "#f8e5a8");
+      }
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
