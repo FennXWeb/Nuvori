@@ -1,6 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { X, Volume2, VolumeX } from "lucide-react";
-import { nuvoAtlas, drawCustomization, keeperSheet } from "./spriteMotion";
+import { drawCustomization, keeperSheet } from "./spriteMotion";
+import { nuvoSprite, fitSprite, spriteFill } from "./sprites";
 import type { Player } from "./game";
 import {
   SPECIES_BY_ID,
@@ -33,6 +34,8 @@ export function NuvoArt({
   className?: string;
 }) {
   const s = SPECIES_BY_ID[id];
+  const { file, atlas, frame } = nuvoSprite(s);
+  const fitted = fitSprite(frame, 100, spriteFill(s));
   return (
     <span
       role="img"
@@ -44,12 +47,15 @@ export function NuvoArt({
           height: size,
           "--hue": `${prismatic ? 140 : 0}deg`,
           "--scale": 1,
-          backgroundImage: `url(${import.meta.env.BASE_URL}assets/${nuvoAtlas(s)})`,
-          backgroundSize: s.id === "oneirune" ? "100% 100%" : "500% 500%",
-          backgroundPosition: s.id === "oneirune" ? "center" : `${(s.sprite % 5) * 25}% ${Math.floor(s.sprite / 5) * 25}%`,
         } as CSSProperties
       }
     >
+      <svg className="nuvo-sprite-image" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <svg x={fitted.x} y={fitted.y} width={fitted.width} height={fitted.height}
+          viewBox={`${frame.x} ${frame.y} ${frame.width} ${frame.height}`} preserveAspectRatio="none" overflow="hidden">
+          <image href={`${import.meta.env.BASE_URL}assets/${file}`} width={atlas.width} height={atlas.height} />
+        </svg>
+      </svg>
       {s.stage > 0 && (
         <span className="evo-stars">{s.stage === 1 ? "✧" : "✧ ✦ ✧"}</span>
       )}
