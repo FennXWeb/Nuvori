@@ -1,5 +1,35 @@
 [
   {
+    "id": "title",
+    "duration": 119.4,
+    "peak": 0.8188,
+    "rms": 0.1174
+  },
+  {
+    "id": "mossbell",
+    "duration": 119.48,
+    "peak": 0.6208,
+    "rms": 0.1168
+  },
+  {
+    "id": "verdant",
+    "duration": 118.8,
+    "peak": 0.8629,
+    "rms": 0.124
+  },
+  {
+    "id": "battle-wild",
+    "duration": 118.8,
+    "peak": 0.8171,
+    "rms": 0.1182
+  },
+  {
+    "id": "battle-trainer",
+    "duration": 118.64,
+    "peak": 0.8337,
+    "rms": 0.11
+  },
+  {
     "id": "ui-click",
     "duration": 0.48,
     "peak": 0.4124,

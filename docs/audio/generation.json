@@ -1184,5 +1184,60 @@
       "attackSeconds": 0.01,
       "releaseSeconds": 0.1
     }
+  },
+  "battle-trainer": {
+    "provider": "Suno",
+    "source": "user-supplied handoff",
+    "file": "audio/music/battle-trainer.mp3",
+    "bytes": 2849055,
+    "sha256": "f1e52ee0946bd478546a60f540227e704ddbafd04b0bb25327210a1592f13afa",
+    "sourceSha256": "883fc910bcb645fba5b9a67525aaadd837b9b1cb93b1d83c0ff903cb317ac5ea",
+    "importedAt": "2026-09-28T19:12:32Z",
+    "notes": "",
+    "processing": "44.1 kHz stereo MP3 192 kbps; loudnorm -18 LUFS / -2 dBTP"
+  },
+  "battle-wild": {
+    "provider": "Suno",
+    "source": "user-supplied handoff",
+    "file": "audio/music/battle-wild.mp3",
+    "bytes": 2852820,
+    "sha256": "ddaf751b2bc4053fecb6a13cbf8621e634230810bcc32cab46abc75838316cbe",
+    "sourceSha256": "b79645ebc7fb7150617abd49b282a353666df519d9a237ffbe7d97c1046c28c0",
+    "importedAt": "2026-09-28T19:12:32Z",
+    "notes": "",
+    "processing": "44.1 kHz stereo MP3 192 kbps; loudnorm -18 LUFS / -2 dBTP"
+  },
+  "mossbell": {
+    "provider": "Suno",
+    "source": "user-supplied handoff",
+    "file": "audio/music/mossbell.mp3",
+    "bytes": 2869122,
+    "sha256": "dfc5ac243151a8f16c564ae2cf884be3c41dacf428c0803775c42ffe6d697d5d",
+    "sourceSha256": "3cf77b58497ab84205aabb0890f76331a53b5642557dc65d7bfc672787bd2da3",
+    "importedAt": "2026-09-28T19:12:32Z",
+    "notes": "",
+    "processing": "44.1 kHz stereo MP3 192 kbps; loudnorm -18 LUFS / -2 dBTP"
+  },
+  "title": {
+    "provider": "Suno",
+    "source": "user-supplied handoff",
+    "file": "audio/music/title.mp3",
+    "bytes": 2867246,
+    "sha256": "8d6520f0a6a21dbd044f5777e8a92df8feeea7bb531ab6135112d761b6b873f0",
+    "sourceSha256": "e57bd18ba4106cca96548bb0782154eaa76988dbeffe3b81a6445a4788d9fe69",
+    "importedAt": "2026-09-28T19:12:32Z",
+    "notes": "",
+    "processing": "44.1 kHz stereo MP3 192 kbps; loudnorm -18 LUFS / -2 dBTP"
+  },
+  "verdant": {
+    "provider": "Suno",
+    "source": "user-supplied handoff",
+    "file": "audio/music/verdant.mp3",
+    "bytes": 2852818,
+    "sha256": "c5ea35362366b6a408c3e7adef5a87e41a22c664b89c29e8d011dcca6d905e52",
+    "sourceSha256": "0f1087d630a8e2357fa412f96983f1406a64051bf922947fde3be18f8add0913",
+    "importedAt": "2026-09-28T19:12:32Z",
+    "notes": "",
+    "processing": "44.1 kHz stereo MP3 192 kbps; loudnorm -18 LUFS / -2 dBTP"
   }
 }
