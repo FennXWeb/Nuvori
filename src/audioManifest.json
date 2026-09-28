@@ -3,28 +3,28 @@
     "title": "Your Path, Their Evolution",
     "kind": "music",
     "file": "audio/music/title.mp3",
-    "seconds": 120,
+    "seconds": 119.4,
     "loopStart": null,
     "loopEnd": null,
-    "available": false
+    "available": true
   },
   "mossbell": {
     "title": "A Pocketful of Morning",
     "kind": "music",
     "file": "audio/music/mossbell.mp3",
-    "seconds": 120,
+    "seconds": 119.48,
     "loopStart": null,
     "loopEnd": null,
-    "available": false
+    "available": true
   },
   "verdant": {
     "title": "The Trail Wakes Up",
     "kind": "music",
     "file": "audio/music/verdant.mp3",
-    "seconds": 120,
+    "seconds": 118.8,
     "loopStart": null,
     "loopEnd": null,
-    "available": false
+    "available": true
   },
   "tideglass": {
     "title": "Sea Glass in Your Shoes",
@@ -165,19 +165,19 @@
     "title": "A Spark in the Grass",
     "kind": "music",
     "file": "audio/music/battle-wild.mp3",
-    "seconds": 120,
+    "seconds": 118.8,
     "loopStart": null,
     "loopEnd": null,
-    "available": false
+    "available": true
   },
   "battle-trainer": {
     "title": "The Bond We Bring",
     "kind": "music",
     "file": "audio/music/battle-trainer.mp3",
-    "seconds": 120,
+    "seconds": 118.64,
     "loopStart": null,
     "loopEnd": null,
-    "available": false
+    "available": true
   },
   "battle-league": {
     "title": "Four Keepers, One Legend",

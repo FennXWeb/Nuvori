@@ -6,7 +6,7 @@
       "id": "title",
       "title": "Your Path, Their Evolution",
       "kind": "music",
-      "seconds": 120,
+      "seconds": 119.4,
       "file": "audio/music/title.mp3",
       "prompt": "Instrumental fantasy adventure game soundtrack. The main title: hopeful, curious and magical. 112 BPM, D major, celesta and flute lead a rising four-note motif, pizzicato strings, warm horn answer, soft brushed percussion. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
       "musicalDirection": "The main title: hopeful, curious and magical. 112 BPM, D major, celesta and flute lead a rising four-note motif, pizzicato strings, warm horn answer, soft brushed percussion.",
@@ -14,13 +14,15 @@
       "use": "Title screen and keeper creation",
       "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
       "priority": true,
-      "targetSeconds": 120
+      "targetSeconds": 120,
+      "loopStart": null,
+      "loopEnd": null
     },
     {
       "id": "mossbell",
       "title": "A Pocketful of Morning",
       "kind": "music",
-      "seconds": 120,
+      "seconds": 119.48,
       "file": "audio/music/mossbell.mp3",
       "prompt": "Instrumental fantasy adventure game soundtrack. Mossbell Village. Gentle 100 BPM village pastoral, nylon guitar, flute, marimba, a tender playful melody and cozy strings. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
       "musicalDirection": "Mossbell Village. Gentle 100 BPM village pastoral, nylon guitar, flute, marimba, a tender playful melody and cozy strings.",
@@ -28,13 +30,15 @@
       "use": "Mossbell Village exploration",
       "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
       "priority": true,
-      "targetSeconds": 120
+      "targetSeconds": 120,
+      "loopStart": null,
+      "loopEnd": null
     },
     {
       "id": "verdant",
       "title": "The Trail Wakes Up",
       "kind": "music",
-      "seconds": 120,
+      "seconds": 118.8,
       "file": "audio/music/verdant.mp3",
       "prompt": "Instrumental fantasy adventure game soundtrack. Verdant Wilds. Lively 120 BPM woodland exploration, woody mallets, pizzicato cello, bright flute, light hand percussion and adventurous wonder. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
       "musicalDirection": "Verdant Wilds. Lively 120 BPM woodland exploration, woody mallets, pizzicato cello, bright flute, light hand percussion and adventurous wonder.",
@@ -42,7 +46,9 @@
       "use": "Verdant Wilds exploration",
       "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
       "priority": true,
-      "targetSeconds": 120
+      "targetSeconds": 120,
+      "loopStart": null,
+      "loopEnd": null
     },
     {
       "id": "tideglass",
@@ -258,7 +264,7 @@
       "id": "battle-wild",
       "title": "A Spark in the Grass",
       "kind": "music",
-      "seconds": 120,
+      "seconds": 118.8,
       "file": "audio/music/battle-wild.mp3",
       "prompt": "Instrumental fantasy adventure game soundtrack. Wild Nuvo battle. Exciting 150 BPM turn-based combat, bouncing bass, quick strings, punchy light drums, playful brass responses, agile synth arpeggios, adventurous not grim. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
       "musicalDirection": "Wild Nuvo battle. Exciting 150 BPM turn-based combat, bouncing bass, quick strings, punchy light drums, playful brass responses, agile synth arpeggios, adventurous not grim.",
@@ -266,13 +272,15 @@
       "use": "Wild Nuvo encounters",
       "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
       "priority": true,
-      "targetSeconds": 120
+      "targetSeconds": 120,
+      "loopStart": null,
+      "loopEnd": null
     },
     {
       "id": "battle-trainer",
       "title": "The Bond We Bring",
       "kind": "music",
-      "seconds": 120,
+      "seconds": 118.64,
       "file": "audio/music/battle-trainer.mp3",
       "prompt": "Instrumental fantasy adventure game soundtrack. Trainer duel. Spirited 158 BPM, tight drums, bright staccato brass, nimble strings, syncopated bass, determined melodic call and response, friendly competitive excitement. Warm chamber orchestra, delicate 16-bit synth accents, expressive woodwinds, acoustic plucks and rounded bass. Memorable original melody with a rising four-note question and a gentle answering phrase. Clear intimate mix that leaves room for game sounds. Aim for about two minutes: brief pickup, 16-bar A melody, contrasting 16-bar B melody, varied A return and a lighter instrumental passage. Keep a steady pulse and return to the opening harmony for repeat playback. Continuous instrumental arrangement; no finale or fade-out.",
       "musicalDirection": "Trainer duel. Spirited 158 BPM, tight drums, bright staccato brass, nimble strings, syncopated bass, determined melodic call and response, friendly competitive excitement.",
@@ -280,7 +288,9 @@
       "use": "Trainer duels",
       "exclude": "vocals, singing, humming, spoken words, choir, lyrics, harsh distortion, trailer impacts, long silent intro, fade-out",
       "priority": false,
-      "targetSeconds": 120
+      "targetSeconds": 120,
+      "loopStart": null,
+      "loopEnd": null
     },
     {
       "id": "battle-league",
