@@ -7,6 +7,8 @@ import { drawInterior, drawFurniture } from "./interiors";
 import { TRAINERS } from "./expansion";
 import { nuvoAtlas, drawCompanion, drawCustomization, keeperSheet } from "./spriteMotion";
 import { drawFrontierLandmark } from "./frontierScenery";
+import { gameAudio } from "./audio";
+import { footstepSurface } from "./footsteps";
 export const TILE = 32,
   WORLD_W = 36,
   WORLD_H = 26;
@@ -404,10 +406,13 @@ export function World({
         lastEncounter = elapsed;
         keys.current.clear();
         route = [];
+        gameAudio.updateFootsteps(0, null);
       }
       const props = getMap(r, s?.interior);
       let dx = 0,
         dy = 0;
+      let travelled = 0;
+      const sprinting = keys.current.has("shift");
       moving = false;
       if (state.paused) route = [];
       if (!state.paused && s) {
@@ -429,13 +434,14 @@ export function World({
         if (length) {
           dx /= length;
           dy /= length;
-          const speed = keys.current.has("shift") ? 175 : 103;
+          const speed = sprinting ? 175 : 103;
           const ox = x,
             oy = y;
           if (canWalk(x + dx * speed * dt, y, r, props, s.interior)) x += dx * speed * dt;
           if (canWalk(x, y + dy * speed * dt, r, props, s.interior)) y += dy * speed * dt;
           moving = Math.abs(x - ox) + Math.abs(y - oy) > 0.05;
-          distance += Math.hypot(x - ox, y - oy);
+          travelled = Math.hypot(x - ox, y - oy);
+          distance += travelled;
           if (Math.abs(dx) > Math.abs(dy)) dir = dx < 0 ? 1 : 2;
           else dir = dy < 0 ? 3 : 0;
           if (distance > 32) {
@@ -449,6 +455,7 @@ export function World({
             ) {
               lastEncounter = elapsed;
               state.onEncounter();
+              travelled = 0;
             }
           }
         }
@@ -466,6 +473,7 @@ export function World({
         if (interact && !pressed && nearby?.interact) {
           pressed = true;
           state.onInteract(nearby.interact);
+          gameAudio.updateFootsteps(0, null);
           raf = requestAnimationFrame(frame);
           return;
         }
@@ -489,8 +497,13 @@ export function World({
         if (next && !s.interior) {
           keys.current.clear();
           state.onTravel(next, tx, ty);
+          travelled = 0;
         }
       }
+      // Match the rendered ground tile, rather than treating an entire town as paving.
+      gameAudio.updateFootsteps(travelled, s && !state.paused
+        ? footstepSurface(r.id, s.interior, isPath(Math.floor(x / TILE) + .5, Math.floor(y / TILE) + .5))
+        : null, sprinting);
       const followDistance = Math.hypot(x - fx, y - fy);
       const companionGap = 30 + (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
       if (followDistance > companionGap + 7) {
@@ -750,6 +763,7 @@ export function World({
     };
     raf = requestAnimationFrame(frame);
     return () => {
+      gameAudio.updateFootsteps(0, null);
       running = false;
       cancelAnimationFrame(raf);
       ro.disconnect();

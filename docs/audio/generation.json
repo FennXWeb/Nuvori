@@ -71,42 +71,6 @@
     "generatedAt": "2026-09-27T18:45:43Z",
     "credits": 10
   },
-  "step-grass": {
-    "provider": "ElevenLabs",
-    "model": "eleven_text_to_sound_v2",
-    "file": "audio/sfx/step-grass.mp3",
-    "bytes": 8821,
-    "sha256": "1f7161a66fc89d358f18a05c94951b7f8746981c22904a209ea419a51c5560e7",
-    "generatedAt": "2026-09-27T18:45:45Z",
-    "credits": 5
-  },
-  "step-stone": {
-    "provider": "ElevenLabs",
-    "model": "eleven_text_to_sound_v2",
-    "file": "audio/sfx/step-stone.mp3",
-    "bytes": 8821,
-    "sha256": "55da9b3a7de5dda0f415bfbd104a116cc7e729dc5e4fbbc26417c6818134d487",
-    "generatedAt": "2026-09-27T18:45:46Z",
-    "credits": 5
-  },
-  "step-sand": {
-    "provider": "ElevenLabs",
-    "model": "eleven_text_to_sound_v2",
-    "file": "audio/sfx/step-sand.mp3",
-    "bytes": 8821,
-    "sha256": "b5ba78023e16c7206abb700d5077e529d8afaf36f897bab320b9be484e593680",
-    "generatedAt": "2026-09-27T18:45:48Z",
-    "credits": 5
-  },
-  "step-snow": {
-    "provider": "ElevenLabs",
-    "model": "eleven_text_to_sound_v2",
-    "file": "audio/sfx/step-snow.mp3",
-    "bytes": 8821,
-    "sha256": "1b8da66f7f1b43c6c76cc794c5230499455e5c93fc99f83c7562c778b8e48865",
-    "generatedAt": "2026-09-27T18:45:50Z",
-    "credits": 5
-  },
   "door": {
     "provider": "ElevenLabs",
     "model": "eleven_text_to_sound_v2",
@@ -128,11 +92,21 @@
   "battle-start": {
     "provider": "ElevenLabs",
     "model": "eleven_text_to_sound_v2",
-    "file": "audio/sfx/battle-start.mp3",
-    "bytes": 24703,
-    "sha256": "e2ba6c821eb05c2171c7966842d8989b59941e664500a3880f67083988e8253f",
-    "generatedAt": "2026-09-27T18:45:55Z",
-    "credits": 15
+    "file": "audio/sfx/battle-start-soft.mp3",
+    "bytes": 13418,
+    "sha256": "ce9c489f78a25f63c011a5fabf88b3b0f5124acd06da5a2ed214c490cc2976f1",
+    "generatedAt": "2026-09-28T18:35:13Z",
+    "credits": 8,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "4da2f22c2baba66afe51c873edf502e4042376a5b60ad3904dab0771615c9207",
+      "gain": 3.627918,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.075,
+      "peakCeiling": 0.3,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
   },
   "capture-throw": {
     "provider": "ElevenLabs",
@@ -754,5 +728,461 @@
     "sha256": "6ac0220a32d6d3926ebb62a03f0de294f96abe5c80832e0f721a150db615856f",
     "generatedAt": "2026-09-27T18:51:01Z",
     "credits": 60
+  },
+  "step-grass-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-1.mp3",
+    "bytes": 8821,
+    "sha256": "d81fd87cad13809191b4fbe1705d0b19dc08df38d3ff1d7563cc0504a506aadd",
+    "generatedAt": "2026-09-28T18:35:15Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "6ec3bd2c41194f73d158512462bda80c338c4d9b60d7f78456e80763b1e09bd0",
+      "gain": 0.593525,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-2.mp3",
+    "bytes": 8821,
+    "sha256": "29b40a564eada897f8da9eb174be6917026f90b02331d5fea419552a237d913e",
+    "generatedAt": "2026-09-28T18:35:17Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "a200077fad9f451a7d2d0686b0756fc94037e2ab9f518de8473c94a37a1a71c9",
+      "gain": 0.466539,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-3.mp3",
+    "bytes": 8821,
+    "sha256": "ba779a8c800a8aac19d721043f5a3fb8cf3b64b9a5072eb885f6cd59474f5b32",
+    "generatedAt": "2026-09-28T18:35:19Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "86f77aa93e341f8203dee87ac23972e195f94d224fe6349815a9c43091cfde66",
+      "gain": 1.459102,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-4.mp3",
+    "bytes": 8821,
+    "sha256": "b8d2ec21bbc05662334dc07af6d9e86fcf1b77d6eb4d458b3b807aea78954a59",
+    "generatedAt": "2026-09-28T18:35:21Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "63191e27b2eecd012465dd7925147b34807b372b0d5931591a6587d8e597441a",
+      "gain": 0.476024,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-stone-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-stone-1.mp3",
+    "bytes": 8821,
+    "sha256": "739533c489bc6c357a185a6c02c479392a928cbd80479790cbdae9c5c92c04cb",
+    "generatedAt": "2026-09-28T18:35:22Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "db34ca3656bcaee40033bffe4e1f66518e8c52e8742d7175dfe11638ab482e7c",
+      "gain": 0.262746,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-stone-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-stone-2.mp3",
+    "bytes": 8821,
+    "sha256": "c0a110123247bc441fb56cb0400d4e7c2dc952aaf461e6b19f2924757b016c38",
+    "generatedAt": "2026-09-28T18:35:24Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "c8936cc6e258661e0ef7e64ded150bc5d6bab177294ee8c4a4a8b44cfb179436",
+      "gain": 1.641768,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-stone-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-stone-3.mp3",
+    "bytes": 8821,
+    "sha256": "6b2eb56ca7e8d735d6402441ab59fdd85c1631791f2e0971e59dd8e2c4773a8c",
+    "generatedAt": "2026-09-28T18:35:26Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "d8633c26180cb49c88213006f412a4548906ea67fb77fa137cf759757b0f3cd3",
+      "gain": 0.259282,
+      "trimmedLeadSeconds": 0.0079,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-stone-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-stone-4.mp3",
+    "bytes": 8821,
+    "sha256": "dd061dd2f63e75dff058af37bfd3a7faa4889c41ffc4a838e614424f7e3bbe4e",
+    "generatedAt": "2026-09-28T18:35:28Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "9a52ebff895cc91808ee87cef3d71511897e881251880e5e53a0462836d12e03",
+      "gain": 0.844189,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-sand-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-sand-1.mp3",
+    "bytes": 8821,
+    "sha256": "a48d88acea63135eef31f0cda845dbd54c77aa08e8e2e64035b98b3fa6bd45d4",
+    "generatedAt": "2026-09-28T18:35:30Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "158a14df6b27dffb3c5bf8301b21a40c30d096239fe607743474b0f988a30ee5",
+      "gain": 1.99486,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-sand-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-sand-2.mp3",
+    "bytes": 8821,
+    "sha256": "9a168a1194c5b0a9af4b5e86d9384856c4715b335d900c941bb8446fae1a02ec",
+    "generatedAt": "2026-09-28T18:35:32Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "f51004c2788d1c49e403693225e0529ca7fe30dcd4cd02c98494dbc1e85d8b01",
+      "gain": 2.523556,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-sand-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-sand-3.mp3",
+    "bytes": 8821,
+    "sha256": "697191999f745812b9b59b3254a00a32cb79601270cc4b2796031e9abeb513b5",
+    "generatedAt": "2026-09-28T18:35:34Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "b5d933f1dfa0ffbeba81dc25bb9e13573b661002cc0be1605b38baa04aa0d4b4",
+      "gain": 5.570723,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-sand-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-sand-4.mp3",
+    "bytes": 8821,
+    "sha256": "edbff8617699d5db34a82d91a46bc9072a76b468051e5fac754ded5351c0b1f8",
+    "generatedAt": "2026-09-28T18:35:36Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "26db9a5743f536b1f80141c34213ed1164d11479597d8fb220fca17eb4ecd3d9",
+      "gain": 0.589337,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-snow-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-snow-1.mp3",
+    "bytes": 8821,
+    "sha256": "a33ca76de40fec0e3c1c6792d944d4946f08313a7d14adbf40e89e5009424198",
+    "generatedAt": "2026-09-28T18:35:37Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "f610925b797c06bb6863ad34aa4bd2d171a5d65af865c23a8fcad191bf1c6a26",
+      "gain": 0.259266,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-snow-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-snow-2.mp3",
+    "bytes": 8821,
+    "sha256": "5fb5b1eb672a72053ce541e192216b6d795da27b16bef9192db5341e64dc40dc",
+    "generatedAt": "2026-09-28T18:35:39Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "70c4750ee8a1a7500bb87a75629c7813375690d43341b87b8caad666f76385c4",
+      "gain": 0.426698,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-snow-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-snow-3.mp3",
+    "bytes": 8821,
+    "sha256": "02fa8bab5b60c75a33cb15fb41a76bf499d11f37c687991edd4847bf77541594",
+    "generatedAt": "2026-09-28T18:35:41Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "4f2b93e51aa36c7b8253a989ec42d5f98530014773d54960c293dbb6f2f10d79",
+      "gain": 0.382979,
+      "trimmedLeadSeconds": 0.0272,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-snow-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-snow-4.mp3",
+    "bytes": 8821,
+    "sha256": "9c42c65bcdb557fbab87a5d27338531a4dcd83aa44e226f2297f76ce3c88559f",
+    "generatedAt": "2026-09-28T18:35:43Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "6948e4dffedecbf4b7f7ec4fbb0e7d12f990668f43fd94656f1d9371bbe883f1",
+      "gain": 1.312125,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-dirt-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-dirt-1.mp3",
+    "bytes": 8821,
+    "sha256": "bf8efa6e5941de9dd7b6372a93dc3af264d1f5bdcaccacc0b1c24512b4a3d2d0",
+    "generatedAt": "2026-09-28T18:35:45Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "fe2d2bd5356ec84ccd8cd26afb0b5acf02cd34efef379a9db6d0a3c387150504",
+      "gain": 1.189369,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-dirt-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-dirt-2.mp3",
+    "bytes": 8821,
+    "sha256": "abfb04fe7c595917d7ec62f82b6e15576f75b9729aececb80a2582c16e249941",
+    "generatedAt": "2026-09-28T18:35:46Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "1687d56f0f6e623aaed088f56e3b360726768fa7dc83c0b83f4f41f3fed7ae9d",
+      "gain": 5.169425,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-dirt-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-dirt-3.mp3",
+    "bytes": 8821,
+    "sha256": "23cd3f3d1f658b3c51682530945b36e362f8856be3efe315083b3b0fdefc9716",
+    "generatedAt": "2026-09-28T18:35:49Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "e106c9f291890f7739606c0520bcd6945892d4d6541b42b964254a77358e9c5f",
+      "gain": 1.018523,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-dirt-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-dirt-4.mp3",
+    "bytes": 8821,
+    "sha256": "ab64d6ed84cff2545e29e3b7e6a3c0aedcd59f0c0ec3cee4f710619fd54b711c",
+    "generatedAt": "2026-09-28T18:35:51Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "3ad3a2e63000e7fb6639c698705acdd4fb917a6f4a5fce535bc565ef7d8b66da",
+      "gain": 0.712303,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-wood-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-wood-1.mp3",
+    "bytes": 8821,
+    "sha256": "4784187fa27de9df83123c825e40a04cc3b7c082809c3a1815691dfb40d298a3",
+    "generatedAt": "2026-09-28T18:35:53Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "15977912d265e1b8193427355b555bae779aac76a739049f43bd0d32b76f3eb4",
+      "gain": 0.257988,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-wood-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-wood-2.mp3",
+    "bytes": 8821,
+    "sha256": "44228d83f2eaee08e394abfc82fbc6ee93d622da42068a79b5aac3d59ba93b29",
+    "generatedAt": "2026-09-28T18:35:55Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "34a359590e75f2ae1aaf6a05f528e726dea20181a2fedfe209ef907521f98946",
+      "gain": 2.245548,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-wood-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-wood-3.mp3",
+    "bytes": 8821,
+    "sha256": "edad747f56be6d2d98a364b37d7a05c1444e1116905647c51dda2d728b840ded",
+    "generatedAt": "2026-09-28T18:35:57Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "d2fdf7bee91eb38ff35b8d9b48257e3f64db6883534b05fef9fea33980daf815",
+      "gain": 0.34292,
+      "trimmedLeadSeconds": 0.1127,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-wood-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-wood-4.mp3",
+    "bytes": 8821,
+    "sha256": "7e4114cc4d195a7f48f8a20ab5fadc6e741c1c7d4941103a52c38d1bc0d1d9a3",
+    "generatedAt": "2026-09-28T18:35:59Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "eae36fc14b8e419cd48a87de9edff9203b975683b5688ea6d345e9c096ca1ec0",
+      "gain": 0.259256,
+      "trimmedLeadSeconds": 0.0049,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
   }
 }

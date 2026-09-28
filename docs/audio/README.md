@@ -2,12 +2,14 @@
 
 ## Ready now
 
-- 80 ElevenLabs sound effects: 26 family cries (including Oneirune), 20 elemental attack sounds, and 34 interface/gameplay cues.
+- 100 ElevenLabs sound effects: 26 family cries (including Oneirune), 20 elemental attack sounds, 24 footstep takes, and 30 interface/gameplay cues.
 - Four generated ambience loops: forest, coast, storm and Dream Land.
 - An opt-in Web Audio mixer with separate music, effects and ambience volumes; background-tab pause; lazy asset loading; limited voices and decoded-buffer cache; music ducking for reward stingers; scene transitions.
 - 22 Suno music assignments and copy-ready prompts. **No Suno songs are installed yet.**
 
-`generation.json` records provider, original file hash and credits for each generated asset. `validation.json` contains decoded duration, peak and RMS checks. This is technical validation, not a claim of human listening approval. No provider key ships to the browser.
+`generation.json` records provider, published file hash and credits for each generated asset. Processed foley also preserves the original hash and leveling settings. `validation.json` contains decoded duration, peak and RMS checks. This is technical validation, not a claim of human listening approval. No provider key ships to the browser.
+
+The battle entrance uses a short, leveled marimba cue with a soft attack and release, played at 42% cue gain across wild, trainer, and League battles. Wild encounter cries start after the chime at half their previous gain. Footsteps use four shuffled takes on each of six surfaces (grass, stone, sand, snow, dirt, wood), with no immediate repeats, subtle pitch/level/stereo variation, and cadence driven by actual travel distance. Sprinting uses a faster cadence. Pauses, collisions and travel reset the stride; slow downloads cannot queue late footfalls. Ground selection follows the rendered path tile, with snow in snowy towns and wood indoors.
 
 ## Music handoff
 
@@ -33,6 +35,8 @@ FFmpeg must be on PATH or `imageio-ffmpeg` installed in `.sites-runtime/audio-to
 `python scripts/generate-audio.py --all` generates missing **SFX and ambience only**, using `ELEVENLABS_API_KEY` from the process environment. It skips completed assets and retains a quota reserve. It never generates ElevenLabs music or automatically retries a paid request with an unknown outcome.
 
 `python scripts/validate-audio.py` decodes installed clips with FFmpeg and NumPy, checks for non-silence and expected durations, and refreshes both audio manifests.
+
+`python scripts/finish-foley.py` levels the replacement battle cue and footsteps once, adding attack/release fades and retaining source hashes. It requires the same local FFmpeg and NumPy runtime as validation. It skips clips already processed with this version.
 
 ## Release status
 

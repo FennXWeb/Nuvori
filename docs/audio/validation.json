@@ -48,30 +48,6 @@
     "rms": 0.2589
   },
   {
-    "id": "step-grass",
-    "duration": 0.48,
-    "peak": 0.1908,
-    "rms": 0.0244
-  },
-  {
-    "id": "step-stone",
-    "duration": 0.48,
-    "peak": 0.4903,
-    "rms": 0.1333
-  },
-  {
-    "id": "step-sand",
-    "duration": 0.48,
-    "peak": 0.1149,
-    "rms": 0.0185
-  },
-  {
-    "id": "step-snow",
-    "duration": 0.48,
-    "peak": 1.3177,
-    "rms": 0.1049
-  },
-  {
     "id": "door",
     "duration": 0.88,
     "peak": 0.4925,
@@ -85,9 +61,9 @@
   },
   {
     "id": "battle-start",
-    "duration": 1.48,
-    "peak": 1.5817,
-    "rms": 0.3132
+    "duration": 0.836,
+    "peak": 0.2848,
+    "rms": 0.0578
   },
   {
     "id": "capture-throw",
@@ -502,5 +478,149 @@
     "duration": 6.0,
     "peak": 0.7493,
     "rms": 0.0898
+  },
+  {
+    "id": "step-grass-1",
+    "duration": 0.549,
+    "peak": 0.3102,
+    "rms": 0.0399
+  },
+  {
+    "id": "step-grass-2",
+    "duration": 0.549,
+    "peak": 0.2566,
+    "rms": 0.0199
+  },
+  {
+    "id": "step-grass-3",
+    "duration": 0.549,
+    "peak": 0.283,
+    "rms": 0.0361
+  },
+  {
+    "id": "step-grass-4",
+    "duration": 0.549,
+    "peak": 0.3298,
+    "rms": 0.032
+  },
+  {
+    "id": "step-stone-1",
+    "duration": 0.549,
+    "peak": 0.332,
+    "rms": 0.0204
+  },
+  {
+    "id": "step-stone-2",
+    "duration": 0.549,
+    "peak": 0.3133,
+    "rms": 0.0177
+  },
+  {
+    "id": "step-stone-3",
+    "duration": 0.549,
+    "peak": 0.3331,
+    "rms": 0.0166
+  },
+  {
+    "id": "step-stone-4",
+    "duration": 0.549,
+    "peak": 0.329,
+    "rms": 0.0379
+  },
+  {
+    "id": "step-sand-1",
+    "duration": 0.549,
+    "peak": 0.2954,
+    "rms": 0.0445
+  },
+  {
+    "id": "step-sand-2",
+    "duration": 0.549,
+    "peak": 0.3272,
+    "rms": 0.0739
+  },
+  {
+    "id": "step-sand-3",
+    "duration": 0.549,
+    "peak": 0.2852,
+    "rms": 0.0287
+  },
+  {
+    "id": "step-sand-4",
+    "duration": 0.549,
+    "peak": 0.1901,
+    "rms": 0.0102
+  },
+  {
+    "id": "step-snow-1",
+    "duration": 0.549,
+    "peak": 0.3296,
+    "rms": 0.0148
+  },
+  {
+    "id": "step-snow-2",
+    "duration": 0.549,
+    "peak": 0.2988,
+    "rms": 0.0187
+  },
+  {
+    "id": "step-snow-3",
+    "duration": 0.549,
+    "peak": 0.3343,
+    "rms": 0.019
+  },
+  {
+    "id": "step-snow-4",
+    "duration": 0.549,
+    "peak": 0.2943,
+    "rms": 0.0278
+  },
+  {
+    "id": "step-dirt-1",
+    "duration": 0.549,
+    "peak": 0.3325,
+    "rms": 0.0729
+  },
+  {
+    "id": "step-dirt-2",
+    "duration": 0.549,
+    "peak": 0.2728,
+    "rms": 0.0362
+  },
+  {
+    "id": "step-dirt-3",
+    "duration": 0.549,
+    "peak": 0.3235,
+    "rms": 0.0239
+  },
+  {
+    "id": "step-dirt-4",
+    "duration": 0.549,
+    "peak": 0.2942,
+    "rms": 0.0179
+  },
+  {
+    "id": "step-wood-1",
+    "duration": 0.549,
+    "peak": 0.3325,
+    "rms": 0.0272
+  },
+  {
+    "id": "step-wood-2",
+    "duration": 0.549,
+    "peak": 0.3301,
+    "rms": 0.0466
+  },
+  {
+    "id": "step-wood-3",
+    "duration": 0.549,
+    "peak": 0.3332,
+    "rms": 0.0189
+  },
+  {
+    "id": "step-wood-4",
+    "duration": 0.549,
+    "peak": 0.3326,
+    "rms": 0.0155
   }
 ]
