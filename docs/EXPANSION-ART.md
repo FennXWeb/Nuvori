@@ -1,5 +1,7 @@
 # Expansion art
 
+The game now uses the corrected `evolution-N-v2.png` sheets and measured crop rectangles. See [Sprite cropping repair](SPRITE-CROPS.md) for the active assets and validation workflow. The original generation prompts below are retained for provenance.
+
 Generated with the built-in imagegen tool. Transparent original atlases are stored in public/assets/evolution-N.png; each cell preserves its creature family index. The six sheets give all 150 evolved forms distinct mature anatomy. Runtime animation deforms the sprites into species-specific walking, hopping, flying and swimming cycles.
 
 ## Atlas 1

@@ -1,8 +1,9 @@
-import { SPECIES_BY_ID, type Species } from "./data";
+import { SPECIES_BY_ID } from "./data";
 import { OUTFITS, HAIR_COLORS } from "./expansion";
 import type { Player } from "./game";
+import { nuvoSprite, fitSprite, spriteFill } from "./sprites";
+export { nuvoAtlas } from "./sprites";
 
-export function nuvoAtlas(s: Species) { return s.id === "oneirune" ? "oneirune.png" : s.stage ? `evolution-${s.branch}.png` : "nuvo-atlas.png"; }
 export function gaitFor(id: string) {
   const s = SPECIES_BY_ID[id];
   if (s.types.includes("Gale") || [3,9,12,19].includes(s.sprite) || id === "oneirune") return "float";
@@ -14,8 +15,7 @@ export function drawCompanion(ctx: CanvasRenderingContext2D, image: HTMLImageEle
   const s = SPECIES_BY_ID[id]; if (!s || !image.complete || !image.naturalWidth) return;
   const gait = gaitFor(id), phase = time * (moving ? 10 + s.sprite % 5 : 2.5) + s.sprite;
   const stride = moving ? 1 : .16, size = s.stage === 2 ? 84 : s.stage === 1 ? 70 : 58;
-  const columns = s.id === "oneirune" ? 1 : 5, index = s.id === "oneirune" ? 0 : s.sprite;
-  const cw = image.width / columns, ch = image.height / columns;
+  const { frame } = nuvoSprite(s), fitted = fitSprite(frame, size, spriteFill(s));
   ctx.fillStyle = "#183b3433"; ctx.beginPath();ctx.ellipse(x,y,12+s.stage*4,5,0,0,Math.PI*2);ctx.fill();
   ctx.save();ctx.translate(x,y);
   if (direction === 1) ctx.scale(-1,1);
@@ -24,12 +24,8 @@ export function drawCompanion(ctx: CanvasRenderingContext2D, image: HTMLImageEle
   ctx.rotate(Math.sin(phase)*(gait === "swim" ? .075 : .03)*stride);
   ctx.scale(1+Math.sin(phase)*.025*stride,1-Math.sin(phase)*.025*stride);
   if (prismatic) ctx.filter = "hue-rotate(140deg)";
-  // Slice deformation gives tails, feet and wing tips their own moving silhouette.
-  const strips = 10;
-  for (let band=0; band<strips; band++) {
-    const sway = Math.sin(phase + band*.7) * (gait === "float" ? 2.2 : gait === "swim" ? 2.5 : band>6 ? 1.5 : .3) * stride;
-    ctx.drawImage(image,(index%columns)*cw,Math.floor(index/columns)*ch+band*ch/strips,cw,ch/strips,-size/2+sway,-size*.86+band*size/strips,size,size/strips+.3);
-  }
+  // Animate the intact silhouette: offset strips can look like cropped or torn body parts.
+  ctx.drawImage(image,frame.x,frame.y,frame.width,frame.height,-fitted.width/2,-fitted.height,fitted.width,fitted.height);
   ctx.restore();
   if(prismatic) { ctx.fillStyle="#fff2a2";ctx.fillRect(x+Math.cos(time*3)*23,y-30+Math.sin(time*3)*15,3,3); }
 }
