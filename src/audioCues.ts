@@ -26,9 +26,3 @@ export function creatureSound(id: string) {
   const nuvo = SPECIES_BY_ID[id];
   return nuvo ? { id: `cry-${nuvo.base}`, rate: 1 - nuvo.stage * .14 } : null;
 }
-export function footstepSound(region: string, interior?: Interior) {
-  if (interior || REGION_BY_ID[region]?.kind === "Town" || region === "crystal") return "step-stone";
-  if (["saffron", "tideglass"].includes(region)) return "step-sand";
-  if (region === "frostmere" || region === "tempest") return "step-snow";
-  return "step-grass";
-}

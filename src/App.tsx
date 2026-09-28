@@ -104,7 +104,7 @@ import { useLeague, LeaguePanel } from "./League";
 import { TRAINERS, trainerBattle, ORBS, orbCount, restoreAtLodge, type OrbKind } from "./expansion";
 import "./expansion.css";
 import { gameAudio } from "./audio";
-import { footstepSound, soundscape } from "./audioCues";
+import { soundscape } from "./audioCues";
 import { AudioSettings, readAudioMix } from "./AudioSettings";
 type Panel =
   | "guide"
@@ -457,7 +457,6 @@ export default function App() {
     (x: number, y: number, dir: number, moving: boolean, steps: number) => {
       if (pausedByOtherTab.current) return;
       position.current = { x, y, dir, moving };
-      if (moving && state.current) gameAudio.play(footstepSound(state.current.region, state.current.interior), { gain: .22 });
       if (steps)
         setSave((s) => (s ? { ...s, x, y, steps: s.steps + steps } : s));
     },
@@ -491,8 +490,8 @@ export default function App() {
         : v,
     );
     sound("battle", audio);
-    gameAudio.cry(b.wild.speciesId, .4);
-    if (b.wild.prismatic) gameAudio.play("prismatic", { delay: .6 });
+    gameAudio.cry(b.wild.speciesId, .85, .4);
+    if (b.wild.prismatic) gameAudio.play("prismatic", { delay: 1.1, gain: .5 });
   }, [audio]);
   const onInteract = useCallback(
     (kind: Interaction) => {

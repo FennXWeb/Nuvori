@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { MOVES, SPECIES, REGIONS } from "../src/data";
 import { creatureSound, moveSound, soundscape, validMix } from "../src/audioCues";
+import { FootstepSequence, FootstepStride, FOOTSTEP_SURFACES, footstepSurface } from "../src/footsteps";
 
 const manifest=JSON.parse(readFileSync(new URL('../src/audioManifest.json',import.meta.url),'utf8'));
 const receipts=JSON.parse(readFileSync(new URL('../docs/audio/generation.json',import.meta.url),'utf8'));
@@ -20,9 +22,68 @@ test('sound assets exist and receipts match their published availability',()=>{
   for(const [id,entry]of Object.entries(manifest) as [string,{available:boolean;file:string;kind:string}][]){
     assert.equal(entry.available,Boolean(receipts[id])&&existsSync(new URL('../public/'+entry.file,import.meta.url)),id);
     if(entry.kind!=='music') assert.equal(entry.available,true,id);
+    if(entry.available) assert.equal(createHash('sha256').update(readFileSync(new URL('../public/'+entry.file,import.meta.url))).digest('hex'),receipts[id].sha256,id);
   }
+});
+
+test('replacement battle and footstep files have controlled peaks and distinct recordings',()=>{
+  const levels=JSON.parse(readFileSync(new URL('../docs/audio/validation.json',import.meta.url),'utf8')) as {id:string;peak:number;rms:number;duration:number}[];
+  const battle=levels.find(c=>c.id==='battle-start')!;
+  assert.ok(battle.duration<1,'the battle opening should stay brief');
+  assert.ok(battle.peak<.4&&battle.rms<.09,'battle entrance must remain gently leveled');
+  const takes=levels.filter(c=>c.id.startsWith('step-'));
+  assert.equal(takes.length,24);
+  assert.equal(new Set(takes.map(c=>receipts[c.id].sha256)).size,24);
+  for(const take of takes) assert.ok(take.peak<.4&&take.rms<.10,take.id);
 });
 test('audio settings recover corrupt values and clamp volumes',()=>{
   assert.deepEqual(validMix({music:2,sfx:-1,ambience:NaN}),{music:1,sfx:0,ambience:.3});
   assert.deepEqual(validMix(null),{music:.5,sfx:.7,ambience:.3});
+});
+
+test('footsteps exhaust every surface take before repeating, including bag boundaries',()=>{
+  let seed=716;
+  const sequence=new FootstepSequence(()=>((seed=(seed*1664525+1013904223)>>>0)/2**32));
+  for(const surface of FOOTSTEP_SURFACES){
+    let previous='';
+    for(let bag=0;bag<20;bag++){
+      const ids=new Set<string>();
+      for(let take=0;take<4;take++){
+        const cue=sequence.next(surface,bag%2===0);
+        assert.equal(manifest[cue.id]?.available,true,cue.id);
+        assert.notEqual(cue.id,previous);
+        assert.ok(cue.rate>=.94&&cue.rate<=1.12);
+        assert.ok(cue.gain>=.19&&cue.gain<=.3);
+        assert.ok(Math.abs(cue.pan)<=.1);
+        ids.add(cue.id);previous=cue.id;
+      }
+      assert.equal(ids.size,4);
+    }
+  }
+});
+
+test('footsteps follow actual travel at any frame rate, accelerate with sprinting, and stop at rest',()=>{
+  function travel(speed:number,sprint:boolean,fps:number){
+    const stride=new FootstepStride();let count=0;
+    for(let frame=0;frame<fps*4;frame++)if(stride.advance(speed/fps,sprint))count++;
+    return count;
+  }
+  assert.equal(travel(103,false,60),11);
+  assert.equal(travel(103,false,30),11);
+  assert.equal(travel(175,true,60),15);
+  assert.equal(travel(175,true,30),15);
+  assert.equal(travel(0,true,60),0);
+  const stride=new FootstepStride();
+  assert.equal(stride.advance(35,false),false);
+  assert.equal(stride.advance(0,false),false);
+  assert.equal(stride.advance(2,false),false,'stopping clears the unfinished stride');
+});
+
+test('footsteps reflect paving, trails, indoor wood, beaches and snowy towns',()=>{
+  assert.equal(footstepSurface('mossbell',undefined,true),'stone');
+  assert.equal(footstepSurface('mossbell',undefined,false),'grass');
+  assert.equal(footstepSurface('verdant',undefined,true),'dirt');
+  assert.equal(footstepSurface('frostmere',undefined,true),'snow');
+  assert.equal(footstepSurface('sunwake'),'sand');
+  assert.equal(footstepSurface('frostmere','lodge'),'wood');
 });

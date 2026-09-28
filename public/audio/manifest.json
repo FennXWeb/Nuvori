@@ -269,42 +269,6 @@
     "loopEnd": null,
     "available": true
   },
-  "step-grass": {
-    "title": "Grass footstep",
-    "kind": "sfx",
-    "file": "audio/sfx/step-grass.mp3",
-    "seconds": 0.5,
-    "loopStart": null,
-    "loopEnd": null,
-    "available": true
-  },
-  "step-stone": {
-    "title": "Stone footstep",
-    "kind": "sfx",
-    "file": "audio/sfx/step-stone.mp3",
-    "seconds": 0.5,
-    "loopStart": null,
-    "loopEnd": null,
-    "available": true
-  },
-  "step-sand": {
-    "title": "Sand footstep",
-    "kind": "sfx",
-    "file": "audio/sfx/step-sand.mp3",
-    "seconds": 0.5,
-    "loopStart": null,
-    "loopEnd": null,
-    "available": true
-  },
-  "step-snow": {
-    "title": "Snow footstep",
-    "kind": "sfx",
-    "file": "audio/sfx/step-snow.mp3",
-    "seconds": 0.5,
-    "loopStart": null,
-    "loopEnd": null,
-    "available": true
-  },
   "door": {
     "title": "Welcome inside",
     "kind": "sfx",
@@ -324,10 +288,10 @@
     "available": true
   },
   "battle-start": {
-    "title": "A challenger appears",
+    "title": "A gentle encounter",
     "kind": "sfx",
-    "file": "audio/sfx/battle-start.mp3",
-    "seconds": 1.5,
+    "file": "audio/sfx/battle-start-soft.mp3",
+    "seconds": 0.8,
     "loopStart": null,
     "loopEnd": null,
     "available": true
@@ -949,6 +913,222 @@
     "kind": "ambience",
     "file": "audio/ambience/ambience-dream.mp3",
     "seconds": 6,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-1": {
+    "title": "Grass footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-2": {
+    "title": "Grass footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-3": {
+    "title": "Grass footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-4": {
+    "title": "Grass footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-4.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-stone-1": {
+    "title": "Stone footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-stone-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-stone-2": {
+    "title": "Stone footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-stone-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-stone-3": {
+    "title": "Stone footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-stone-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-stone-4": {
+    "title": "Stone footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-stone-4.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-sand-1": {
+    "title": "Sand footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-sand-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-sand-2": {
+    "title": "Sand footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-sand-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-sand-3": {
+    "title": "Sand footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-sand-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-sand-4": {
+    "title": "Sand footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-sand-4.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-snow-1": {
+    "title": "Snow footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-snow-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-snow-2": {
+    "title": "Snow footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-snow-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-snow-3": {
+    "title": "Snow footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-snow-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-snow-4": {
+    "title": "Snow footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-snow-4.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-dirt-1": {
+    "title": "Dirt footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-dirt-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-dirt-2": {
+    "title": "Dirt footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-dirt-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-dirt-3": {
+    "title": "Dirt footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-dirt-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-dirt-4": {
+    "title": "Dirt footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-dirt-4.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-wood-1": {
+    "title": "Wood footstep 1",
+    "kind": "sfx",
+    "file": "audio/sfx/step-wood-1.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-wood-2": {
+    "title": "Wood footstep 2",
+    "kind": "sfx",
+    "file": "audio/sfx/step-wood-2.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-wood-3": {
+    "title": "Wood footstep 3",
+    "kind": "sfx",
+    "file": "audio/sfx/step-wood-3.mp3",
+    "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-wood-4": {
+    "title": "Wood footstep 4",
+    "kind": "sfx",
+    "file": "audio/sfx/step-wood-4.mp3",
+    "seconds": 0.5,
     "loopStart": null,
     "loopEnd": null,
     "available": true

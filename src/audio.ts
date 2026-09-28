@@ -1,5 +1,6 @@
 import manifest from "./audioManifest.json";
 import { DEFAULT_MIX, validMix, creatureSound, moveSound, type AudioMix } from "./audioCues";
+import { FootstepSequence, FootstepStride, type FootstepSurface } from "./footsteps";
 
 interface Cue { title: string; kind: string; file: string; available: boolean; seconds: number; loopStart?: number | null; loopEnd?: number | null }
 export const AUDIO_CUES = manifest as Record<string, Cue>;
@@ -23,6 +24,12 @@ export class GameAudio {
   private paused = false;
   private mix = DEFAULT_MIX;
   private duckUntil = 0;
+  private stride = new FootstepStride();
+  private footstepSequence = new FootstepSequence();
+  private footstepGeneration = 0;
+  private effectGeneration = 0;
+  private walking = false;
+  private footstepSurface?: FootstepSurface;
 
   configure(enabled: boolean, mix = this.mix) {
     this.enabled = enabled;
@@ -133,20 +140,58 @@ export class GameAudio {
     source.start(); this.loops[bus] = { id, source, gain };
   }
 
-  play(id: string, options: { rate?: number; gain?: number; delay?: number } = {}) {
+  updateFootsteps(distance: number, surface: FootstepSurface | null, sprinting = false) {
+    if (!surface || distance <= 0 || !this.enabled || this.paused || this.mix.sfx <= 0 || this.context?.state !== "running") {
+      if (this.walking) this.footstepGeneration++;
+      this.walking = false;
+      this.stride.reset();
+      return;
+    }
+    const warm = !this.walking || this.footstepSurface !== surface;
+    this.walking = true;
+    if (this.footstepSurface !== surface) {
+      this.footstepSurface = surface;
+      this.footstepGeneration++;
+    }
+    // Warm the next takes without queueing sounds while their downloads finish.
+    if (warm) for (let take = 1; take <= 4; take++) void this.buffer(`step-${surface}-${take}`);
+    if (this.stride.advance(distance, sprinting)) {
+      const { id, ...options } = this.footstepSequence.next(surface, sprinting);
+      this.play(id, options);
+    }
+  }
+
+  play(id: string, options: { rate?: number; gain?: number; delay?: number; pan?: number } = {}) {
     if (!this.enabled || this.paused || this.mix.sfx <= 0 || this.context?.state !== "running" || !AUDIO_CUES[id]?.available) return;
     const timestamp = performance.now(), previous = this.played.get(id) ?? -Infinity;
-    if (timestamp - previous < (id.startsWith("step-") ? 230 : 90)) return;
+    const footstep = id.startsWith("step-");
+    if (timestamp - previous < 90) return;
     this.played.set(id, timestamp);
+    const generation = this.effectGeneration, stepGeneration = this.footstepGeneration;
     void this.buffer(id).then(buffer => {
-      if (!buffer || !this.enabled || this.paused || !this.context || !this.buses || this.context.state !== "running" || performance.now() - timestamp > 2500 || this.effects.size >= 10) return;
+      if (!buffer || generation !== this.effectGeneration || !this.enabled || this.paused || !this.context || !this.buses || this.context.state !== "running" || performance.now() - timestamp > (footstep ? 120 : 2500) || this.effects.size >= 10) return;
+      if (footstep && stepGeneration !== this.footstepGeneration) return;
       const source = this.context.createBufferSource(), gain = this.context.createGain();
       source.buffer = buffer;
       source.playbackRate.value = Math.max(.65, Math.min(1.4, options.rate ?? 1));
-      gain.gain.value = Math.max(0, Math.min(1, options.gain ?? 1));
-      source.connect(gain); gain.connect(this.buses.sfx); this.effects.add(source);
-      source.onended = () => { this.effects.delete(source); source.disconnect(); gain.disconnect(); };
-      source.start(this.context.currentTime + (options.delay ?? 0));
+      const battle = id === "battle-start";
+      const level = Math.max(0, Math.min(1, options.gain ?? 1)) * (battle ? .42 : 1);
+      const start = this.context.currentTime + (options.delay ?? 0);
+      const duration = Math.min(buffer.duration / source.playbackRate.value, footstep ? .38 : Infinity);
+      const attack = battle ? .025 : .008, release = battle ? .14 : .065;
+      if (battle || footstep) {
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(level, start + Math.min(attack, duration / 3));
+        gain.gain.setValueAtTime(level, start + Math.max(duration / 3, duration - release));
+        gain.gain.linearRampToValueAtTime(0, start + duration);
+      } else gain.gain.value = level;
+      const pan = options.pan === undefined ? undefined : this.context.createStereoPanner();
+      source.connect(gain);
+      if (pan) { pan.pan.value = options.pan!; gain.connect(pan); pan.connect(this.buses.sfx); }
+      else gain.connect(this.buses.sfx);
+      this.effects.add(source);
+      source.onended = () => { this.effects.delete(source); source.disconnect(); gain.disconnect(); pan?.disconnect(); };
+      source.start(start); source.stop(start + duration);
       if (["victory", "defeat", "evolve", "capture-success", "prismatic", "wheel-prize"].includes(id)) this.duck(buffer.duration);
     });
   }
@@ -160,11 +205,13 @@ export class GameAudio {
   }
 
   private stopEffects() {
+    this.effectGeneration++;
+    this.updateFootsteps(0, null);
     for (const effect of this.effects) { try { effect.stop(); } catch { /* Already ended. */ } }
     this.effects.clear();
   }
 
-  cry(speciesId: string, delay = 0) { const cue = creatureSound(speciesId); if (cue) this.play(cue.id, { rate: cue.rate, gain: .8, delay }); }
+  cry(speciesId: string, delay = 0, gain = .8) { const cue = creatureSound(speciesId); if (cue) this.play(cue.id, { rate: cue.rate, gain, delay }); }
   move(moveId: string) { const cue = moveSound(moveId); this.play(cue.id, { rate: cue.rate }); }
 }
 
