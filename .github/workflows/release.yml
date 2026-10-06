@@ -1,0 +1,36 @@
+name: Publish portable Windows build
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run export:catalog
+      - run: npm run package:windows
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - run: python scripts/verify-smog-build.py
+      - name: Verify version matches tag
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Release tag and package version differ.' }
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          gh release create $env:GITHUB_REF_NAME "release/Nuvori-$version-windows-x64.zip" "release/SHA256SUMS.txt" --title "Nuvori $version - Windows / SMOG" --notes-file docs/RELEASE-NOTES.md --verify-tag

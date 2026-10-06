@@ -1,0 +1,16 @@
+{
+  "appId": "com.fennxweb.nuvori",
+  "productName": "Nuvori",
+  "directories": { "output": "release" },
+  "files": ["dist/**/*", "electron/**/*", "package.json", "!node_modules/**/*"],
+  "extraFiles": ["smog_icon.ico", "smog_logo.png", "smog_header.png", "smog_meta.xml", "smog_launch.bat", { "from": "public/licenses", "to": "licenses" }],
+  "asar": true,
+  "npmRebuild": false,
+  "win": {
+    "target": [{ "target": "zip", "arch": ["x64"] }],
+    "icon": "smog_icon.ico",
+    "artifactName": "Nuvori-${version}-windows-${arch}.${ext}",
+    "executableName": "Nuvori",
+    "signAndEditExecutable": true
+  }
+}

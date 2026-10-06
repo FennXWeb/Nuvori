@@ -4,6 +4,8 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 
 **Play:** https://fennxweb.github.io/Nuvori/
 
+**Windows / SMOG:** [Download the portable build](https://github.com/FennXWeb/Nuvori/releases/latest), or add `FennXWeb/Nuvori` in SMOG. Extract the full ZIP and run `smog_launch.bat` to play without installing Node.js. Desktop saves live in `%APPDATA%\FennXWeb\Nuvori`. F11 toggles fullscreen. See [Windows publishing](docs/SMOG.md).
+
 ## Included
 
 - Character creation, four outfit palettes, five starters, animated four-direction walking/sprinting, and a following lead Nuvo.
@@ -19,7 +21,7 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 - New-release detection with a save-and-apply popup, deferred until the current battle or activity ends.
 - Rare **Prismatic** color variants at a 1/512 wild-encounter probability. Rarity persists through capture, saves, and evolution.
 - Local guest saves; Supabase OAuth, per-account cloud saves, authenticated shared-world presence, visible remote keepers and companions, and greetings when the backend/providers are configured.
-- Keyboard and touch controls, responsive layouts, optional synthesized sound effects, and reduced-motion styling.
+- Keyboard and touch controls, responsive layouts, five Suno music themes, 100 generated sound effects, four ambience loops, and reduced-motion styling.
 - Previously caught badges in wild encounters and the Nuvopedia; animated evolution-ready choices that can be deferred.
 - Persistent friend requests, friend codes, blocking, and direction markers for off-screen friends in the same area.
 - Global and area-local text chat, including separate lodge/shop channels, message limits, and blocked-user filtering.
