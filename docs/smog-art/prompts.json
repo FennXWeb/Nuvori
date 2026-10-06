@@ -1,0 +1,20 @@
+{
+  "tool": "OpenAI built-in image_gen",
+  "created": "2026-10-06",
+  "assets": [
+    {
+      "file": "smog_header.png",
+      "prompt": "Use case: ads-marketing. Asset: Nuvori SMOG game-library landscape header, 2400 x 1000 pixels, full-bleed 12:5 composition. Create polished illustrated key art for the original cozy 2D creature-collection RPG Nuvori. Input image 1 is a reference for the exact NUVORI title identity: ivory-to-mint fantasy lettering, deep navy outlines, leafy flourishes and a turquoise orbital star. Input image 2 is a reference sheet for the actual creatures: keep their recognizable designs, not the atlas layout. Show a warm, magical panorama of Auralis: a winding trail through mossy green meadows, a small timber-and-teal-roof village, luminous ancient stone arch, a distant crystalline mountain and waterfall. In the foreground feature the five starter creatures from the first row of the creature reference: leafy green fox, ember red panda, blue bubble otter, lavender cloud owl, yellow electric rabbit; appealing expressive poses together along the path, fully within frame. Include the NUVORI wordmark centered in the upper-middle sky with comfortable clearance. Rich painterly game illustration with crisp shapes inspired by the existing art, atmospheric depth, golden morning light, mint, teal, cream and deep navy accents. Only text: NUVORI. No tagline, no UI, no SMOG branding, no unrelated franchise references, no watermark. Keep important content within the central 85 percent for library cropping."
+    },
+    {
+      "file": "smog_logo.png",
+      "prompt": "Use case: logo-brand. Asset: smog_logo.png, transparent game title wordmark, wide 3:1 canvas suitable for 1200 x 400 pixels. Generate a new clean high-resolution NUVORI wordmark using the provided Nuvori logo as the brand reference. Exact text: NUVORI (N U V O R I). Preserve recognizable ivory-to-mint fantasy serif letters with deep navy outline and subtle dimensional shading, a turquoise ring orbiting the O with a small luminous four-point star, and small leafy flourishes. Refine the proportions into a compact horizontal library logo that reads at small size, with all flourishes entirely inside the canvas and generous transparent padding at all edges. Crisp polished illustrated game branding matching the reference. Genuine transparent alpha background, no solid rectangle, no scene, no other text, no watermark."
+    },
+    {
+      "file": "smog_icon.ico",
+      "source": "docs/smog-art/nuvori-icon-source.png",
+      "prompt": "Use case: logo-brand. Asset: original Nuvori Windows app icon, square 1024 x 1024 source with genuinely transparent outer corners, designed to remain recognizable at 16, 32, 48 and 256 px. Create a bold polished illustrated emblem inspired by the provided Nuvori logo: one luminous ivory/mint capital N centered on a deep navy rounded-square tile, with a simple turquoise orbit sweeping around it and a single small leafy sprout integrated at the top right. Thick clean silhouette, very restrained detail, centered composition, high contrast, subtle bevel and warm ivory highlights. The tile occupies 90 percent of canvas, with consistent transparent padding and rounded transparent corners. No wordmark beyond the single N, no tiny text, no extra stars or fine decorative clutter, no scenery, no watermark. Match the existing Nuvori palette and fantasy-game personality."
+    }
+  ],
+  "processing": "Deterministic resizing to the kit's recommended dimensions and ICO encoding at 16, 32, 48, 64, 128, 256 px. Transparent alpha preserved."
+}

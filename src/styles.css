@@ -1,6 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap");
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/manrope';
 :root {
-  font-family: "DM Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   color: #283e37;
   background: #f5f4ed;
   font-synthesis: none;
@@ -71,7 +72,7 @@ p {
 h1,
 h2,
 h3 {
-  font-family: Manrope, sans-serif;
+  font-family: "Manrope Variable", sans-serif;
 }
 h1 {
   font-size: 32px;
@@ -211,7 +212,7 @@ kbd {
 }
 .online-invite strong {
   color: #e5eed8;
-  font-family: Manrope;
+  font-family: "Manrope Variable";
   font-size: 15px;
 }
 .online-invite p {
@@ -444,7 +445,7 @@ kbd {
 }
 .location-chip strong {
   font-size: 12px;
-  font-family: Manrope;
+  font-family: "Manrope Variable";
   font-weight: 750;
 }
 .location-chip small {
@@ -1213,7 +1214,7 @@ kbd {
   border-radius: 50%;
 }
 .preview-name {
-  font-family: Manrope;
+  font-family: "Manrope Variable";
   font-weight: 750;
   font-size: 17px;
   color: #5e7850;
@@ -1886,7 +1887,7 @@ kbd {
 .item-row h3 small {
   color: #a0ad8e;
   font-size: 12px;
-  font-family: "DM Sans";
+  font-family: "DM Sans Variable";
 }
 .item-row p {
   font-size: 12px;
@@ -1916,7 +1917,7 @@ kbd {
 }
 .journal-stats strong {
   font-size: 26px;
-  font-family: Manrope;
+  font-family: "Manrope Variable";
   color: #779261;
 }
 .objective {
@@ -2403,7 +2404,7 @@ kbd {
 }
 .battle-health strong {
   font-size: 16px;
-  font-family: Manrope;
+  font-family: "Manrope Variable";
 }
 .battle-health > div:first-child > span {
   font-size: 12px;
@@ -2535,7 +2536,7 @@ kbd {
   align-items: center;
 }
 .battle-result > strong {
-  font-family: Manrope;
+  font-family: "Manrope Variable";
   font-size: 16px;
   color: #77985e;
 }
@@ -3718,3 +3719,6 @@ kbd {
     transition: none !important;
   }
 }
+.desktop-login-complete { max-width: 640px; margin: 12vh auto; padding: 36px; }
+.desktop-login-complete h1 { margin-bottom: 18px; }
+.desktop-login-complete p { margin-bottom: 28px; }

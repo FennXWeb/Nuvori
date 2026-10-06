@@ -25,16 +25,31 @@ export const supabase: SupabaseClient | null = backendConfigured
       },
     )
   : null;
+let desktopLoginPending = false;
 export async function signIn(provider: "google" | "discord") {
   if (!supabase)
     throw new Error(
       "Online accounts are still being set up. You can play and save on this device now.",
     );
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: { redirectTo: new URL(".", window.location.href).href },
-  });
-  if (error) throw error;
+  const desktop = window.nuvoriDesktop;
+  if (desktop && desktopLoginPending) throw new Error('Finish signing in through the browser window already open.');
+  if (desktop) desktopLoginPending = true;
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: desktop ? 'https://fennxweb.github.io/Nuvori/' : new URL(".", window.location.href).href,
+        skipBrowserRedirect: Boolean(desktop),
+      },
+    });
+    if (error) throw error;
+    if (desktop) {
+      if (!data.url) throw new Error('Sign-in could not start. Please try again.');
+      const code = await desktop.signIn(data.url);
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      if (exchangeError) throw exchangeError;
+    }
+  } finally { desktopLoginPending = false; }
 }
 export async function fetchCloudSave(user: User): Promise<Save | null> {
   if (!supabase) return null;

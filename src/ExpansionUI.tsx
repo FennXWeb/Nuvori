@@ -47,6 +47,7 @@ export function UpdateNotice({safe,onApply,onBlocking}:{safe:boolean;onApply:()=
   const shown=Boolean(update)&&safe&&deferred!==update;
   useEffect(()=>{onBlocking(shown);return()=>onBlocking(false);},[shown,onBlocking]);
   useEffect(()=>{const abort=new AbortController();let alive=true;let checking=false;
+    if(window.nuvoriDesktop)return; // SMOG installs whole desktop releases; a page refresh cannot update the EXE.
     const check=async()=>{if(checking)return;checking=true;try { const res=await fetch(`${import.meta.env.BASE_URL}version.json?t=${Date.now()}`,{cache:"no-store",signal:abort.signal});if(!res.ok)return;const data=await res.json();if(alive&&typeof data.id==="string"&&data.id!==__BUILD_ID__)setUpdate(data.id); }catch{/* Offline players keep exploring. */}finally{checking=false;}};
     const visible=()=>{if(document.visibilityState==="visible")void check();};void check();const timer=setInterval(visible,60000);document.addEventListener("visibilitychange",visible);
     return()=>{alive=false;abort.abort();clearInterval(timer);document.removeEventListener("visibilitychange",visible);};

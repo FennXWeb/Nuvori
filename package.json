@@ -1,16 +1,20 @@
 {
   "name": "nuvori",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/third-party-licenses.mjs && tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "tsx --test tests/*.test.ts",
-    "export:catalog": "tsx scripts/export-catalog.ts"
+    "export:catalog": "tsx scripts/export-catalog.ts",
+    "desktop": "electron .",
+    "package:windows": "npm run build && electron-builder --win zip --x64 --config electron-builder.json --publish never"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
     "@supabase/supabase-js": "^2.57.4",
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
@@ -24,9 +28,14 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.3",
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3",
     "pngjs": "^7.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "vite": "^7.1.7"
-  }
+  },
+  "description": "Nuvori: an original creature-collection adventure in Auralis",
+  "author": "FennXWeb",
+  "main": "electron/main.cjs"
 }
