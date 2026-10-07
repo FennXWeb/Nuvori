@@ -12,7 +12,7 @@ import { footstepSurface } from "./footsteps";
 export const TILE = 32,
   WORLD_W = 36,
   WORLD_H = 26;
-export type Interaction = "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}`;
+export type Interaction = "nursery" | "breeder" | "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}`;
 export interface WorldProps {
   save: Save | null;
   paused: boolean;
@@ -48,9 +48,9 @@ const noise = (x: number, y: number, seed = 1) => {
 export function getMap(region: Region, interior?: Interior): Prop[] {
   const props: Prop[] = [];
   if (interior) return [
-    { x: 18, y: 9, kind: -1, size: 62, solid: false, label: {lodge:"Nurse Liora",shop:"Shopkeeper Finch",tailor:"Tailor Lark",barber:"Stylist Rue"}[interior] },
-    ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: ({lodge:"nurse",shop:"merchant",tailor:"clothier",barber:"stylist"}[interior]) as Interaction, label: {lodge:"Restore your team",shop:"Browse supplies",tailor:"Browse clothing",barber:"Change your hairstyle"}[interior] })),
-    ...[11,15,18].map(y => ({ x: 11, y, kind: interior === "lodge" ? 20 : interior === "tailor" ? 24 : interior === "barber" ? 25 : 22, size: 76, solid: true })),
+    { x: 18, y: 9, kind: -1, size: 62, solid: false, label: {lodge:"Nurse Liora",shop:"Shopkeeper Finch",tailor:"Tailor Lark",barber:"Stylist Rue",nursery:"Nurserist Clover"}[interior] },
+    ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: ({lodge:"nurse",shop:"merchant",tailor:"clothier",barber:"stylist",nursery:"breeder"}[interior]) as Interaction, label: {lodge:"Restore your team",shop:"Browse supplies",tailor:"Browse clothing",barber:"Change your hairstyle",nursery:"Care for a new generation"}[interior] })),
+    ...[11,15,18].map(y => ({ x: 11, y, kind: interior === "nursery" ? 26 : interior === "lodge" ? 20 : interior === "tailor" ? 24 : interior === "barber" ? 25 : 22, size: 76, solid: true })),
     { x: 25, y: 11, kind: 22, size: 76, solid: true },
     { x: 25, y: 16, kind: interior === "lodge" ? 23 : 22, size: 76, solid: true },
     { x: 24, y: 20, kind: 13, size: 44, solid: true },
@@ -77,6 +77,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
         interact: "shop",
         label: "Supply shop",
       },
+      { x: 7, y: 23, kind: 4, size: 125, solid: true, interact: "nursery", label: "Nuvo Nursery" },
       { x: 9, y: 18, kind: 4, size: 128, solid: true, interact: "tailor", label: "Thread & Thistle · Clothing" },
       { x: 26, y: 7, kind: 4, size: 126, solid: true, interact: "barber", label: "The Tidy Tangle · Barber" },
       { x: 28, y: 22, kind: 7, size: 140, solid: true, interact: "league", label: "Champions Hall" },
@@ -628,7 +629,7 @@ export function World({
             text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 52, "#f4deb0");
           } else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
           else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
-          if (["tailor","barber","league"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size*.76,"#ffe3b0");
+          if (["tailor","barber","league","nursery"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size*.76,"#ffe3b0");
           if (
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < 85 &&

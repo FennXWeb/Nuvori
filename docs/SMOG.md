@@ -14,7 +14,7 @@ npm run package:windows
 python scripts/verify-smog-build.py
 ```
 
-The output is `release/Nuvori-1.0.0-windows-x64.zip`, with `Nuvori.exe`, the bundled Chromium/Node runtime, `resources/app.asar` containing the compiled game and assets, and the five SMOG files at the ZIP root. Source uploads, `.env` files, provider secrets, and development fixtures are excluded. The BAT invokes the EXE directly and waits for its exit, allowing SMOG to track play time.
+The output is `release/Nuvori-1.1.0-windows-x64.zip`, with `Nuvori.exe`, the bundled Chromium/Node runtime, `resources/app.asar` containing the compiled game and assets, and the five SMOG files at the ZIP root. Source uploads, `.env` files, provider secrets, and development fixtures are excluded. The BAT invokes the EXE directly and waits for its exit, allowing SMOG to track play time.
 
 For a new release, update the versions in `package.json`, `package-lock.json` and `smog_meta.xml`, and update `RELEASE-NOTES.md`. Merge to `main`, wait for the Pages workflow (the browser sign-in relay must be deployed), then tag that commit `v<version>` and push the tag. `.github/workflows/release.yml` tests, compiles, validates, and publishes a non-prerelease GitHub Release with the ZIP and SHA-256 checksum. Build outputs belong in Releases; source, packaging scripts and SMOG files belong in Git.
 
@@ -33,3 +33,7 @@ The build currently has no Windows code-signing certificate. It is an early-acce
 ## Validation for 1.0.0
 
 All 59 gameplay, audio, rendering and desktop regression tests passed. The portable archive passed the kit verifier and SMOG's own metadata parser, ZIP extractor and launcher discovery. Its ASAR contains the compiled game and assets, with no `.env` files or runtime `node_modules`. The executable created the Nuvori title window. Interactive desktop gameplay and real provider sign-in were not completed: the owner chose to publish using automated checks after the app-control permission timed out. The PKCE receiver, callback validation, expiry and destination restrictions are covered by automated tests.
+
+## Validation for 1.1.0
+
+All 67 regression checks pass, including the new nursery PostgreSQL tests and sprite bounds for 311 forms. The live backend has the nursery RPC and updated catalog. Browser checks exercise cross-branch pairing, persistent timers, cancellation, collection and the new evolution navigator. The release workflow validates the compiled archive against the SMOG kit. Native interactive testing remains limited as described above.

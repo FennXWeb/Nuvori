@@ -6,7 +6,7 @@ export { nuvoAtlas } from "./sprites";
 
 export function gaitFor(id: string) {
   const s = SPECIES_BY_ID[id];
-  if (s.types.includes("Gale") || [3,9,12,19].includes(s.sprite) || id === "oneirune") return "float";
+  if (s.types.includes("Gale") || [3,9,12,19].includes(s.sprite) || id === "oneirune" || s.base === "dreamweaver") return "float";
   if ([2,6,11,14,16].includes(s.sprite)) return "swim";
   if ([4,21].includes(s.sprite)) return "hop";
   return "walk";
@@ -14,7 +14,7 @@ export function gaitFor(id: string) {
 export function drawCompanion(ctx: CanvasRenderingContext2D, image: HTMLImageElement, id: string, x: number, y: number, time: number, moving: boolean, direction: number, prismatic: boolean) {
   const s = SPECIES_BY_ID[id]; if (!s || !image.complete || !image.naturalWidth) return;
   const gait = gaitFor(id), phase = time * (moving ? 10 + s.sprite % 5 : 2.5) + s.sprite;
-  const stride = moving ? 1 : .16, size = s.stage === 2 ? 84 : s.stage === 1 ? 70 : 58;
+  const stride = moving ? 1 : .16, size = 58 + s.stage * 13;
   const { frame } = nuvoSprite(s), fitted = fitSprite(frame, size, spriteFill(s));
   ctx.fillStyle = "#183b3433"; ctx.beginPath();ctx.ellipse(x,y,12+s.stage*4,5,0,0,Math.PI*2);ctx.fill();
   ctx.save();ctx.translate(x,y);

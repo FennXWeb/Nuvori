@@ -12,7 +12,7 @@ test('the original crowded evolution sheet is rejected instead of silently clipp
   assert.throws(() => measureAtlas(original, 5, 5), /gutter|boundary/);
 });
 
-test('published crop bounds match actual PNGs and isolate all 176 complete Nuvo forms', () => {
+test('published crop bounds match actual PNGs and isolate every complete Nuvo form', () => {
   let count = 0;
   for (const [file, cols, rows] of NUVO_SHEETS) {
     const actual = measureAtlas(readFileSync(new URL(`../public/assets/${file}`, import.meta.url)), cols, rows);
@@ -25,7 +25,7 @@ test('published crop bounds match actual PNGs and isolate all 176 complete Nuvo 
       }
     }
   }
-  assert.equal(count, 176);
+  assert.equal(count, SPECIES.length + 1); // The Dreamweaver sheet also contains one nursery egg.
 });
 
 test('every portrait preserves aspect ratio and has space around the full silhouette', () => {

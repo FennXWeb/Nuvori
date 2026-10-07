@@ -11,7 +11,7 @@ begin
     perform set_config('request.jwt.claim.sub',ids[i]::text,true);perform public.nuvori_profile('League fixture '||i,0);
   end loop;
   perform set_config('request.jwt.claim.sub',ids[1]::text,true);
-  update public.keeper_saves set data=jsonb_set(save,'{party}',jsonb_build_array(n,n-'level')) where user_id=ids[1];
+  update public.keeper_saves set data=jsonb_set(save,'{party}',jsonb_build_array(n,(n-'level')||jsonb_build_object('uid','fixture-invalid'))) where user_id=ids[1];
   begin perform public.nuvori_league_open('heartwood',null);raise exception 'FAIL: malformed crew accepted';exception when others then if sqlerrm like 'FAIL:%' then raise;end if;end;
   update public.keeper_saves set data=save where user_id=ids[1];
   result:=public.nuvori_league_open('heartwood',null);raid:=(result->>'id')::uuid;room:=result->>'code';

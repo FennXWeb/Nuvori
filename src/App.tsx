@@ -45,7 +45,8 @@ import {
 import type { User } from "@supabase/supabase-js";
 import {
   BASE_SPECIES,
-  DREAM_SPECIES,
+  ALL_FAMILIES,
+  SPECIES,
   SPECIES_BY_ID,
   STARTERS,
   MOVES,
@@ -106,6 +107,9 @@ import "./expansion.css";
 import { gameAudio } from "./audio";
 import { soundscape } from "./audioCues";
 import { AudioSettings, readAudioMix } from "./AudioSettings";
+import { Nursery, type NurseryAction } from "./NurseryPanel";
+import { startBreeding, finishBreeding, sexLabel, normalizeSave } from "./nursery";
+import { nurseryCloud } from "./nurseryOnline";
 type Panel =
   | "guide"
   | "map"
@@ -120,6 +124,7 @@ type Panel =
   | "tailor"
   | "barber"
   | "league"
+  | "nursery"
   | null;
 const objectives = [
   {
@@ -154,7 +159,7 @@ const objectives = [
   {
     id: "keeper",
     title: "A friend in every corner",
-    text: "Befriend all 25 Nuvo families",
+    text: "Befriend all 25 original Nuvo families",
     done: (s: Save) => BASE_SPECIES.every(n=>s.caught.includes(n.id)),
     reward: 1200,
   },
@@ -497,7 +502,7 @@ export default function App() {
     (kind: Interaction) => {
       const s = state.current;
       if (!s) return;
-      if (kind === "heal" || kind === "shop" || kind === "tailor" || kind === "barber" || kind === "exit") {
+      if (kind === "heal" || kind === "shop" || kind === "tailor" || kind === "barber" || kind === "nursery" || kind === "exit") {
         gameAudio.play("door");
         const next = kind === "exit" ? leaveInterior(s) : enterInterior(s, kind === "heal" ? "lodge" : kind, position.current.x, position.current.y);
         position.current = { x: next.x, y: next.y, dir: 0, moving: false };
@@ -511,12 +516,13 @@ export default function App() {
       if (kind === "merchant") setPanel("shop");
       if (kind === "clothier") setPanel("tailor");
       if (kind === "stylist") setPanel("barber");
+      if (kind === "breeder") setPanel("nursery");
       if (kind === "league") setPanel("league");
       if (kind.startsWith("trainer:")) setTrainerOffer(kind.slice(8));
       if (kind === "professor")
         setDialog({
           title: "Ranger Elowen",
-          text: "“Every Nuvo holds more than one possibility. At levels 12 and 26, you choose what they become. Head north to Verdant Wilds, walk through the grass, and meet your first wild friend. Weaken it in battle, then toss a binding orb. And remember: your first teammate will always follow you.”",
+          text: "“Every Nuvo holds more than one possibility. Every family has its own evolution tree. Starters can grow through five stages, with choices at levels 12, 34, and 44. Visit Clover at the nursery to raise a new companion from any two branches of the same family. Head north to Verdant Wilds, walk through the grass, and meet your first wild friend. Weaken it in battle, then toss a binding orb. And remember: your first teammate will always follow you.”",
         });
       if (kind === "sign")
         setDialog({
@@ -643,6 +649,38 @@ export default function App() {
     } finally { dailyBusy.current = false; }
   };
   const placeName = save?.interior ? interiorName(save.interior) : region.name;
+  const nurseryAction = async (action: NurseryAction) => {
+    if (!state.current || dailyBusy.current || pausedByOtherTab.current || league.raid) throw new Error("Finish your current activity before visiting the nursery.");
+    dailyBusy.current = true;
+    const account = userRef.current;
+    try {
+      let current = {...state.current,x:position.current.x,y:position.current.y};
+      if (account) {
+        if (!cloudReady.current) throw new Error("Reconnect your cloud save before using the nursery.");
+        await pendingCloud.current;
+        await saveCloud(account,current);
+        current = await nurseryCloud(action);
+        if (account.id !== userRef.current?.id) throw new Error("Your account changed. The nursery visit is saved to the original account.");
+        lastCloud.current=JSON.stringify(current);setSaveStatus("Saved to cloud");
+      } else current = action.type === "start" ? startBreeding(current,...action.parents) : finishBreeding(current,action.jobId,action.type);
+      current = normalizeSave(current);
+      state.current=current;setSave(current);writeSave(current,account?.id||"guest");
+      gameAudio.play(action.type==="collect"?"capture-success":"ui-confirm");
+      notify(action.type==="start"?"Clover is caring for your pair. Your visit continues while you explore.":action.type==="collect"?"A new companion joins your family! Both parents are back with you.":"Both parents are back. Your nursery visit has ended.");
+    } catch (error) {
+      if (account && account.id === userRef.current?.id) {
+        try {
+          const cloud=await fetchCloudSave(account);
+          if (cloud && (cloud.nursery?.id!==state.current?.nursery?.id || JSON.stringify(cloud.nurseryReceipts)!==JSON.stringify(state.current?.nurseryReceipts))) {
+            state.current=cloud;setSave(cloud);writeSave(cloud,account.id);lastCloud.current=JSON.stringify(cloud);
+            position.current={x:cloud.x,y:cloud.y,dir:0,moving:false};
+            notify("Your nursery was saved online. The latest adventure has been restored.");
+          }
+        } catch { /* Keep the local adventure until the connection returns. */ }
+      }
+      throw error;
+    } finally {dailyBusy.current=false;}
+  };
   const flushForExpansion = async () => {
     if(pausedByOtherTab.current)throw new Error("Continue from your latest adventure tab first.");
     const current=state.current;if(!current)return;
@@ -694,7 +732,7 @@ export default function App() {
               {item.id === "team" && save && <small>{save.party.length}</small>}
               {item.id === "friends" && social.friends.some(f => f.status === "pending" && f.incoming) && <small className="request-dot">!</small>}
               {item.id === "guide" && save && (
-                <small>{save.caught.length}/26</small>
+                <small>{save.caught.length}/{ALL_FAMILIES.length}</small>
               )}
             </button>
           ))}
@@ -1197,7 +1235,7 @@ export default function App() {
                     {SPECIES_BY_ID[starter].lore}
                     <br />
                     <span>
-                      Two evolution choices at Lv. 12. Two more at Lv. 26.
+                      Five stages. Choose a branch at Lv. 12, 34, and 44; grow again at Lv. 22.
                     </span>
                   </p>
                 </div>
@@ -1221,7 +1259,8 @@ export default function App() {
       )}
       <UpdateNotice safe={authReady&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
       {(panel === "tailor" || panel === "barber") && save && <StyleShop save={save} kind={panel} onChange={setSave} onClose={closePanel} notify={notify}/>}
-      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=JSON.stringify(result);if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune beyond the path.");}} onClose={closePanel} notify={notify}/>}
+      {panel === "nursery" && save && <Nursery save={save} account={Boolean(user)} onAction={nurseryAction} onClose={()=>{if(!dailyBusy.current)closePanel();}}/>}
+      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=JSON.stringify(result);if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
       {trainerOffer && save && (()=>{const trainer=TRAINERS.find(t=>t.id===trainerOffer)!;return <Modal title={trainer.name} eyebrow="KEEPER CHALLENGE" onClose={()=>setTrainerOffer(null)}><div className="trainer-offer"><PlayerArt palette={trainer.level%4} size={125}/><div><h3>“{trainer.quote}”</h3><p>{trainer.species.length} Nuvo · Lv. {trainer.level}{save.defeatedTrainers?.includes(trainer.id)?" · Rematch":""}</p><p>Trainer Nuvo cannot be caught. Your whole crew shares experience.</p></div></div><div className="expansion-footer"><button className="secondary-button" onClick={()=>setTrainerOffer(null)}>Maybe later</button><button className="primary-button" disabled={save.party.every(n=>n.hp<=0)} onClick={()=>{battleLock.current=true;setBattle(trainerBattle(save,trainer));setTrainerOffer(null);sound("battle",audio);}}>Let’s battle <ArrowRight size={16}/></button></div></Modal>;})()}
       {panel === "guide" && <Guide onClose={closePanel} save={save} />}
       {panel === "friends" && user && <FriendsPanel social={social} error={socialError} remote={remote} refresh={refreshSocial} notify={notify} onClose={closePanel}/>}
@@ -1703,7 +1742,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
     [detailTab, setDetailTab] = useState("Evolution paths"),
     [movePreview, setMovePreview] = useState<string | null>(null),
     [animationKey, setAnimationKey] = useState(0);
-  const filtered = [...BASE_SPECIES,...(save?.seen.includes("oneirune")||save?.caught.includes("oneirune")?[DREAM_SPECIES]:[])].filter(
+  const filtered = ALL_FAMILIES.filter(
     (s) =>
       (type === "All types" || s.types.includes(type as Element)) &&
       s.name.toLowerCase().includes(query.toLowerCase()),
@@ -1714,7 +1753,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
       eyebrow={
         selected
           ? `NO. ${String(selected.dex).padStart(3, "0")} · ${selected.title}`
-          : "25 FAMILIES · ONE MYTHICAL SECRET"
+          : `${ALL_FAMILIES.length} FAMILIES · ${SPECIES.length} EVOLUTION FORMS`
       }
       onClose={onClose}
       wide
@@ -1750,7 +1789,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                   <div key={stat}>
                     <span>{stat}</span>
                     <i>
-                      <b style={{ width: `${(val / 120) * 100}%` }} />
+                      <b style={{ width: `${Math.min(100,(val / 180) * 100)}%` }} />
                     </i>
                     <strong>{val}</strong>
                   </div>
@@ -1777,9 +1816,9 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
           {detailTab === "Evolution paths" ? (
             <>
               <p className="section-intro">
-                {selected.id === "oneirune" ? "Oneirune is a singular mythical being. It has no further evolution." : "Choose one path at level 12, then choose again at level 26. Each choice changes its form, types and stats."}
+                {selected.id === "oneirune" ? "Oneirune is a singular mythical being. It has no further evolution." : "Explore every possibility below. Each family has its own stages and choices; select a form to follow its branches."}
               </p>
-              <EvolutionTree base={SPECIES_BY_ID[selected.base]} />
+              <EvolutionTree base={SPECIES_BY_ID[selected.base]} selected={selected} onSelect={setSelected} />
             </>
           ) : (
             <div className="table-scroll">
@@ -1837,7 +1876,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                 className={tab === "nuvo" ? "active" : ""}
                 onClick={() => setTab("nuvo")}
               >
-                Nuvo <span>25</span>
+                Nuvo <span>{ALL_FAMILIES.length}</span>
               </button>
               <button
                 className={tab === "moves" ? "active" : ""}
@@ -1895,7 +1934,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                     ))}
                   </div>
                   <span className="dex-evolutions">
-                    <GitBranch size={13} />6 possible evolutions
+                    <GitBranch size={13} />{SPECIES.filter(form=>form.base===s.id).length-1} possible evolutions
                   </span>
                 </button>
               ))}
@@ -1970,52 +2009,17 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
     </Modal>
   );
 }
-function EvolutionTree({ base }: { base: Species }) {
-  return (
-    <div className="evolution-tree">
-      <div className="evo-root">
-        <NuvoArt id={base.id} size={95} />
-        <strong>{base.name}</strong>
-        <span>First companion</span>
-      </div>
-      <div className="evo-branches">
-        {base.evolvesTo.map((id) => {
-          const middle = SPECIES_BY_ID[id];
-          return (
-            <div className="evo-branch" key={id}>
-              <div className="evo-node">
-                <small>LV. 12</small>
-                <NuvoArt id={id} size={87} />
-                <strong>{middle.name}</strong>
-                <div className="type-row">
-                  {middle.types.map((t) => (
-                    <TypeBadge key={t} type={t} />
-                  ))}
-                </div>
-              </div>
-              <div className="evo-leaves">
-                {middle.evolvesTo.map((end) => {
-                  const s = SPECIES_BY_ID[end];
-                  return (
-                    <div className="evo-node" key={end}>
-                      <small>LV. 26</small>
-                      <NuvoArt id={end} size={82} />
-                      <strong>{s.name}</strong>
-                      <div className="type-row">
-                        {s.types.map((t) => (
-                          <TypeBadge key={t} type={t} />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+function EvolutionTree({ base, selected:current, onSelect }: { base: Species; selected:Species; onSelect:(s:Species)=>void }) {
+  const family=SPECIES.filter(s=>s.base===base.id);
+  const path=[current.id];
+  while(path[0]!==base.id){const parent=family.find(s=>s.evolvesTo.includes(path[0]));if(!parent)break;path.unshift(parent.id);}
+  return <section className="evolution-explorer">
+    <nav className="evolution-breadcrumbs" aria-label="Evolution lineage">{path.map((id,index)=><button key={id} onClick={()=>onSelect(SPECIES_BY_ID[id])}>{index>0?"→ ":""}{SPECIES_BY_ID[id].name}</button>)}</nav>
+    <div className="evolution-current"><NuvoArt id={current.id} size={115}/><div><strong>{current.name}</strong><small>Stage {current.stage+1} of this path · {current.rarity}</small><small>{current.evolvesTo.length?`${current.evolvesTo.length} next ${current.evolvesTo.length===1?"form":"choices"} at level ${current.evolveLevel}`:"Final form on this branch"}</small><div className="type-row">{current.types.map(t=><TypeBadge key={t} type={t}/>)}</div></div></div>
+    <div className="evolution-options">{current.evolvesTo.map(id=>{const s=SPECIES_BY_ID[id];return <button key={id} onClick={()=>onSelect(s)}><small>LV. {current.evolveLevel} · STAGE {s.stage+1}</small><NuvoArt id={id} size={104}/><strong>{s.name}</strong><small>{s.evolvesTo.length?`${s.evolvesTo.length} paths continue →`:"Final form"}</small></button>;})}</div>
+    <p className="nursery-note">{family.length} forms · up to {Math.max(...family.map(s=>s.stage))+1} stages. Select a form to inspect its moves and follow its next branches. Use the lineage above to explore another path.</p>
+    {path.length>1&&<button className="text-button" onClick={()=>onSelect(base)}>← Back to {base.name}</button>}
+  </section>;
 }
 function Team({
   save,
@@ -2063,7 +2067,7 @@ function Team({
               <span>
                 <strong>{SPECIES_BY_ID[p.speciesId].name}</strong>
                 <small>
-                  Lv. {p.level}
+                  Lv. {p.level} · {sexLabel(p)}
                   {i === 0 ? " · Following you" : ""}
                   {p.prismatic ? " · Prismatic" : ""}
                   {readyToEvolve(p) ? " · ✦ Ready to evolve" : ""}
@@ -2082,7 +2086,7 @@ function Team({
                   ? "✦ PRISMATIC COMPANION"
                   : `LEVEL ${n.level} COMPANION`}
               </span>
-              <h2>{s.name}</h2>
+              <h2>{s.name}</h2><span className="sex-label">{sexLabel(n)} · {s.rarity} · Stage {s.stage+1}</span>
               <div className="type-row">
                 {s.types.map((t) => (
                   <TypeBadge key={t} type={t} />
@@ -2281,7 +2285,7 @@ function Team({
                 <NuvoArt id={p.speciesId} prismatic={p.prismatic} size={70} />
                 <strong>{SPECIES_BY_ID[p.speciesId].name}</strong>
                 <small>
-                  Lv. {p.level} ·{" "}
+                  Lv. {p.level} · {sexLabel(p)} ·{" "}
                   {save.party.length < 6 ? "Add to team" : "Swap with slot 6"}
                 </small>
               </button>
@@ -2337,7 +2341,7 @@ function BattleView({
                 {ws.name}
                 {battle.wild.prismatic ? " ✦" : ""}
               </strong>
-              <span>Lv. {battle.wild.level}</span>
+              <span>Lv. {battle.wild.level} · {sexLabel(battle.wild)}</span>
             </div>
             <div className="type-row">
               {ws.types.map((t) => (

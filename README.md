@@ -10,14 +10,16 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 
 - Character creation, four outfit palettes, five starters, animated four-direction walking/sprinting, and a following lead Nuvo.
 - Fourteen connected regions with five towns, unique landmarks, trainers, and a hidden Dream Land. The new frontier includes Saffron Expanse, Threadhaven, Mirelight Fen, Tempest Shelf, and Crownspire.
-- 25 original illustrated Nuvo families. Every family has two choices at level 12 and another two choices at level 26: **175 named playable forms**, plus the mythical Oneirune. All 150 evolved forms have distinct, larger artwork and animated follower gaits.
+- **27 Nuvo families and 311 playable forms**, each with illustrated portraits and animated follower gaits. The five starters span five stages with choices at the first, third and final evolution (levels 12, 22, 34 and 44). Other families have varied depths and branch patterns.
+- Male and female Nuvo, plus walkable nurseries in all five towns. Breed opposite-sex companions from the same family, including different branches, for a level-1 base-form offspring. Rarity, parent levels and stages determine the wait; online visits persist on the account and use the server clock.
+- Mythical Dreamweaver has **85 forms across four stages**: 1 → 4 → 16 → 64. Each adventure can catch one wild male and one wild female; nursery descendants do not reset or consume that lifetime allowance. Oneirune remains a separate mythical family.
 - 100 moves across 10 elemental types, with unique particle configurations, physical/special/status classifications, power, accuracy, PP, priority, status effects, healing, and draining.
 - Per-species starting moves, level-up learnsets, and tutor compatibility in the Nuvopedia and the downloadable [catalog](public/data/nuvori-catalog.json).
 - Turn-based wild and trainer battles, six-Nuvo parties, reserve storage, capturing, progression, items, and move tutoring. Drag the bottom crew to reorder it; the far-left member leads. Other crew members receive 20% of active-member battle XP.
 - Five Champions League guardians with 900–3,400 HP. Sign in and battle solo or in four-player rooms, with shared boss health, individual crew actions, room codes, resumable trials, and crest rewards.
 - Six orb types: Binding, Verdant, Tide, Dusk, Swift, and Prism, with different capture affinities.
 - Walkable clothing stores and barbers with six owned outfits, six hairstyles, and six hair colors.
-- A keeper last stand when the entire crew faints. Keeper defeat normally restores the crew at the last Healing Lodge; a 1-in-10,000 roll instead awakens them in Dream Land, where Oneirune can appear and be caught.
+- A keeper last stand when the entire crew faints. Keeper defeat normally restores the crew at the last Healing Lodge; a 1-in-10,000 roll instead awakens them in Dream Land, where Oneirune and Dreamweaver can appear and be caught.
 - New-release detection with a save-and-apply popup, deferred until the current battle or activity ends.
 - Rare **Prismatic** color variants at a 1/512 wild-encounter probability. Rarity persists through capture, saves, and evolution.
 - Local guest saves; Supabase OAuth, per-account cloud saves, authenticated shared-world presence, visible remote keepers and companions, and greetings when the backend/providers are configured.
@@ -68,7 +70,7 @@ The database migration enforces ownership with row-level security; guests cannot
 
 ## Art
 
-Logo, 25-creature atlas, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [art-prompts.json](docs/art-prompts.json). PNG alpha was verified, and atlas cells are normalized rather than rounded to an integer cell width. The 150 individual evolution illustrations and Oneirune were also generated with the built-in Imagegen tool; prompts are in [expansion art](docs/EXPANSION-ART.md) and [final evolution art](docs/EXPANSION-ART-FINALS.md). All source artwork is included in `public/assets`.
+Logo, creature atlases, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [original art](docs/art-prompts.json), [expansion art](docs/EXPANSION-ART.md), [final evolution art](docs/EXPANSION-ART-FINALS.md), and [nursery and Dreamweaver art](docs/nursery-art-prompts.json). The nursery update adds 50 starter evolutions and all 85 Dreamweaver forms. PNG alpha and full silhouette bounds are checked automatically. All source artwork is included in `public/assets`.
 
 ## Save data
 

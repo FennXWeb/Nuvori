@@ -10,6 +10,7 @@ import {
   type Move,
 } from "./data";
 import { ORBS, orbCount, orbAffinity, awardCrewXp, keeperDefeat, restoreAtLodge, type OrbKind } from "./expansion";
+import { normalizeSave, canCatchDreamweaver, sexOf, SEXES, breedingDetails, pairingError, type NurseryJob, type Sex } from "./nursery";
 export interface Player {
   name: string;
   palette: number;
@@ -38,7 +39,10 @@ export interface Save {
   battles: number;
   started: string;
   updated: string;
-  interior?: "lodge" | "shop" | "tailor" | "barber";
+  interior?: "lodge" | "shop" | "tailor" | "barber" | "nursery";
+  nursery?: NurseryJob;
+  nurseryReceipts?: string[];
+  dreamweaverCaptures?: Partial<Record<Sex,string>>;
   outside?: { x: number; y: number };
   evolutionNotices?: string[];
   dailySpinDay?: string;
@@ -54,7 +58,7 @@ export function newSave(player: Player, starter: string): Save {
   return {
     version: 1,
     player,
-    party: [createNuvo(starter, 5, false)],
+    party: [{...createNuvo(starter, 5, false),origin:"starter"}],
     box: [],
     region: "mossbell",
     x: 17.5 * 32,
@@ -89,6 +93,8 @@ export function validateSave(value: unknown): value is Save {
     n.hp >= 0 &&
     n.hp <= maxHp(n) &&
     typeof n.prismatic === "boolean" &&
+    (n.sex === undefined || SEXES.includes(n.sex)) &&
+    (n.origin === undefined || ["wild","nursery","starter"].includes(n.origin)) &&
     Array.isArray(n.moves) &&
     n.moves.length >= 1 &&
     n.moves.length <= 4 &&
@@ -114,7 +120,7 @@ export function validateSave(value: unknown): value is Save {
     ["defeatedTrainers", "leagueBadges", "leagueClaims"].every(k => s[k as keyof Save] === undefined || (Array.isArray(s[k as keyof Save]) && (s[k as keyof Save] as unknown[]).every(v => typeof v === "string"))) &&
     (s.lastLodge === undefined || REGION_BY_ID[s.lastLodge]?.kind === "Town") &&
     Boolean(REGION_BY_ID[s.region]) &&
-    (s.interior === undefined || (["lodge", "shop", "tailor", "barber"].includes(s.interior) && REGION_BY_ID[s.region].kind === "Town")) &&
+    (s.interior === undefined || (["lodge", "shop", "tailor", "barber", "nursery"].includes(s.interior) && REGION_BY_ID[s.region].kind === "Town")) &&
     (s.outside === undefined || (finite(s.outside.x) && finite(s.outside.y) && s.outside.x >= 24 && s.outside.x <= 1128 && s.outside.y >= 24 && s.outside.y <= 808)) &&
     (s.evolutionNotices === undefined || (Array.isArray(s.evolutionNotices) && s.evolutionNotices.length <= 2000 && s.evolutionNotices.every(v => typeof v === "string"))) &&
     (s.dailySpinDay === undefined || /^\d{4}-\d{2}-\d{2}$/.test(s.dailySpinDay)) &&
@@ -132,6 +138,11 @@ export function validateSave(value: unknown): value is Save {
     Array.isArray(s.box) &&
     s.box.length <= 500 &&
     s.box.every(validNuvo) &&
+    (s.nurseryReceipts === undefined || (Array.isArray(s.nurseryReceipts) && s.nurseryReceipts.every(id=>typeof id==="string"))) &&
+    (s.dreamweaverCaptures === undefined || (!!s.dreamweaverCaptures && typeof s.dreamweaverCaptures==="object" && Object.entries(s.dreamweaverCaptures).every(([sex,id])=>SEXES.includes(sex as Sex) && typeof id==="string" && id.length>0))) &&
+    (s.nursery === undefined || (!!s.nursery && typeof s.nursery.id === "string" && !s.nurseryReceipts?.includes(s.nursery.id) && Array.isArray(s.nursery.parents) && s.nursery.parents.length===2 && s.nursery.parents.every(validNuvo) && validNuvo(s.nursery.child) && !pairingError(...s.nursery.parents) && s.nursery.child.speciesId===SPECIES_BY_ID[s.nursery.parents[0].speciesId].base && s.nursery.child.level===1 && s.nursery.child.origin==="nursery" && finite(s.nursery.startedAt) && finite(s.nursery.readyAt) && s.nursery.readyAt-s.nursery.startedAt===breedingDetails(...s.nursery.parents).seconds*1000)) &&
+    new Set([...s.party,...s.box,...(s.nursery ? [...s.nursery.parents,s.nursery.child] : [])].map(n=>n.uid)).size === s.party.length+s.box.length+(s.nursery ? 3 : 0) &&
+    s.party.length+s.box.length+(s.nursery ? 3 : 0)<=506 &&
     ["coins", "potions", "orbs", "steps", "battles"].every(
       (k) => finite(s[k as keyof Save]) && Number(s[k as keyof Save]) >= 0,
     ) &&
@@ -145,7 +156,7 @@ export function validateSave(value: unknown): value is Save {
 export function readSave(key = "guest"): Save | null {
   try {
     const s = JSON.parse(localStorage.getItem(`nuvori-save:${key}`) || "null");
-    return validateSave(s) ? s : null;
+    return validateSave(s) ? normalizeSave(s) : null;
   } catch {
     return null;
   }
@@ -185,12 +196,16 @@ export interface Battle {
   keeperMaxHp?: number;
   dreamAwakening?: boolean;
 }
-export function encounter(save: Save): Battle {
+export function encounter(save: Save, random = Math.random): Battle {
   const r = REGION_BY_ID[save.region];
-  const index = r.pool[Math.floor(Math.random() * r.pool.length)];
+  const index = r.pool[Math.floor(random() * r.pool.length)];
   const level =
-    r.level[0] + Math.floor(Math.random() * (r.level[1] - r.level[0] + 1));
-  const wild = createNuvo(r.id === "dreamland" && Math.random() < .12 ? "oneirune" : BASE_SPECIES[index].id, level);
+    r.level[0] + Math.floor(random() * (r.level[1] - r.level[0] + 1));
+  const roll = random();
+  const availableSexes = SEXES.filter(sex=>canCatchDreamweaver(save,{speciesId:"dreamweaver",sex,uid:"encounter"} as Nuvo));
+  const id = r.id === "dreamland" && roll < .08 && availableSexes.length ? "dreamweaver" : r.id === "dreamland" && roll < .20 ? "oneirune" : BASE_SPECIES[index].id;
+  const sex = id === "dreamweaver" ? availableSexes[Math.floor(random()*availableSexes.length)] : random()<.5?"male":"female";
+  const wild = {...createNuvo(id,level,random()<1/512,sex),origin:"wild" as const};
   return {
     wild,
     lastStand: save.party.every(n => n.hp <= 0) ? "choice" : undefined,
@@ -281,7 +296,7 @@ export function useMove(
 export function catchChance(n: Nuvo, orb: OrbKind = "binding", turn = 0) {
   return Math.min(
     0.93,
-    (0.24 + (1 - n.hp / maxHp(n)) * 0.58 + (n.status ? 0.1 : 0)) * orbAffinity(n, orb, turn) * (n.speciesId === "oneirune" ? .35 : 1),
+    (0.24 + (1 - n.hp / maxHp(n)) * 0.58 + (n.status ? 0.1 : 0)) * orbAffinity(n, orb, turn) * (SPECIES_BY_ID[n.speciesId].rarity === "Mythical" ? .35 : 1),
   );
 }
 export type BattleAction =
@@ -347,10 +362,11 @@ export function battleTurn(
     playerMove = action.id;
   }
   if (action.type === "catch") {
-    if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
+if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
+    if (!canCatchDreamweaver(s,b.wild)) return fail(`You have already caught your wild ${sexOf(b.wild)} Dreamweaver. Nursery descendants are still possible.`);
     const orb = action.orb || "binding";
     if (!ORBS.some(o => o.id === orb)) return fail("Unknown orb type.");
-    if (s.box.length >= 500 && s.party.length >= 6) return fail("Your reserve is full. Make room before catching another Nuvo.");
+    if (s.box.length+s.party.length+(s.nursery?3:0) >= 506) return fail("Your reserve is full. Make room before catching another Nuvo.");
     if (orbCount(s,orb) < 1)
       return fail("You need a binding orb. Buy more at a town shop.");
     if (orb === "binding") s.orbs--; else s.specialOrbs = { ...s.specialOrbs, [orb]: orbCount(s,orb)-1 };
@@ -358,7 +374,8 @@ export function battleTurn(
     if (random() < catchChance(b.wild,orb,b.turn)) {
       b.over = "caught";
       wildActs = false;
-      const caught = { ...b.wild, guard: false, boost: false };
+      const caught = { ...b.wild, sex:sexOf(b.wild), origin:"wild" as const, guard: false, boost: false };
+      if (SPECIES_BY_ID[caught.speciesId].base === "dreamweaver") s.dreamweaverCaptures = {...s.dreamweaverCaptures,[caught.sex]:caught.uid};
       if (s.party.length < 6) s.party.push(caught);
       else s.box.push(caught);
       s.caught = [
