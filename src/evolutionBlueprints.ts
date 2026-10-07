@@ -31,4 +31,3 @@ export function treeStages(tree: number[][]): number[] {
   const visit = (index: number) => { for (const child of tree[index]) { if (stages[child] !== -1) throw new Error("Evolution trees must not merge or cycle."); stages[child] = stages[index]+1; visit(child); } };
   visit(0); if (stages.includes(-1)) throw new Error("Unreachable evolution form."); return stages;
 }
-

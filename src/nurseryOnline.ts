@@ -9,4 +9,3 @@ export async function nurseryCloud(action: NurseryAction): Promise<Save> {
   if(!validateSave(data))throw new Error("The nursery returned an unreadable adventure. Reload your cloud save before continuing.");
   return normalizeSave(data);
 }
-
