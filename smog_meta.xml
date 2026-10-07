@@ -5,7 +5,7 @@
   <developer>Devon Becker</developer>
   <genre>Adventure</genre>
   <accent>#bcaff8</accent>
-  <visibility>private</visibility>
+  <visibility>public</visibility>
   <pricing>free</pricing>
   <tags><tag>exploration</tag><tag>single player</tag><tag>creature collector</tag></tags>
   <release><asset>*windows*.zip</asset></release>
