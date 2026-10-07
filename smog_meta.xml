@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <smog version="1">
   <title>Nuvori</title>
-  <description>Explore Auralis, befriend 25 Nuvo families, and choose their branching evolutions. Discover rare Prismatic companions, battle trainers, and face Champions League guardians with up to four keepers. An original 2D creature-collection adventure.</description>
-  <developer>FennXWeb</developer>
-  <genre>Creature collector RPG</genre>
-  <version>1.0.0</version>
-  <accent>#41bfa3</accent>
-  <tags>
-    <tag>Creature collection</tag>
-    <tag>Branching evolution</tag>
-    <tag>Exploration</tag>
-    <tag>Turn-based battles</tag>
-    <tag>Online co-op</tag>
-    <tag>Single player</tag>
-  </tags>
-  <release>
-    <asset>Nuvori-*-windows-x64.zip</asset>
-  </release>
+  <description>An original 2D creature collector with branching evolutions and online exploration</description>
+  <developer>Devon Becker</developer>
+  <genre>Adventure</genre>
+  <accent>#bcaff8</accent>
+  <visibility>public</visibility>
+  <pricing>free</pricing>
+  <tags><tag>exploration</tag><tag>single player</tag><tag>creature collector</tag></tags>
+  <release><asset>*windows*.zip</asset></release>
 </smog>
