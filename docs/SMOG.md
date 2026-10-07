@@ -1,6 +1,6 @@
 # Nuvori for Windows and SMOG
 
-The [publishing kit contract](SMOG-PUBLISHING-KIT.md) is implemented by the five root files: `smog_icon.ico`, `smog_logo.png`, `smog_header.png`, `smog_meta.xml` and `smog_launch.bat`. These are real files, not Git LFS pointers. The art was generated specifically for Nuvori with the built-in Imagegen tool; [exact prompts](smog-art/prompts.json) and the [icon source](smog-art/nuvori-icon-source.png) are committed. The logo is a transparent 1200 × 400 PNG, the header is 2400 × 1000, and the ICO contains 16, 32, 48, 64, 128 and 256 px sizes. Every file is under SMOG's 8 MB artwork limit.
+The [publishing kit contract](SMOG-PUBLISHING-KIT.md) is implemented by the five root files: `smog_icon.ico`, `smog_logo.png`, `smog_header.png`, `smog_meta.xml` and `smog_launch.bat`. These are real files, not Git LFS pointers. The art was generated specifically for Nuvori with the built-in Imagegen tool; [exact prompts](smog-art/prompts.json) and the [icon source](smog-art/nuvori-icon-source.png) are committed. The latest owner-selected artwork is retained: a transparent 1200 × 300 logo, a 1600 × 700 header, and a 256 px ICO. The publishing kit recommends multiple icon sizes but also accepts this icon. Every file is under SMOG's 8 MB artwork limit.
 
 ## Build and publish
 
