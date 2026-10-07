@@ -1,9 +1,16 @@
-Nuvori's first portable Windows release for SMOG includes the current Auralis adventure, all 176 Nuvo forms, branching evolutions, trainers, Champions League co-op, friends and chat, the daily wheel, five Suno music themes, and 104 sound effects/ambience clips.
+Nuvori 1.1.0 brings new generations and deeper evolution paths to Auralis.
 
-Add **FennXWeb/Nuvori** in SMOG. The launcher selects **Nuvori-1.0.0-windows-x64.zip**. Install and Play. To launch manually, extract the entire ZIP and run `smog_launch.bat` or `Nuvori.exe`. Node.js and a separate browser runtime are not required. F11 toggles fullscreen.
+- Male and female Nuvo, with stable assignments for existing companions.
+- Walkable nurseries in all five towns. Pair opposite-sex Nuvo from the same family, including different branches, for a level-1 base-form offspring. Rarity, levels and evolution stages determine the wait. Signed-in visits persist across devices and use the server clock.
+- Five-stage starter families with branching at the first, third and final evolution. Other families have varied depths and branch patterns.
+- Mythical Dreamweaver: four stages and 85 forms, with four choices at every evolution. Catch one wild male and one wild female per adventure; their nursery descendants can explore additional paths.
+- 311 playable forms across 27 families, 135 new creature illustrations, complete sprite crops, animated followers, and an updated Nuvopedia path browser.
+- Existing adventures, companion identities, Prismatic status and desktop settings are preserved.
 
-Guest adventures work offline. Google/Discord sign-in opens your default browser; after provider consent, click **Return to Nuvori** to finish in the game. Internet access is required for accounts, cloud saves and multiplayer. Existing browser guest saves stay in that browser; signing into the same account loads its cloud adventure.
+All 67 gameplay, PostgreSQL, audio, rendering and desktop regression checks pass. The nursery migrations are installed on the live backend. Local browser checks cover pairing, timers, cancellation, collection and evolution browsing.
 
-Desktop saves and settings live in `%APPDATA%\FennXWeb\Nuvori`, outside SMOG's versioned game folder, and survive game updates. Close the game before installing updates through SMOG. The compiled game and audio are bundled locally; it does not stream the web game or change itself when the website updates.
+Add **FennXWeb/Nuvori** in SMOG and install the latest release. The portable archive is **Nuvori-1.1.0-windows-x64.zip**. To launch manually, extract the entire ZIP and run `smog_launch.bat` or `Nuvori.exe`. Node.js and a separate browser runtime are not required. F11 toggles fullscreen.
 
-This early-access release is not code-signed. All three original SMOG artwork files, metadata and launch script are included both in the repository and at the ZIP root. `SHA256SUMS.txt` records the build checksum.
+Guest adventures work offline. Google/Discord sign-in opens your default browser; after consent, click **Return to Nuvori**. Accounts, cloud saves and multiplayer require internet access. Desktop saves live in `%APPDATA%\FennXWeb\Nuvori`, outside SMOG's versioned installation folder. Close the game before updating through SMOG.
+
+This early-access Windows build is not code-signed. All five SMOG files are included at the archive root. `SHA256SUMS.txt` records the build checksum.

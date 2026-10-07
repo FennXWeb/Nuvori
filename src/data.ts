@@ -635,6 +635,7 @@ const baseSpecs: BaseSpec[] = [
     ],
   },
 ];
+import { STARTER_TREE, FAMILY_TREES, FAMILY_SHAPES, RARITIES, STARTER_NAMES, STARTER_AFFINITIES, BRANCH_BUILDS, treeStages } from "./evolutionBlueprints";
 export interface Species {
   id: string;
   dex: number;
@@ -647,6 +648,8 @@ export interface Species {
   sprite: number;
   stage: number;
   branch: number;
+  rarity: "Common" | "Uncommon" | "Rare" | "Mythical";
+  art?: { file: string; frame: number };
   base: string;
   evolvesTo: string[];
   evolveLevel: number;
@@ -678,13 +681,17 @@ function learnTable(types: Element[], stage: number) {
 }
 export const SPECIES: Species[] = baseSpecs.flatMap((b, i) => {
   const id = b.name.toLowerCase();
+  const tree = i < 5 ? STARTER_TREE : FAMILY_TREES[FAMILY_SHAPES[i]];
+  const stages = treeStages(tree);
   const stageTypes: Element[] = [
     TYPES[(TYPES.indexOf(b.types[0]) + 5) % 10],
     TYPES[(TYPES.indexOf(b.types[0]) + 8) % 10],
   ];
-  return [b.name, ...b.paths].map((name, n) => {
-    const stage = n === 0 ? 0 : n < 3 ? 1 : 2;
-    const secondary =
+  return [b.name, ...b.paths, ...(i < 5 ? STARTER_NAMES[i] : [])].map((name, n) => {
+    const stage = stages[n];
+    const statStage = Math.max(stage, n === 0 ? 0 : n < 3 ? 1 : 2);
+    const build = n >= 7 ? BRANCH_BUILDS[(n-7)%4] : [0,0,0,0];
+    const secondary = n >= 7 ? STARTER_AFFINITIES[i][n-7] :
       n === 4
         ? TYPES[(TYPES.indexOf(b.types[0]) + 3) % 10]
         : n === 6
@@ -693,7 +700,7 @@ export const SPECIES: Species[] = baseSpecs.flatMap((b, i) => {
             ? stageTypes[0]
             : stageTypes[1];
     const types = n === 0 ? b.types : [b.types[0], secondary];
-    const evolve = n === 0 ? [1, 2] : n === 1 ? [3, 4] : n === 2 ? [5, 6] : [];
+    const evolve = tree[n];
     return {
       id: n === 0 ? id : `${id}-${n}`,
       dex: i + 1,
@@ -711,17 +718,19 @@ export const SPECIES: Species[] = baseSpecs.flatMap((b, i) => {
           : `An evolution of ${b.name}. ${n % 2 === 0 ? "Its patient spirit awakens a mysterious elemental affinity." : "Its adventurous spirit draws out a powerful new form."}`,
       habitat: b.habitat,
       stats: {
-        hp: b.stats[0] + stage * 22,
-        attack: b.stats[1] + stage * 20 + (n % 2) * 5,
-        defense: b.stats[2] + stage * 18,
-        speed: b.stats[3] + stage * 13,
+        hp: b.stats[0] + statStage * 22 + build[0],
+        attack: b.stats[1] + statStage * 20 + (n % 2) * 5 + build[1],
+        defense: b.stats[2] + statStage * 18 + build[2],
+        speed: b.stats[3] + statStage * 13 + build[3],
       },
       sprite: i,
       stage,
       branch: n,
+      rarity: RARITIES[i],
+      ...(n >= 7 ? { art: { file: `${id}-evolutions.png`, frame: n-7 } } : {}),
       base: id,
       evolvesTo: evolve.map((e) => `${id}-${e}`),
-      evolveLevel: stage === 0 ? 12 : 26,
+      evolveLevel: [12,22,34,44,50][stage],
       ...learnTable([...new Set(types)], stage),
     };
   });
@@ -730,11 +739,37 @@ export const BASE_SPECIES = SPECIES.filter((s) => s.stage === 0);
 export const DREAM_SPECIES: Species = {
   id: "oneirune", dex: 26, name: "Oneirune", types: ["Astral", "Shade"],
   title: "The dream between heartbeats", habitat: "Dream Land", sprite: 25, stage: 0, branch: 0,
+  rarity: "Mythical",
   lore: "A mythical dream dragon that stitches fallen stars into sleeping skies. Only keepers who awaken beyond the veil can meet it.",
   stats: { hp: 98, attack: 94, defense: 88, speed: 96 }, base: "oneirune", evolvesTo: [], evolveLevel: 50,
   ...learnTable(["Astral", "Shade"], 2),
 };
 SPECIES.push(DREAM_SPECIES);
+const dreamTitles = ["Moon", "Sun", "Night", "Dawn"], dreamRoots = ["Luna", "Sol", "Umbra", "Aurora"];
+const dreamAffinities: Element[] = ["Frost", "Flame", "Shade", "Bloom"];
+export const DREAMWEAVER_FORMS: Species[] = Array.from({ length: 85 }, (_, n) => {
+  const stage = n === 0 ? 0 : n <= 4 ? 1 : n <= 20 ? 2 : 3;
+  const path: number[] = []; let cursor = n;
+  while (cursor) { path.unshift((cursor-1)%4); cursor = Math.floor((cursor-1)/4); }
+  const theme = path[0] ?? 2, affinity = path.at(-1) ?? 2;
+  const types: Element[] = ["Astral", dreamAffinities[affinity]];
+  const ancestry = path.reduce((stats, choice, step) => stats.map((value, stat) => value + BRANCH_BUILDS[choice][stat] * (step+1)), [0,0,0,0]);
+  const name = !n ? "Dreamweaver" : stage === 1 ? `${dreamTitles[theme]}weaver` : stage === 2 ? `${dreamRoots[theme]}${["seer","warden","oracle","singer"][path[1]]}` : `${dreamRoots[theme]}${["veil","crest","shroud","bloom"][path[1]]} ${["Sovereign","Titan","Seraph","Eidolon"][path[2]]}`;
+  return {
+    id: !n ? "dreamweaver" : `dreamweaver-${n}`, dex: 27, name, types,
+    title: !n ? "The keeper of unwritten dreams" : `The ${dreamTitles[theme].toLowerCase()} thread · stage ${stage+1}`,
+    lore: !n ? "A mythical thread-tailed spirit that weaves possible futures into the sleeping sky. Each keeper can capture only one wild male and one wild female. Their descendants begin a new tapestry at the nursery." : `A grown Dreamweaver of the ${dreamTitles[theme].toLowerCase()} tapestry. ${stage < 3 ? "Four threads still wait to be woven into its next form." : "Its chosen threads have become a unique guardian of the dreaming sky."}`,
+    habitat: "Dream Land", stats: { hp: 68+stage*24+Math.round(ancestry[0]/3), attack: 68+stage*23+affinity*2+Math.round(ancestry[1]/3), defense: 64+stage*21+(3-affinity)*2+Math.round(ancestry[2]/3), speed: 70+stage*16+Math.round(ancestry[3]/3) },
+    sprite: 26, stage, branch: n, rarity: "Mythical", base: "dreamweaver",
+    evolvesTo: stage < 3 ? Array.from({length:4}, (_, c) => `dreamweaver-${n*4+c+1}`) : [],
+    evolveLevel: [16,30,44,50][stage],
+    art: n <= 4 ? {file:"dreamweaver-beginnings.png",frame:n} : n <= 20 ? {file:"dreamweaver-ascendants.png",frame:n-5} : {file:`dreamweaver-crown-${Math.floor((n-21)/16)}.png`,frame:(n-21)%16},
+    ...learnTable(types,stage),
+  };
+});
+export const DREAMWEAVER = DREAMWEAVER_FORMS[0];
+SPECIES.push(...DREAMWEAVER_FORMS);
+export const ALL_FAMILIES = [...BASE_SPECIES, DREAM_SPECIES, DREAMWEAVER];
 export const SPECIES_BY_ID = Object.fromEntries(
   SPECIES.map((s) => [s.id, s]),
 ) as Record<string, Species>;
@@ -770,6 +805,8 @@ export interface Nuvo {
   xp: number;
   hp: number;
   prismatic: boolean;
+  sex: "male" | "female";
+  origin?: "wild" | "nursery" | "starter";
   moves: string[];
   pp: Record<string, number>;
   status?: "burn" | "poison" | "slow";
@@ -793,6 +830,7 @@ export function createNuvo(
   speciesId: string,
   level = 5,
   prismatic = Math.random() < 1 / 512,
+  sex: Nuvo["sex"] = Math.random() < .5 ? "male" : "female",
 ): Nuvo {
   const moves = learnedMoves(SPECIES_BY_ID[speciesId], level).slice(-4);
   const n: Nuvo = {
@@ -802,6 +840,7 @@ export function createNuvo(
     xp: 0,
     hp: 1,
     prismatic,
+    sex,
     moves,
     pp: Object.fromEntries(moves.map((id) => [id, MOVE_BY_ID[id].pp])),
   };
@@ -1000,7 +1039,7 @@ REGIONS.push(
   { id: "mirelight", name: "Mirelight Fen", kind: "Wild zone", subtitle: "A thousand lanterns beneath the reeds", description: "Luminous lilies and ancient lanterns float over violet water. The causeway winds west toward the storm-carved cliffs.", color: "#8dada0", level: [21,29], pool: [5,6,9,15,19,21], links: { south: "threadhaven", west: "tempest" }, landmark: "The Lantern Leviathan", prop: 9, pos: [88,39], biome: "marsh" },
   { id: "tempest", name: "Tempest Shelf", kind: "Wild zone", subtitle: "Run where the thunder lands", description: "Wind-carved cliffs catch violet lightning. The Thunder Harp turns every storm into a song.", color: "#9b9bc4", level: [24,33], pool: [3,4,8,12,20,23], links: { west: "frostmere", south: "saffron", east: "mirelight", north: "crownspire" }, landmark: "The Thunder Harp", prop: 8, pos: [65,29], biome: "storm" },
   { id: "crownspire", name: "Crownspire", kind: "Town", subtitle: "The summit of possibility", description: "A marble town above the clouds, home to the final Champions League guardian. Its bells ring for every victorious keeper.", color: "#c7b8df", level: [28,38], pool: [12,17,23,24], links: { south: "tempest" }, landmark: "The Crown of Auralis", prop: 10, pos: [86,12], biome: "storm" },
-  { id: "dreamland", name: "Dream Land", kind: "Landmark", subtitle: "Somewhere between a wish and waking", description: "Floating islands drift through a lavender sky. Seek Oneirune beyond the path; touch the Dreaming Gate to return to the Healing Lodge.", color: "#d0a5ec", level: [30,35], pool: [3,12,17], links: {}, landmark: "The Dreaming Gate", prop: 9, pos: [45,48], biome: "dream", hidden: true },
+  { id: "dreamland", name: "Dream Land", kind: "Landmark", subtitle: "Somewhere between a wish and waking", description: "Floating islands drift through a lavender sky. Seek Oneirune and Dreamweaver beyond the path; touch the Dreaming Gate to return to the Healing Lodge.", color: "#d0a5ec", level: [30,35], pool: [3,12,17], links: {}, landmark: "The Dreaming Gate", prop: 9, pos: [45,48], biome: "dream", hidden: true },
 );
 // Spread map labels across the expanded archipelago.
 const mapPositions: Record<string,[number,number]> = { mossbell:[13,77],verdant:[13,53],hollow:[12,29],tideglass:[38,87],sunwake:[59,78],crystal:[39,57],emberfall:[58,57],frostmere:[45,29],starfall:[29,13] };

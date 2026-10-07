@@ -8,7 +8,7 @@ import { applyDailyPrize, cellKey, caughtBefore, edgeMarker, enterInterior, evol
 const fresh = () => newSave({ name: "Test", palette: 0, pronouns: "They / them" }, "spriglet");
 test("old saves remain valid; interiors preserve the exact outdoor return point", () => {
   assert.ok(validateSave(fresh()));
-  for (const r of REGIONS.filter(r => r.kind === "Town")) for (const room of ["lodge", "shop"] as const) {
+  for (const r of REGIONS.filter(r => r.kind === "Town")) for (const room of ["lodge", "shop", "tailor", "barber", "nursery"] as const) {
     const outside = { ...fresh(), region: r.id };
     const inside = enterInterior(outside, room, 290, 331);
     assert.equal(inside.interior, room);
@@ -21,7 +21,7 @@ test("old saves remain valid; interiors preserve the exact outdoor return point"
   assert.equal(enterInterior({ ...fresh(), region: "verdant" }, "lodge", 50, 50).interior, undefined);
 });
 test("both interiors have walkable paths to their service counter and exit, with solid walls and furniture", () => {
-  for (const room of ["lodge", "shop"] as const) {
+  for (const room of ["lodge", "shop", "tailor", "barber", "nursery"] as const) {
     const r = REGION_BY_ID.mossbell, props = getMap(r, room);
     assert.ok(findPath(576,608,576,368,r,room).length);
     assert.ok(findPath(576,368,576,656,r,room).length);
@@ -50,7 +50,10 @@ test("each evolution threshold yields a new notice key while final forms stop pr
   assert.notEqual(evolutionKey(n),evolutionKey(next));
   assert.equal(readyToEvolve(next),false);
   next.level=26; assert.equal(readyToEvolve(next),true);
-  const final=evolve(next,"spriglet-3");
+  const third=evolve(next,"spriglet-3");
+  third.level=34;assert.equal(readyToEvolve(third),true);
+  const fourth=evolve(third,"spriglet-4");fourth.level=44;
+  const final=evolve(fourth,"spriglet-9");
   assert.equal(readyToEvolve(final),false);
 });
 test("every wheel prize awards the advertised items, persists, and refuses duplicate or older days", () => {

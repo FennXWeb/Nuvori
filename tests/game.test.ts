@@ -37,21 +37,13 @@ const fight = (id = "bubbfin", level = 4): Battle => ({
   turn: 0,
   reward: 0,
 });
-test("25 unique families, two genuinely branching decisions and valid move tables", () => {
+test("all original families and expanded forms have unique names and valid move tables", () => {
   assert.equal(BASE_SPECIES.length, 25);
-  assert.equal(SPECIES.length, 176);
-  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 176);
+  assert.equal(SPECIES.length, 311);
+  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 311);
   assert.equal(MOVES.length, 100);
   assert.equal(new Set(MOVES.map((m) => m.name)).size, 100);
   assert.equal(new Set(MOVES.map((m) => m.animation)).size, 100);
-  for (const base of BASE_SPECIES) {
-    assert.equal(base.evolvesTo.length, 2);
-    const ends = base.evolvesTo.flatMap((id) => {
-      assert.equal(SPECIES_BY_ID[id].evolvesTo.length, 2);
-      return SPECIES_BY_ID[id].evolvesTo;
-    });
-    assert.equal(new Set(ends).size, 4);
-  }
   for (const s of SPECIES) {
     assert.ok(s.types.length >= 1 && s.types.length <= 2);
     assert.ok(s.startMoves.length);
@@ -129,7 +121,7 @@ test("evolution gates and preserves identity, variant and health deficit", () =>
   assert.throws(() => evolve(n, "spriglet-6"));
   assert.throws(() => evolve(createNuvo("spriglet", 11), "spriglet-1"));
   e.level = 26;
-  assert.equal(evolve(e, "spriglet-4").speciesId, "spriglet-4");
+  assert.equal(evolve(e, "spriglet-3").speciesId, "spriglet-3");
 });
 test("battle honors PP, effectiveness, guard and damage", () => {
   const p = createNuvo("spriglet", 7, false),

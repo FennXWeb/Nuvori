@@ -51,7 +51,11 @@ export const TRAINERS: Trainer[] = REGIONS.filter(r => !r.hidden).map((r, i) => 
   level: Math.max(5, r.level[0] + 2), quote: ["Let’s see how our companions have grown.", "Every battle teaches us something.", "Show me the bond you share!"][i % 3],
 }));
 export function trainerBattle(save: Save, trainer: Trainer): Battle {
-  const team = trainer.species.map((id, i) => createNuvo(trainer.level >= 26 ? `${id}-${3+i}` : trainer.level >= 12 ? `${id}-${1+i}` : id, trainer.level, false));
+  const team = trainer.species.map((id, i) => {
+    let species = SPECIES_BY_ID[id];
+    while (species.evolvesTo.length && trainer.level >= species.evolveLevel) species = SPECIES_BY_ID[species.evolvesTo[i % species.evolvesTo.length]];
+    return createNuvo(species.id,trainer.level,false);
+  });
   return { wild: team[0], active: Math.max(0, save.party.findIndex(n => n.hp > 0)), log: [`${trainer.name}: “${trainer.quote}”`], turn: 0, reward: 0, trainerId: trainer.id, trainerName: trainer.name, opponentQueue: team.slice(1), lastStand: save.party.every(n => n.hp <= 0) ? "choice" : undefined };
 }
 export function restoreAtLodge(save: Save): Save {

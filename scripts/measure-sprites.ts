@@ -70,6 +70,10 @@ export const NUVO_SHEETS: [string, number, number][] = [
   ["nuvo-atlas.png", 5, 5],
   ...Array.from({ length: 6 }, (_, i): [string, number, number] => [`evolution-${i + 1}-v2.png`, 5, 5]),
   ["oneirune.png", 1, 1],
+  ...["spriglet","cindlet","bubbfin","wisplet","voltik"].map((id): [string,number,number]=>[`${id}-evolutions.png`,2,5]),
+  ["dreamweaver-beginnings.png",3,2],
+  ["dreamweaver-ascendants.png",4,4],
+  ...Array.from({length:4},(_,i):[string,number,number]=>[`dreamweaver-crown-${i}.png`,4,4]),
 ];
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

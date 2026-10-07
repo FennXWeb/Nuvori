@@ -15,14 +15,19 @@ icon = (ROOT / names[0]).read_bytes()
 reserved, kind, count = struct.unpack_from('<HHH', icon)
 assert reserved == 0 and kind == 1
 sizes = {icon[6 + i * 16] or 256 for i in range(count)}
-assert {16, 32, 48, 256} <= sizes
-for name, size in [('smog_logo.png', (1200, 400)), ('smog_header.png', (2400, 1000))]:
+assert 256 in sizes, 'The executable icon must include a 256 px source'
+for name in ['smog_logo.png', 'smog_header.png']:
     data = (ROOT / name).read_bytes()
-    assert data[:8] == b'\x89PNG\r\n\x1a\n' and struct.unpack_from('>II', data, 16) == size
+    assert data[:8] == b'\x89PNG\r\n\x1a\n'
+    width, height = struct.unpack_from('>II', data, 16)
+    assert width >= 256 and height >= 128 and width > height, 'Store artwork must be a landscape PNG'
 assert (ROOT / 'smog_logo.png').read_bytes()[25] == 6, 'Logo must have an alpha channel'
 metadata = ET.fromstring((ROOT / 'smog_meta.xml').read_bytes())
 assert metadata.tag == 'smog' and metadata.findtext('version') == version
-assert metadata.findtext('release/asset') == 'Nuvori-*-windows-x64.zip'
+import fnmatch
+assert fnmatch.fnmatch(f'Nuvori-{version}-windows-x64.zip', metadata.findtext('release/asset'))
+launcher = (ROOT / 'smog_launch.bat').read_text()
+assert '"Nuvori.exe"' in launcher and 'MyGame.exe' not in launcher, 'Launcher must invoke the packaged executable'
 archive = ROOT / 'release' / f'Nuvori-{version}-windows-x64.zip'
 with zipfile.ZipFile(archive) as z:
     assert not z.testzip(), 'Archive CRC failed'

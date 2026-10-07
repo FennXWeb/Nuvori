@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, GripVertical, RefreshCw, Scissors, Shirt, Shield } from "lucide-react";
 import { Health, Modal, NuvoArt, PlayerArt } from "./components";
 import { SPECIES_BY_ID } from "./data";
+import { sexOf } from "./nursery";
 import { OUTFITS, HAIRSTYLES, HAIR_COLORS, ORBS, orbCount, reorderCrew } from "./expansion";
 import type { Save } from "./game";
 
@@ -19,7 +20,7 @@ export function CrewStrip({save,disabled,onChange,onManage}:{save:Save;disabled:
         onDragEnd={()=>{drag.current=null;setOver(null);setTimeout(()=>{moved.current=false;},0);}}
         onKeyDown={e=>{if(e.altKey&&n&&["ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();onChange(reorderCrew(save,i,i+(e.key==="ArrowLeft"?-1:1)));}}}
         onClick={()=>{if(!moved.current)onManage();}}>
-        {n?<><GripVertical className="crew-grip" size={13}/><NuvoArt id={n.speciesId} size={65} prismatic={n.prismatic}/><span>{SPECIES_BY_ID[n.speciesId].name}</span><small>Lv. {n.level}{i===0?" · Active":""}</small><Health nuvo={n} showText={false}/></>:<><span>＋</span><small>A new friend</small></>}
+        {n?<><GripVertical className="crew-grip" size={13}/><NuvoArt id={n.speciesId} size={65} prismatic={n.prismatic}/><span>{SPECIES_BY_ID[n.speciesId].name}</span><small>{sexOf(n)==="male"?"♂":"♀"} Lv. {n.level}{i===0?" · Active":""}</small><Health nuvo={n} showText={false}/></>:<><span>＋</span><small>A new friend</small></>}
       </button>;})}
     </div><p className="crew-hint">Far left leads and follows you · Other crew earn 20% XP · Alt + ← / → also reorders</p></section>;
 }

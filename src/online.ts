@@ -5,6 +5,7 @@ import {
   type User,
 } from "@supabase/supabase-js";
 import { validateSave, type Save } from "./game";
+import { normalizeSave } from "./nursery";
 import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
 import type { Interior } from "./adventure";
 const env = import.meta.env ?? {};
@@ -63,7 +64,7 @@ export async function fetchCloudSave(user: User): Promise<Save | null> {
     throw new Error(
       "Your cloud save could not be read. Your local save is safe.",
     );
-  return data ? { ...data.data, updated: data.updated_at } : null;
+  return data ? normalizeSave({ ...data.data, updated: data.updated_at }) : null;
 }
 export async function saveCloud(user: User, save: Save) {
   if (!supabase) return;
@@ -105,7 +106,7 @@ export function validRemote(p: unknown): p is RemoteKeeper {
     k.name.length <= 18 &&
     typeof k.region === "string" &&
     Boolean(REGION_BY_ID[k.region]) &&
-    (k.interior === undefined || ["lodge","shop","tailor","barber"].includes(k.interior)) &&
+    (k.interior === undefined || ["lodge","shop","tailor","barber","nursery"].includes(k.interior)) &&
     [k.outfit,k.hair,k.hairColor].every(v => v === undefined || (Number.isInteger(v) && v >= 0 && v < 6)) &&
     Number.isFinite(k.x) &&
     Number.isFinite(k.y) &&

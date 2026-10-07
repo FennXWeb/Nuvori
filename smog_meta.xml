@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <smog version="1">
   <title>Nuvori</title>
-  <description>An original 2D creature collector with branching evolutions and online exploration</description>
+  <description>Explore Auralis and discover 311 Nuvo forms across 27 families. Choose intricate evolution paths, breed companions at the nursery, and seek the mythical Dreamweaver with 85 possible forms. Find rare Prismatic companions, battle trainers, and challenge League guardians with up to four keepers.</description>
   <developer>DarkHeaven Games</developer>
   <genre>Adventure</genre>
+  <version>1.1.0</version>
   <accent>#bcaff8</accent>
   <visibility>public</visibility>
   <pricing>free</pricing>
