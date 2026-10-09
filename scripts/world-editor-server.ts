@@ -7,6 +7,8 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {authorizedRequest,verifyPrivateWorkspace,REPOSITORY,BRANCH,OWNER} from './editor-security';
 import {publishWorld} from './world-publisher';
+import {compileBeta,readBetaBuild} from './beta-build';
+import {startBetaServer} from './beta-server';
 import {inspectWorld,validateWorld} from '../src/editor/model';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=5187;
 const home=path.join(root,'.world-editor'),drafts=path.join(home,'drafts'),content=path.join(root,'src/content/world.json');
@@ -17,6 +19,8 @@ const run=async(command:string,args:string[])=>{
 await verifyPrivateWorkspace(run);
 await mkdir(drafts,{recursive:true});
 const key=randomBytes(32).toString('hex');
+const betaServer=await startBetaServer(path.join(home,'beta'),key);
+const betaStatus=async()=>{const build=await readBetaBuild(root),head=(await run('git',['rev-parse','HEAD'])).trim();return {build,head,stale:!!build&&build.sha!==head,busy,phase,launch:build?`http://127.0.0.1:5188/launch#${key}:${build.id}`:null};};
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 const state=async()=>{const raw=await readFile(content,'utf8');return {document:JSON.parse(raw),revision:hash(raw)};};
 const atomic=async(file:string,value:unknown)=>{const tmp=file+'.tmp';await writeFile(tmp,JSON.stringify(value,null,2)+'\n',{mode:0o600});await rename(tmp,file);};
@@ -31,6 +35,7 @@ const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:t
    if(req.method==='GET'){
     try{
      if(route==='/session')return send(200,{owner:OWNER,repository:REPOSITORY,branch:BRANCH,...await state(),phase,busy});
+     if(route==='/beta')return send(200,await betaStatus());
      if(route==='/drafts'){
       const files=(await readdir(drafts)).filter(f=>/^(autosave|[a-f0-9-]{36})\.json$/.test(f));
       const list=await Promise.all(files.map(async f=>{const d=JSON.parse(await readFile(path.join(drafts,f),'utf8'));return {id:f.slice(0,-5),name:d.name,updated:d.updated};}));
@@ -46,6 +51,13 @@ const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:t
    try{
     let raw='';for await(const chunk of req){raw+=chunk.toString();if(Buffer.byteLength(raw)>4*1024*1024)throw new Error('The world document exceeds the 4 MB limit.');}
     const body=JSON.parse(raw);
+    if(route==='/beta/build'){
+     await compileBeta({root,run,phase:value=>{phase=value;},compile:async(out,id)=>{
+      await exec(process.execPath,[path.join(root,'node_modules/typescript/bin/tsc'),'-b'],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024});
+      await exec(process.execPath,[path.join(root,'node_modules/vite/bin/vite.js'),'build','--mode','beta','--outDir',out],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024,env:{...process.env,GITHUB_SHA:id}});
+     }});
+     return send(200,{...await betaStatus(),busy:false,phase:'Ready'});
+    }
     const issues=inspectWorld(body.document);if(issues.some(i=>i.severity==='error'))return send(422,{error:'Invalid world data.',issues});
     if(route==='/drafts'){
      const id=body.autosave?'autosave':randomUUID(),name=String(body.name??'Untitled draft').slice(0,80);
@@ -61,7 +73,7 @@ const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:t
      phase='Building the beta game';
      await exec(process.execPath,['scripts/third-party-licenses.mjs'],{cwd:root,windowsHide:true,timeout:180000});
      await exec(process.execPath,[path.join(root,'node_modules/typescript/bin/tsc'),'-b'],{cwd:root,windowsHide:true,timeout:180000});
-     await exec(process.execPath,[path.join(root,'node_modules/vite/bin/vite.js'),'build'],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024});
+     await exec(process.execPath,[path.join(root,'node_modules/vite/bin/vite.js'),'build','--mode','beta'],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024});
     }});return send(200,result);
    }catch(error){console.error('World studio action failed during '+phase+':',error instanceof Error?error.message:error);const message=error instanceof Error?error.message:'Studio action failed.';return send(400,{error:message.startsWith('Command failed')?'A validation, build, or Git check failed. Your draft is preserved; inspect the local terminal before retrying.':message});}
    finally{busy=false;phase='Ready';}
@@ -69,8 +81,8 @@ const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:t
  }
 }]});
 await server.listen();
-const url=`http://127.0.0.1:${port}/editor.html#${key}`;
-await atomic(path.join(home,'session.json'),{url});
+const url=`http://127.0.0.1:${port}/${process.argv.includes('--beta')?'beta':'editor'}.html#${key}`;
+await atomic(path.join(home,'session.json'),{url,betaUrl:`http://127.0.0.1:${port}/beta.html#${key}`});
 console.log(`\nNUVORI WORLD STUDIO • Owner: ${OWNER}\nPrivate destination: ${REPOSITORY} / ${BRANCH}\nOpen this private launch link (do not share):\n${url}\n`);
-const close=async()=>{await unlink(path.join(home,'session.json')).catch(()=>{});await server.close();process.exit();};
+const close=async()=>{await unlink(path.join(home,'session.json')).catch(()=>{});betaServer.close();await server.close();process.exit();};
 process.on('SIGINT',()=>void close());process.on('SIGTERM',()=>void close());

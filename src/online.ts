@@ -12,7 +12,7 @@ import {validAppearance, type Appearance} from "./appearance";
 import {WORLD_PIXEL_WIDTH,WORLD_PIXEL_HEIGHT} from "./worldScenery";
 import {writeCloudAdventure} from './cloudSave';
 const env = import.meta.env ?? {};
-export const backendConfigured = Boolean(
+export const backendConfigured = env.MODE !== 'beta' && Boolean(
   env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
 );
 export const supabase: SupabaseClient | null = backendConfigured

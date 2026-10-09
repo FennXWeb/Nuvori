@@ -56,6 +56,8 @@ Walk along the signed exits to change areas. Step off the paths in wild zones to
 
 ## Development
 
+For private browser play, open **Nuvori Play Beta.cmd** (or `npm run beta`) and follow its private launch link. The same **Play Beta** space is available from World Studio. Build once, then play the full game with separate local beta saves. See [private testing](docs/PRIVATE-TESTING.md).
+
 Node.js 22 or later is recommended.
 
 ```sh

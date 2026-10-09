@@ -4,7 +4,19 @@ Production: `FennXWeb/Nuvori` (`origin`, public). Testing: `FennXWeb/Nuvori-Test
 
 GitHub branches inherit repository visibility. A separate private repository is necessary to keep unfinished changes closed. This checkout's default push destination is `testing`, and its pre-push guard permits only `codex/testing` in that repository. See the standing user instruction in `AGENTS.md`.
 
-Every testing push runs automated tests and a web build in the private repository. The workflow's downloadable `nuvori-private-web-build` artifact is retained for 14 days. It creates no public preview, Pages deployment, production tag, or release. The testing build has no online backend configuration unless separately provided; it supports guest play. Do not put a service-role key or provider secret in frontend configuration.
+Every testing push runs automated tests and a beta web build in the private repository. The workflow's downloadable `nuvori-private-web-build` artifact is retained for 14 days. It creates no public preview, Pages deployment, production tag, or release. Beta mode explicitly disables online accounts and ignores production environment files; it supports guest play. Do not put a service-role key or provider secret in frontend configuration.
+
+## Play beta in your browser
+
+Double-click **Nuvori Play Beta.cmd**, or run `npm run beta`, then open the private launch link printed in the terminal. If World Studio is already running, click **Play Beta** in its header instead of starting a second server. GitHub CLI must be signed into FennXWeb, with this checkout on `codex/testing` and the testing repository private.
+
+The beta lounge has **Build beta / Rebuild latest beta**, **Play beta**, a compiled commit/date, and a link back to World Studio. The first build requires a clean committed checkout. After publishing a world draft or pushing code changes, rebuild to play that commit. Rebuilding is local and does not publish anything. Unsaved or saved-but-unpublished world drafts are not included. Build failures preserve the previous playable game.
+
+The full compiled game runs at `127.0.0.1:5188`, inside the lounge or its own tab, with fullscreen controls. This is a private local browser space, not an internet-hosted beta website. Keep the terminal running while playing. The studio/lobby uses port 5187; the game uses a separate origin with its own persistent guest saves. Progress survives rebuilds and server restarts in the same browser. Settings → Export adventure backs up that beta adventure. Clearing browser data removes local saves. A Codex browser panel and Chrome have separate storage.
+
+The game requires a private launch capability exchanged for an HttpOnly session cookie. Both servers bind to loopback. The game server rejects unexpected hosts and unsafe paths. Restarting the launcher expires launch sessions; reopen from the lounge. Production Supabase accounts, chat, multiplayer, and cloud saves are disabled in beta mode so testing cannot write to the live adventure. A separate testing backend would be needed to test those features online.
+
+Compiled builds and session details stay in ignored `.world-editor/beta/`. Each build has its own immutable directory so rebuilding cannot break assets in an already-running game. Previous builds are retained locally. The editor, launch keys, beta lounge, and local server are excluded from distributable game bundles.
 
 ## Pending interface update
 

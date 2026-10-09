@@ -46,3 +46,7 @@ Failed checks restore the prior world file. A failed upload preserves its local 
 ## Verification
 
 Automated coverage exercises authored geometry in actual collision checks, brush/fill boundaries, weighted zones and overlap, encounter levels, mythical restrictions, invalid imports, owner/origin/remote checks, backup creation, check/commit rollback, upload failure recovery, dirty worktrees, and stale revisions. The complete beta JSON is also validated on every test run; legacy regression fixtures use the unmodified procedural world.
+
+## Play the full beta
+
+The header's **Play Beta** button opens a dedicated private browser lounge. Build the latest committed beta, then launch the complete game, including battles and progression. Use **Playtest** for immediate isolated previews of an unpublished world draft; use **Play Beta** after publishing the world to test it in the full game. The beta has its own browser saves and no connection to production accounts. See [private testing](PRIVATE-TESTING.md) for launch and rebuild details.
