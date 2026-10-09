@@ -5,6 +5,8 @@ import {PGlite} from "@electric-sql/pglite";
 import {newSave,validateSave,type Save} from "../src/game";
 import {createNuvo} from "../src/data";
 import {breedingDetails} from "../src/nursery";
+import {writeCloudAdventure} from '../src/cloudSave';
+import type {SupabaseClient} from '@supabase/supabase-js';
 test("PostgreSQL nursery: account isolation, server timer, escrow, immutable sex, retries, cancellation, and Dreamweaver lifetime quota",async()=>{
  const db=new PGlite();try{
   await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated,anon;create table public.keeper_saves(user_id uuid primary key references auth.users(id),data jsonb not null,updated_at timestamptz default now());`);
@@ -22,11 +24,29 @@ test("PostgreSQL nursery: account isolation, server timer, escrow, immutable sex
   await assert.rejects(rpc("collect",null,null,job.id),/not ready/);await assert.rejects(rpc("start",a.uid,b.uid),/already caring/);
   await db.query("select set_config('request.jwt.claim.sub',$1,false)",[other]);await assert.rejects(rpc("collect",null,null,job.id),/Save your adventure/);await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user]);
   await db.exec("reset role");
+  // Reproduce the real bug: PostgreSQL calls BEFORE INSERT before resolving an upsert.
+  await assert.rejects(db.query('insert into keeper_saves(user_id,data) values($1,$2) on conflict(user_id) do update set data=excluded.data',[user,JSON.stringify(started)]),/Start an online nursery visit/);
+  const persist=async(row:{data:Save},id:string)=>{
+    try{const result=await db.query('update keeper_saves set data=$1 where user_id=$2 returning user_id',[JSON.stringify(row.data),id]);return {data:result.rows[0]??null,error:null};}
+    catch(error){return {data:null,error:{message:(error as Error).message}};}
+  };
+  const updateClient={from(table:string){
+    assert.equal(table,'keeper_saves');
+    return {update:(row:{data:Save})=>({eq:(column:string,id:string)=>{
+      assert.equal(column,'user_id');return {select:()=>({maybeSingle:()=>persist(row,id)})};
+    }})};
+  }} as unknown as SupabaseClient;
+  // Autosave and pre-League/pre-nursery flushes use this same client function.
+  await writeCloudAdventure(updateClient,user,{...started,coins:started.coins+10});
+  const preserved=(await db.query<{data:Save}>('select data from keeper_saves where user_id=$1',[user])).rows[0].data;
+  assert.deepEqual(preserved.nursery,job);assert.equal(preserved.coins,started.coins+10);
+  await assert.rejects(writeCloudAdventure(updateClient,user,original),/nursery changed/);
   await assert.rejects(db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(original),user]),/nursery changed/);
   // Advance only the fixture's database clock equivalent, leaving the advertised duration intact.
   const delta=job.readyAt+1000-Date.now();const ready={...started,nursery:{...job,startedAt:job.startedAt-delta,readyAt:job.readyAt-delta}};
   await db.exec("select set_config('nuvori.nursery_write','on',false)");await db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(ready),user]);await db.exec("select set_config('nuvori.nursery_write','off',false);set role authenticated");
   const collected=await rpc("collect",null,null,job.id);assert.ok(validateSave(collected));assert.equal(collected.party.length,4);assert.equal(collected.nursery,undefined);assert.deepEqual(await rpc("collect",null,null,job.id),collected);
+  await db.exec('reset role');await writeCloudAdventure(updateClient,user,collected);await db.exec('set role authenticated');
   const visit=await rpc("start",a.uid,b.uid);const cancelled=await rpc("cancel",null,null,visit.nursery!.id);assert.equal(cancelled.party.length,4);assert.ok(validateSave(cancelled));
   await db.exec("reset role");const changedSex=structuredClone(cancelled);changedSex.party[0].sex=changedSex.party[0].sex==="male"?"female":"male";await assert.rejects(db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(changedSex),user]),/assigned sex/);
   const dream=createNuvo("dreamweaver",30,false,"male");const captured={...cancelled,box:[{...dream,origin:"wild"}],dreamweaverCaptures:{male:dream.uid}};

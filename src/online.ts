@@ -10,6 +10,7 @@ import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
 import type { Interior } from "./adventure";
 import {validAppearance, type Appearance} from "./appearance";
 import {WORLD_PIXEL_WIDTH,WORLD_PIXEL_HEIGHT} from "./worldScenery";
+import {writeCloudAdventure} from './cloudSave';
 const env = import.meta.env ?? {};
 export const backendConfigured = Boolean(
   env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
@@ -70,14 +71,7 @@ export async function fetchCloudSave(user: User): Promise<Save | null> {
 }
 export async function saveCloud(user: User, save: Save) {
   if (!supabase) return;
-  const { error } = await supabase
-    .from("keeper_saves")
-    .upsert({
-      user_id: user.id,
-      data: save,
-      updated_at: new Date().toISOString(),
-    });
-  if (error) throw error;
+  await writeCloudAdventure(supabase,user.id,save);
 }
 export interface RemoteKeeper {
   appearance?: Appearance;

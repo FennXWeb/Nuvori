@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: full-screen illustrated world atlas background for the original creature-collecting game Nuvori, named Auralis.
+Primary request: a gorgeous richly detailed hand-painted fantasy cartographer's map of a coherent large island continent, seen from directly overhead with tiny isometric landmarks. Landscape 3:2 image. Antique cream parchment coast outlines, jade forests, turquoise rivers and ocean, gold-accented paths, charming miniature towns, mountains, caves, bridges, marshes, deserts, and winding trails. Fine ink contours and watercolor gouache detail; sophisticated magical naturalist game aesthetic.
+Geography, using approximate image percentages (x from left, y from top), must follow this layout for interactive labels added by code:
+North: astronomical ruins in forest at (38,12); snowy town at (54,25); storm cliffs at (68,25); high marble citadel at (80,12); snowy pass at (91,25).
+West: old forest at (23,29); hedge labyrinth at (8,39); lush woodland at (23,53); meadow village at (23,77); watermill and river bridge at (8,77).
+Center: crystal mountains at (40,49), underground cave entrance at (40,66), lantern mine at (40,80); warm volcanic badlands at (56,49).
+East: amber desert with ancient sundial at (71,49); luminous green marsh at (85,49); windmill and tailor town at (76,78); island-filled lake at (91,78).
+South: sunny lighthouse harbor at (57,79); sea-glass coastal coves at (40,94).
+Make most of these positions land, with connected trails. Ocean mainly around perimeter, generous coastal detail and a few tiny offshore islands. Long rivers connect central mountain waters to the southern sea.
+No text, no labels, no lettering, no legend, no markers or UI, no characters, no giant creatures, no border frame. Fill the whole image with the illustrated map. Even lighting for legible overlaid interface; high detail without oversaturation.

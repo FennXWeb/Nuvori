@@ -70,9 +70,18 @@ export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:numb
  c.restore();
  if(a.accessory===3){const bag=part('keeper-accessories.png',8+dir,a,'accessory');if(bag)c.drawImage(bag,-14,-58-bob,27,33);}
  const f=WORLD_ART[headFile].frames[headIndex],hs=.215,chin=jaws[a.hairStyle][dir]-f.y;
- const hx=-head.width*hs/2,hy=-57-bob-chin*hs;
- c.save();c.translate(0,-57-bob);c.rotate(stride*.015);c.drawImage(head,hx,-chin*hs,head.width*hs,head.height*hs);c.restore();
- if(a.hat){const hat=part('keeper-hats.png',(a.hat-1)*4+dir,a,'hat');if(hat){const width=a.hat===2?59:a.hat===3?16:a.hat===4?50:44,height=width*hat.height/hat.width;const hatY=a.hat===4?hy-3:hy+12;c.drawImage(hat,a.hat===3?10:-width/2,hatY-height*.66,width,height);}}
+ const hx=-head.width*hs/2;
+ // Register headwear to the forehead/jaw, never the bounding box of long or spiky hair.
+ // Both layers share bob and rotation, so the brim stays attached while walking.
+ c.save();c.translate(0,-57-bob);c.rotate(stride*.015);
+ c.save();if(a.hat===1||a.hat===2){c.beginPath();c.rect(-80,-34,160,120);c.clip();}
+ c.drawImage(head,hx,-chin*hs,head.width*hs,head.height*hs);c.restore();
+ if(a.hat){const hat=part('keeper-hats.png',(a.hat-1)*4+dir,a,'hat');if(hat){
+  const width=a.hat===2?59:a.hat===3?18:a.hat===4?48:44,height=width*hat.height/hat.width;
+  const attachment=[0,.91,.71,.46,.48,.84][a.hat],forehead=a.hat===3?-27:-26;
+  c.drawImage(hat,a.hat===3?(dir===1?-22:dir===2?5:10):-width/2,forehead-height*attachment,width,height);
+ }}
+ c.restore();
  if(a.accessory&&a.accessory!==3&&a.accessory!==5&&(dir!==3||a.accessory===2)){
   const accessory=part('keeper-accessories.png',(a.accessory-1)*4+dir,a,'accessory');
   if(accessory){const w=a.accessory===1?(side?17:32):a.accessory===2?29:side?4:36,h=a.accessory===1?13:a.accessory===2?19:7;

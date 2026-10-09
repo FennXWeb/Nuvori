@@ -1,0 +1,47 @@
+import {useEffect,useRef,useState,type CSSProperties} from 'react';
+import {ArrowRight,Backpack,Check,Footprints,Heart,Shield,Swords,Users} from 'lucide-react';
+import {BattleActors} from './BattleActors';
+import {Health,NuvoArt,PlayerArt,TypeBadge} from './components';
+import {MOVE_BY_ID,REGION_BY_ID,SPECIES_BY_ID,TYPE_COLORS,TYPE_SYMBOLS,maxHp} from './data';
+import {ORBS,orbCount,type OrbKind} from './expansion';
+import {caughtBefore} from './adventure';
+import {sexLabel} from './nursery';
+import type {Battle,BattleAction,Save} from './game';
+import './battleScreen.css';
+
+export function BattleView({battle,save,busy:turnBusy,onAction,onFinish}:{battle:Battle;save:Save;busy:boolean;onAction:(a:BattleAction)=>void;onFinish:()=>void}){
+ const [entering,setEntering]=useState(true),[tab,setTab]=useState<'moves'|'bag'|'crew'>('moves'),[orb,setOrb]=useState<OrbKind>('binding');
+ const panel=useRef<HTMLElement>(null);
+ useEffect(()=>{const previous=document.activeElement as HTMLElement;panel.current?.focus();const t=setTimeout(()=>setEntering(false),1750);return()=>{clearTimeout(t);previous?.focus();};},[]);
+ const busy=turnBusy||entering,p=save.party[battle.active],keeper=battle.lastStand==='fighting';
+ const [presented,setPresented]=useState({player:p,wild:battle.wild});
+ const shown=presented.player,wild=presented.wild,ps=SPECIES_BY_ID[shown.speciesId],ws=SPECIES_BY_ID[wild.speciesId];
+ const act=(a:BattleAction)=>{if(!busy){onAction(a);setTab('moves');}};
+ useEffect(()=>{if(battle.lastStand)setTab('moves');},[battle.lastStand]);
+ const region=REGION_BY_ID[save.region];
+ return <section ref={panel} tabIndex={-1} className={`nu-battle ${keeper?'keeper-stand':''} ${battle.over?'resolved':''}`} role="dialog" aria-modal="true" aria-label={battle.trainerName?`Battle with ${battle.trainerName}`:'Wild Nuvo encounter'} onKeyDown={e=>{
+  if(e.key==='Tab'){const els=Array.from(panel.current!.querySelectorAll<HTMLElement>('button:not(:disabled),select:not(:disabled)'));const first=els[0],last=els.at(-1);if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel.current)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}
+ }}>
+  <div className="battle-sky" aria-hidden="true"><i/><i/><i/></div>
+  <header className="encounter-header"><div><span className="nu-kicker">{battle.trainerName?'KEEPER CHALLENGE':'INTO THE WILD'}</span><h1>{region.name}</h1></div><div className="encounter-seal">✦</div><div><span className="nu-kicker">{battle.wild.prismatic?'PRISMATIC DISCOVERY':battle.trainerName??'YOUR PATH. THEIR EVOLUTION.'}</span><strong>Turn {battle.turn+1}<small>{battle.trainerId?` · ${(battle.opponentQueue?.length??0)+1} opponents remain`:''}</small></strong></div></header>
+  <div className="encounter-stage">
+   <div className="battle-plinth ally-plinth"/><div className="battle-plinth rival-plinth"/>
+   <div className="combat-card rival-card"><span className="nu-kicker">{battle.trainerId?'OPPONENT':'WILD NUVO'} {caughtBefore(save,ws.id)&&<span className="caught-mark"><Check size={12}/> Collected</span>}</span><div className="combat-name"><h2>{ws.name}{wild.prismatic?' ✦':''}</h2><span>Lv. {wild.level} · {sexLabel(wild)}</span></div><Health nuvo={wild}/><div className="type-row">{ws.types.map(t=><TypeBadge key={t} type={t}/>)}{wild.status&&<small>{wild.status}</small>}</div></div>
+   <BattleActors battle={battle} player={p} onPresentation={setPresented} keeper={keeper?<PlayerArt palette={save.player.palette} look={save.player} size={300}/>:undefined}/>
+   <div className="combat-card ally-card"><span className="nu-kicker">{keeper?'KEEPER’S LAST STAND':'BY YOUR SIDE'}</span><div className="combat-name"><h2>{keeper?save.player.name:ps.name}</h2><span>{keeper?'COURAGE':`Lv. ${shown.level}`}</span></div>{keeper?<div className="health"><div className="health-track"><i style={{width:`${100*(battle.keeperHp??0)/(battle.keeperMaxHp??1)}%`}}/></div><span>{battle.keeperHp} / {battle.keeperMaxHp} HP</span></div>:<Health nuvo={shown}/>}<div className="type-row">{keeper?<small>Your companions are counting on you.</small>:ps.types.map(t=><TypeBadge key={t} type={t}/>)}</div></div>
+  </div>
+  <div className="encounter-dock">
+   <aside className="encounter-story"><span className="nu-kicker">{busy?'THE BATTLE UNFOLDS':'YOUR NEXT CHOICE'}</span><div className="encounter-log" aria-live="polite" aria-atomic="true">{battle.log.slice(-2).map((line,i)=><p key={i}>{line}</p>)}</div><div className="crew-vitals" aria-label="Crew health">{save.party.map(n=><span key={n.uid} className={n.hp<=0?'fallen':''} title={`${SPECIES_BY_ID[n.speciesId].name}: ${n.hp} HP`}>◈</span>)}</div></aside>
+   <div className="encounter-controls">
+    {battle.over?<div className="encounter-result"><span className="nu-kicker">{battle.over==='won'?'VICTORY':battle.over==='caught'?'A NEW BOND':battle.over==='lost'?'A NEW BEGINNING':'SAFELY AWAY'}</span><h2>{battle.over==='won'?'A little stronger, together.':battle.over==='caught'?'Your story grows.':battle.dreamAwakening?'Beyond the waking world…':battle.over==='lost'?'Rest beneath the lodge lights.':'The trail is calling.'}</h2>{keeper&&battle.over!=='lost'&&<p>Your fallen Nuvo still need care at the Healing Lodge.</p>}<button className="nu-button primary" disabled={busy} onClick={onFinish}>Continue adventure <ArrowRight size={18}/></button></div>
+    :battle.lastStand==='choice'?<div className="encounter-result"><span className="nu-kicker">YOUR CREW HAS FALLEN</span><h2>Will you stand for them?</h2><p>Your Nuvo cannot fight. Step forward as your keeper, or return to the Healing Lodge.</p><div className="encounter-choices"><button className="nu-button primary" disabled={busy} onClick={()=>act({type:'stand'})}><Swords size={18}/> I’ll fight myself</button><button className="nu-button" disabled={busy} onClick={()=>act({type:'retreat'})}>Call for rescue</button></div></div>
+    :<><nav className="combat-tabs" aria-label="Battle actions">{(['moves','bag','crew'] as const).map((id,i)=><button key={id} aria-pressed={tab===id} disabled={busy||(id==='crew'&&keeper)} onClick={()=>setTab(id)}>{i===0?<Swords size={17}/>:i===1?<Backpack size={17}/>:<Users size={17}/>} {id==='moves'?'Abilities':id==='bag'?'Satchel':'Crew'}</button>)}<button className="escape-action" disabled={busy||Boolean(battle.trainerId)} onClick={()=>act({type:'run'})}><Footprints size={17}/> Escape</button></nav>
+    <div className="combat-content">
+     {tab==='moves'&&(keeper?<div className="nu-move-grid"><button className="nu-move" disabled={busy} onClick={()=>act({type:'strike'})}><span className="ability-emblem"><Swords/></span><span><strong>Courage Strike</strong><small>A keeper’s resolve · direct damage</small></span><b>01</b></button><button className="nu-move" disabled={busy} onClick={()=>act({type:'brace'})}><span className="ability-emblem"><Shield/></span><span><strong>Brace</strong><small>Reduce the next hit by 70%</small></span><b>02</b></button></div>:<div className="nu-move-grid">{p.moves.every(id=>p.pp[id]<=0)&&<button className="nu-move" disabled={busy} onClick={()=>act({type:'struggle'})}><span className="ability-emblem">✧</span><span><strong>Struggle</strong><small>No energy · causes recoil</small></span></button>}{p.moves.map(id=>{const m=MOVE_BY_ID[id];return <button key={id} className="nu-move" style={{'--ability':TYPE_COLORS[m.type]} as CSSProperties} disabled={busy||p.hp<=0||p.pp[id]<=0} onClick={()=>act({type:'move',id})}><span className="ability-emblem">{TYPE_SYMBOLS[m.type]}</span><span><strong>{m.name}</strong><small>{m.type} · {m.power?`${m.power} power`:m.effect==='heal'?'Recover health':'Support'}</small></span><b>{p.pp[id]}<small>/{m.pp} PP</small></b></button>;})}</div>)}
+     {tab==='bag'&&<div className="battle-satchel"><div><label htmlFor="battle-orb">Capture orb</label><select id="battle-orb" value={orb} disabled={busy||Boolean(battle.trainerId)} onChange={e=>setOrb(e.target.value as OrbKind)}>{ORBS.map(o=><option key={o.id} value={o.id}>{o.name} · ×{orbCount(save,o.id)}</option>)}</select><small>{battle.trainerId?'Bonded trainer Nuvo cannot be caught.':ORBS.find(o=>o.id===orb)!.description}</small><button className="nu-button primary" disabled={busy||Boolean(battle.trainerId)||orbCount(save,orb)<1} onClick={()=>act({type:'catch',orb})}>◈ Throw orb</button></div><div><span className="ability-emblem"><Heart/></span><strong>Healing tonic · ×{save.potions}</strong><small>Restore 50 HP to {keeper?'your keeper':'your active Nuvo'}. Cannot revive fallen Nuvo.</small><button className="nu-button" disabled={busy||save.potions<1||(keeper?battle.keeperHp===battle.keeperMaxHp:p.hp<=0||p.hp===maxHp(p))} onClick={()=>act({type:'potion'})}>Use tonic</button></div></div>}
+     {tab==='crew'&&<div className="combat-crew">{save.party.map((n,index)=><button className="nu-button" disabled={busy||keeper||n.hp<=0||index===battle.active} key={n.uid} onClick={()=>act({type:'switch',index})}><NuvoArt id={n.speciesId} size={50}/><span><strong>{SPECIES_BY_ID[n.speciesId].name}</strong><small>{n.hp<=0?'Fallen · needs lodge':`${n.hp} / ${maxHp(n)} HP${index===battle.active?' · Active':''}`}</small></span></button>)}</div>}
+    </div></>}
+   </div>
+  </div>
+ </section>;
+}

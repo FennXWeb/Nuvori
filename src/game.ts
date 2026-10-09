@@ -327,6 +327,8 @@ export function battleTurn(
   let s = structuredClone(save),
     b = structuredClone(battle);
   if (b.over) return { save, battle };
+  // Enforce this at the domain boundary, including imported/stale battle state.
+  if (!b.lastStand && s.party.every(n=>n.hp<=0)) b.lastStand='choice';
   let p = s.party[b.active];
   const logs: string[] = [];
   let wildActs = true;
@@ -370,6 +372,7 @@ export function battleTurn(
   }
   if (action.type === "move") {
     if (
+      p.hp <= 0 ||
       !p.moves.includes(action.id) ||
       !MOVE_BY_ID[action.id] ||
       p.pp[action.id] <= 0
@@ -411,6 +414,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       if (b.keeperHp === b.keeperMaxHp) return fail("You are already at full health.");
       s.potions--; b.keeperHp = Math.min(b.keeperMaxHp!, b.keeperHp!+50); logs.push("You recovered 50 HP.");
     } else {
+    if (p.hp <= 0) return fail("A fallen Nuvo needs the Healing Lodge.");
     if (p.hp === maxHp(p)) return fail("Your Nuvo is already at full health.");
     s.potions--;
     p.hp = Math.min(maxHp(p), p.hp + 50);
@@ -527,7 +531,6 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       logs.push(`Go, ${SPECIES_BY_ID[s.party[next].speciesId].name}!`);
     }
   }
-  if (b.over && b.lastStand === "fighting" && b.over !== "lost") s.party = s.party.map(n => ({ ...n, hp: Math.max(1,n.hp) }));
   s.seen = [...new Set([...s.seen, SPECIES_BY_ID[b.wild.speciesId].base])];
   b.turn++;
   b.log = [...b.log, ...logs].slice(-40);

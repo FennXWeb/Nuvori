@@ -860,7 +860,7 @@ export function gainXp(n: Nuvo, amount: number) {
     copy.xp -= xpToNext(copy.level);
     copy.level++;
     levels++;
-    copy.hp = Math.min(maxHp(copy), copy.hp + 4);
+    copy.hp = n.hp <= 0 ? 0 : Math.min(maxHp(copy), copy.hp + 4);
     const learned = SPECIES_BY_ID[copy.speciesId].learnset.filter(
       (m) => m.level === copy.level,
     );
@@ -878,7 +878,7 @@ export function evolve(n: Nuvo, target: string): Nuvo {
   if (n.level < s.evolveLevel || !s.evolvesTo.includes(target))
     throw new Error("This evolution is not available yet.");
   const copy = { ...n, speciesId: target };
-  copy.hp = Math.min(maxHp(copy), n.hp + maxHp(copy) - maxHp(n));
+  copy.hp = n.hp <= 0 ? 0 : Math.min(maxHp(copy), n.hp + maxHp(copy) - maxHp(n));
   return copy;
 }
 export interface Region {

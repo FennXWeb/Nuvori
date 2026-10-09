@@ -1,4 +1,8 @@
-import {BattleActors} from './BattleActors';
+import {BattleView} from './BattleScreen';
+export {BattleView} from './BattleScreen';
+import {fastTravel} from './travel';
+import {NuvoriCursor} from './NuvoriCursor';
+import './nuvoriUI.css';
 import {sceneDuration} from './battlePresentation';
 import {RESIDENTS} from './townLife';
 import {
@@ -505,7 +509,7 @@ export default function App() {
   const onEncounter = useCallback(() => {
     if (battleLock.current) return;
     const s = state.current;
-    if (!s || s.interior || REGION_BY_ID[s.region].kind==="Town" || s.party.every((n) => n.hp <= 0)) return;
+    if (!s || s.interior || REGION_BY_ID[s.region].kind==="Town") return;
     battleLock.current = true;
     const b = encounter(s);
     setBattle(b);
@@ -1281,6 +1285,7 @@ export default function App() {
           </div>
         </div>
       )}
+      <NuvoriCursor/>
       {authReady&&mainMenu&&!otherTab&&<MainMenu save={save} obscured={Boolean(panel)||Boolean(dialog)||updateOpen} online={Boolean(user)} status={onlineStatus} social={social} remote={remote} audio={audio} onAudio={()=>enableAudio(!audio)} onPlay={()=>{setMainMenu(false);if(league.raid)setPanel('league');gameAudio.play('ui-confirm');}} onOpen={(id:MenuDestination)=>{if(id==='friends'&&!user){setPanel('online');return;}if(!save&&['wheel','friends','team','journal'].includes(id)){setPanel('menu-welcome');return;}if(league.raid&&!['friends','settings','online','updates','map','guide'].includes(id)){setMainMenu(false);setPanel('league');return;}setPanel(id);}} chat={<ChatDock embedded userId={user?.id} cell={cellKey(save?.region||'mossbell',save?.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} needsKeeper={!save} onCreate={()=>setMainMenu(false)} onSignIn={()=>setPanel('online')} notify={notify} refresh={refreshSocial}/>}/>}
       {panel==='menu-welcome'&&<Modal title="Every adventure begins with a keeper" eyebrow="YOUR NEXT CHAPTER" onClose={closePanel}><p className="quiet-copy">Create your keeper and choose a starter to collect daily gifts, build your crew and meet other keepers. Your rewards will belong to that adventure.</p><div className="menu-footer"><button className="primary-button" onClick={()=>{setPanel(null);setMainMenu(false);}}>Create your keeper <ArrowRight size={16}/></button>{!user&&<button className="secondary-button" onClick={()=>setPanel('online')}>Sign in first</button>}</div></Modal>}
       {panel==='updates'&&<UpdateArchive onClose={closePanel}/>}
@@ -1291,18 +1296,18 @@ export default function App() {
       {(panel === "tailor" || panel === "barber") && save && <StyleShop save={save} kind={panel} onChange={setSave} onClose={closePanel} notify={notify}/>}
       {panel === "nursery" && save && <Nursery save={save} account={Boolean(user)} onAction={nurseryAction} onClose={()=>{if(!dailyBusy.current)closePanel();}}/>}
       {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{const serverSnapshot=JSON.stringify(result);if(state.current)result=awardAdventureProgress(state.current,result);position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=serverSnapshot;if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
-      {trainerOffer && save && (()=>{const trainer=TRAINERS.find(t=>t.id===trainerOffer)!;return <Modal title={trainer.name} eyebrow="KEEPER CHALLENGE" onClose={()=>setTrainerOffer(null)}><div className="trainer-offer"><PlayerArt palette={trainer.level%4} size={125}/><div><h3>“{trainer.quote}”</h3><p>{trainer.species.length} Nuvo · Lv. {trainer.level}{save.defeatedTrainers?.includes(trainer.id)?" · Rematch":""}</p><p>Trainer Nuvo cannot be caught. Your whole crew shares experience.</p></div></div><div className="expansion-footer"><button className="secondary-button" onClick={()=>setTrainerOffer(null)}>Maybe later</button><button className="primary-button" disabled={save.party.every(n=>n.hp<=0)} onClick={()=>{battleLock.current=true;setBattle(trainerBattle(save,trainer));setTrainerOffer(null);sound("battle",audio);}}>Let’s battle <ArrowRight size={16}/></button></div></Modal>;})()}
+      {trainerOffer && save && (()=>{const trainer=TRAINERS.find(t=>t.id===trainerOffer)!;return <Modal title={trainer.name} eyebrow="KEEPER CHALLENGE" onClose={()=>setTrainerOffer(null)}><div className="trainer-offer"><PlayerArt palette={trainer.level%4} size={125}/><div><h3>“{trainer.quote}”</h3><p>{trainer.species.length} Nuvo · Lv. {trainer.level}{save.defeatedTrainers?.includes(trainer.id)?" · Rematch":""}</p><p>Trainer Nuvo cannot be caught. Your whole crew shares experience.</p></div></div><div className="expansion-footer"><button className="secondary-button" onClick={()=>setTrainerOffer(null)}>Maybe later</button><button className="primary-button" onClick={()=>{battleLock.current=true;setBattle(trainerBattle(save,trainer));setTrainerOffer(null);sound("battle",audio);}}>Let’s battle <ArrowRight size={16}/></button></div></Modal>;})()}
       {panel === "guide" && <Guide onClose={closePanel} save={save} />}
       {panel === "friends" && user && <FriendsPanel social={social} error={socialError} remote={remote} refresh={refreshSocial} notify={notify} onClose={closePanel}/>}
       {panel === "wheel" && save && <DailyWheel save={save} account={Boolean(user)} onSpin={spinDaily} onClose={closePanel}/>}
       {panel === "map" && (
         <Modal
-          title="The Auralis archipelago"
+          title="The Atlas of Auralis"
           eyebrow="EVERY PATH HOLDS A POSSIBILITY"
           onClose={closePanel}
           wide
         >
-          <WorldAtlas save={save}/>
+          <WorldAtlas save={save} onTravel={save&&!battle&&!league.raid?(id)=>{const current=state.current;if(!current||battleLock.current||pausedByOtherTab.current)return;try{const next=fastTravel(current,id);state.current=next;position.current={x:next.x,y:next.y,dir:0,moving:false};keys.current.clear();setNearby('');setSave(next);closePanel();setMainMenu(false);gameAudio.play('purchase');notify(`Welcome to ${REGION_BY_ID[id].name}.`);}catch(error){notify((error as Error).message);}}:undefined}/>
         </Modal>
       )}
       {panel === "team" && save && (
@@ -2076,7 +2081,7 @@ function Team({
             </button>
             <button
               className="secondary-button"
-              disabled={!save.potions || n.hp >= maxHp(n)}
+              disabled={!save.potions || n.hp <= 0 || n.hp >= maxHp(n)}
               onClick={() => {
                 setSave({
                   ...save,
@@ -2253,197 +2258,5 @@ function Team({
         </>
       )}
     </Modal>
-  );
-}
-export function BattleView({
-  battle,
-  save,
-  busy:turnBusy,
-  onAction,
-  onFinish,
-}: {
-  battle: Battle;
-  save: Save;
-  busy: boolean;
-  onAction: (action: BattleAction) => void;
-  onFinish: () => void;
-}) {
-  const [entering,setEntering]=useState(true);
-  useEffect(()=>{const timer=setTimeout(()=>setEntering(false),1750);return()=>clearTimeout(timer);},[]);
-  const busy=turnBusy||entering;
-  const [showSwitch, setShowSwitch] = useState(false);
-  const [orb,setOrb] = useState<OrbKind>("binding");
-  const p = save.party[battle.active];
-  const [presented,setPresented]=useState({player:p,wild:battle.wild});
-  const shown=presented.player,wild=presented.wild,ps=SPECIES_BY_ID[shown.speciesId],ws=SPECIES_BY_ID[wild.speciesId];
-  return (
-    <div className="battle-backdrop">
-      <section
-        className="battle-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label={battle.trainerName?`Battle with ${battle.trainerName}`:"Wild Nuvo encounter"}
-      >
-        <header>
-          <span className="eyebrow">
-            <Leaf size={14} /> {REGION_BY_ID[save.region].name} · {battle.trainerName ? `${battle.trainerName} · ${(battle.opponentQueue?.length||0)+1} Nuvo left` : "WILD ENCOUNTER"}
-          </span>
-          <span>
-            {battle.wild.prismatic
-              ? "✦ PRISMATIC DISCOVERY"
-              : `TURN ${battle.turn + 1}`}
-          </span>
-        </header>
-        <div className="battle-arena">
-          <div className="arena-grass ag1" />
-          <div className="arena-grass ag2" />
-          <div className="wild-health battle-health">
-            <div>
-              <strong>
-                {ws.name}
-                {wild.prismatic ? " ✦" : ""}
-              </strong>
-              <span>Lv. {wild.level} · {sexLabel(wild)}</span>
-            </div>
-            <div className="type-row">
-              {ws.types.map((t) => (
-                <TypeBadge key={t} type={t} />
-              ))}
-              {caughtBefore(save, ws.id) && <span className="caught-badge"><Check size={12}/> Already caught</span>}
-            </div>
-            <Health nuvo={wild} />
-            {wild.status && (
-              <small>{wild.status.toUpperCase()}</small>
-            )}
-          </div>
-          <BattleActors battle={battle} player={p} onPresentation={setPresented} keeper={battle.lastStand==='fighting'?<PlayerArt palette={save.player.palette} look={save.player} size={240}/>:undefined}/>
-          <div className="player-health battle-health">
-            <div>
-              <strong>{battle.lastStand === "fighting"?save.player.name:ps.name}</strong>
-              <span>{battle.lastStand === "fighting"?"LAST STAND":`Lv. ${shown.level}`}</span>
-            </div>
-            <div className="type-row">
-              {battle.lastStand !== "fighting" && ps.types.map((t) => (
-                <TypeBadge key={t} type={t} />
-              ))}
-            </div>
-            {battle.lastStand === "fighting"?<div className="health"><div className="health-track"><i style={{width:`${battle.keeperHp!/battle.keeperMaxHp!*100}%`}}/></div><span>{battle.keeperHp} / {battle.keeperMaxHp} HP</span></div>:<Health nuvo={shown} />}
-            {battle.lastStand !== "fighting" && shown.status && <small>{shown.status.toUpperCase()}</small>}
-          </div>
-        </div>
-        <div className="battle-console">
-          <div className="battle-log" aria-live="polite">
-            {battle.log.slice(-3).map((l, i) => (
-              <p key={`${battle.turn}-${i}`}>{l}</p>
-            ))}
-          </div>
-          {battle.over ? (
-            <div className="battle-result">
-              <strong>
-                {battle.over === "won"
-                  ? "A little stronger, together."
-                  : battle.over === "caught"
-                    ? "The beginning of a new friendship."
-                    : battle.over === "lost"
-                      ? battle.dreamAwakening ? "You awaken in Dream Land…" : "A fresh start at the healing lodge."
-                      : "Back to the adventure."}
-              </strong>
-              <button
-                className="primary-button"
-                disabled={busy}
-                onClick={onFinish}
-              >
-                Continue exploring <ArrowRight size={17} />
-              </button>
-            </div>
-          ) : battle.lastStand === "choice" ? <div className="last-stand-choice"><Shield size={32}/><h3>Your crew has fallen.</h3><p>You can step forward and fight as your keeper, or accept rescue to the Healing Lodge.</p><button className="primary-button" disabled={busy} onClick={()=>onAction({type:"stand"})}>I’ll fight myself</button><button className="secondary-button" disabled={busy} onClick={()=>onAction({type:"retreat"})}>Accept rescue</button></div> : (
-            <>
-              {battle.lastStand === "fighting" ? <div className="battle-moves"><button disabled={busy} onClick={()=>onAction({type:"strike"})}><strong>Courage Strike</strong><small>Strike with your keeper’s resolve</small></button><button disabled={busy} onClick={()=>onAction({type:"brace"})}><strong>Brace</strong><small>Reduce incoming damage by 70%</small></button></div> :
-              <div className="battle-moves">
-                {p.moves.every(id=>p.pp[id]<=0)&&<button disabled={busy} onClick={()=>onAction({type:"struggle"})}><strong>Struggle</strong><small>Fight without PP · takes recoil</small></button>}
-                {p.moves.map((id) => {
-                  const m = MOVE_BY_ID[id];
-                  return (
-                    <button
-                      key={id}
-                      disabled={busy || p.pp[id] <= 0}
-                      onClick={() => onAction({ type: "move", id })}
-                      style={{ "--type": TYPE_COLORS[m.type] } as CSSProperties}
-                    >
-                      <span className="move-symbol">
-                        {TYPE_SYMBOLS[m.type]}
-                      </span>
-                      <span>
-                        <strong>{m.name}</strong>
-                        <small>
-                          {m.type} ·{" "}
-                          {m.power
-                            ? `${m.power} power`
-                            : m.effect === "heal"
-                              ? "Recover HP"
-                              : "Defense"}
-                        </small>
-                      </span>
-                      <span className="move-pp">
-                        {p.pp[id]}
-                        <small>/{m.pp} PP</small>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>}
-              {!battle.trainerId&&<label className="orb-select">Capture orb<select value={orb} onChange={e=>setOrb(e.target.value as OrbKind)} disabled={busy}>{ORBS.map(o=><option key={o.id} value={o.id}>{o.name} · ×{orbCount(save,o.id)}</option>)}</select><small>{ORBS.find(o=>o.id===orb)!.description}</small></label>}
-              <div className="battle-actions">
-                <button
-                  disabled={busy || Boolean(battle.trainerId) || orbCount(save,orb) < 1}
-                  onClick={() => onAction({ type: "catch",orb })}
-                >
-                  <span>◈</span> {battle.trainerId?"Bonded Nuvo":ORBS.find(o=>o.id===orb)!.name} <small>×{orbCount(save,orb)}</small>
-                </button>
-                <button
-                  disabled={busy || save.potions < 1}
-                  onClick={() => onAction({ type: "potion" })}
-                >
-                  <Heart size={17} />
-                  Tonic<small>×{save.potions}</small>
-                </button>
-                <button
-                  disabled={busy || Boolean(battle.lastStand)}
-                  onClick={() => setShowSwitch(!showSwitch)}
-                >
-                  <RotateCcw size={17} />
-                  Switch
-                </button>
-                <button
-                  disabled={busy || Boolean(battle.trainerId)}
-                  onClick={() => onAction({ type: "run" })}
-                >
-                  <Footprints size={17} />
-                  Run
-                </button>
-              </div>
-              {showSwitch && (
-                <div className="switch-list">
-                  {save.party.map((n, i) => (
-                    <button
-                      key={n.uid}
-                      disabled={busy || i === battle.active || n.hp === 0}
-                      onClick={() => {
-                        onAction({ type: "switch", index: i });
-                        setShowSwitch(false);
-                      }}
-                    >
-                      <NuvoArt id={n.speciesId} size={47} />
-                      {SPECIES_BY_ID[n.speciesId].name}
-                      <small>{n.hp} HP</small>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </section>
-    </div>
   );
 }

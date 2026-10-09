@@ -6,6 +6,7 @@ permissions:
   contents: write
 jobs:
   windows:
+    if: github.repository == 'FennXWeb/Nuvori'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
