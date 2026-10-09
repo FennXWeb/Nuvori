@@ -20,6 +20,11 @@ Compiled builds and session details stay in ignored `.world-editor/beta/`. Each 
 
 ## Pending interface update
 
+- The Nuvopedia lists all 312 individual forms with distinct entry numbers, family/stage labels, exact-form completion, and caught/seen/not-caught filters. Battles and atlas habitat checkmarks use the same records.
+- New captures and evolutions persist exact species IDs in `caughtForms`/`seenForms`; evolving preserves each prior form. Starter, collected nursery, and claimed reward Nuvo also count as obtained. Existing family progress remains for family objectives and pass rewards. No database migration is required: saves already store their JSON document intact.
+- Legacy saves recover confirmed forms from crew, reserve, nursery parents, evolution notices, and the unambiguous lineage of starter/nursery companions. Pending offspring do not count. Old family-only flags cannot prove which branch or base was obtained, so they do not unlock forms without supporting records; missing historical forms cannot be fully reconstructed.
+- `/scripts/guide-preview.html` is an in-memory local visual fixture showing an evolved starter, a directly captured evolved Nuvo, and a seen-only sibling. It never reads/writes a save and is excluded from compiled builds.
+
 - Full-screen wild and trainer battles with move, satchel, crew and escape controls, keeper last-stand actions, animated actors, and keyboard focus handling.
 - Shared jade/gold buttons, parchment panels, hover/press feedback, and a three-state SVG cursor with an optional click ripple.
 - Generated Auralis map, region selection, local terrain maps, zoom and discovered-area travel. Fares are 35 coins plus 20 per graph connection. Confirmation precedes charging. Travel preserves crew health and cannot reach or leave Dream Land.

@@ -1,5 +1,6 @@
 import { createNuvo, SPECIES_BY_ID, type Nuvo } from "./data";
 import type { Save } from "./game";
+import {recordForms} from './collection';
 
 export type Sex = Nuvo["sex"];
 export interface NurseryJob {
@@ -20,8 +21,8 @@ export function sexOf(n: Pick<Nuvo,"uid"> & { sex?: Sex }): Sex {
 }
 export function normalizeSave(save: Save): Save {
   const migrate = (n: Nuvo) => ({ ...n, sex: sexOf(n) });
-  return { ...save, party: save.party.map(migrate), box: save.box.map(migrate),
-    ...(save.nursery ? { nursery: {...save.nursery, parents: save.nursery.parents.map(migrate) as [Nuvo,Nuvo], child: migrate(save.nursery.child)} } : {}) };
+  return recordForms({ ...save, party: save.party.map(migrate), box: save.box.map(migrate),
+    ...(save.nursery ? { nursery: {...save.nursery, parents: save.nursery.parents.map(migrate) as [Nuvo,Nuvo], child: migrate(save.nursery.child)} } : {}) });
 }
 export const RARITY_MINUTES = { Common: 5, Uncommon: 15, Rare: 45, Mythical: 120 };
 export function breedingDetails(a: Nuvo, b: Nuvo) {
@@ -60,9 +61,9 @@ export function finishBreeding(save: Save, jobId: string, action: "collect"|"can
   const party = [...save.party], box = [...save.box];
   for (const nuvo of arriving) (party.length < 6 ? party : box).push(nuvo);
   const {nursery: _job, ...rest} = save;
-  return {...rest,party,box,nurseryReceipts:[...(save.nurseryReceipts||[]),job.id],
+  return recordForms({...rest,party,box,nurseryReceipts:[...(save.nurseryReceipts||[]),job.id],
     caught:action==="collect"?[...new Set([...save.caught,SPECIES_BY_ID[job.child.speciesId].base])]:save.caught,
-    seen:action==="collect"?[...new Set([...save.seen,job.child.speciesId])]:save.seen};
+    seen:action==="collect"?[...new Set([...save.seen,job.child.speciesId])]:save.seen});
 }
 export function canCatchDreamweaver(save: Save, nuvo: Nuvo) {
   if (SPECIES_BY_ID[nuvo.speciesId]?.base !== "dreamweaver") return true;

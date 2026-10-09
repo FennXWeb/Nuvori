@@ -36,9 +36,9 @@ test("both interiors have walkable paths to their service counter and exit, with
 test("local cells separate towns, wild areas, and each building", () => {
   assert.equal(new Set([cellKey("mossbell"),cellKey("verdant"),cellKey("mossbell","shop"),cellKey("mossbell","lodge"),cellKey("sunwake","shop")]).size,5);
 });
-test("caught indicators recognize the family and don't label uncaught Nuvo", () => {
+test("caught indicators recognize only the exact form, not its whole family", () => {
   assert.equal(caughtBefore(fresh(), "spriglet"),true);
-  assert.equal(caughtBefore(fresh(), "spriglet-1"),true);
+  assert.equal(caughtBefore(fresh(), "spriglet-1"),false);
   assert.equal(caughtBefore(fresh(), "bubbfin"),false);
   assert.equal(caughtBefore(null,"spriglet"),false);
 });

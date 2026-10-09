@@ -1394,8 +1394,12 @@ kbd {
 }
 .guide-filters {
   display: flex;
+  flex-wrap: wrap;
   gap: 9px;
 }
+.guide-progress{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:#78866d;margin:-5px 0 18px}
+.guide-progress strong{color:#48693f}.dex-family{font-size:10px;color:#778768;margin:-3px 0 10px}
+.guide-form-status{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:12px;color:#78866d;margin:0 0 14px}
 .guide-filters select {
   padding: 9px 10px;
   font-size: 12px;

@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState,type ReactNode,type CSSProperties} from 'react';
 import {ArrowRight,ArrowUpRight,BookOpen,Check,ChevronRight,Compass,Gift,Maximize,MessageCircle,Settings,Sparkles,Users,Volume2,VolumeX,X} from 'lucide-react';
 import type {Save} from './game';
+import {caughtFormCount} from './collection';
 import type {SocialState} from './social';
 import type {RemoteKeeper} from './online';
 import {REGION_BY_ID} from './data';
@@ -31,7 +32,7 @@ export function MainMenu({save,onPlay,onOpen,online,status,social,remote,audio,o
    <p>A world to wander.<br/>A companion for every possibility.</p>
    <button ref={play} autoFocus className="lobby-play" onClick={onPlay}><Compass size={24}/><span>{save?'Continue adventure':'Begin your adventure'}<small>{save?REGION_BY_ID[save.region].name:'Create your keeper · choose your first Nuvo'}</small></span><ArrowRight size={23}/></button>
    <div className="lobby-shortcuts"><button onClick={()=>open(save?'team':'guide')}><Sparkles size={15}/>{save?'Your crew':'Keeper’s guide'}</button><span/><button onClick={()=>open('map')}><Compass size={15}/>World atlas</button>{save&&<><span/><button onClick={()=>open('journal')}><BookOpen size={15}/>Journal</button></>}</div>
-   {save&&<div className="lobby-crew"><div>{save.party.map(n=><span key={n.uid} title={`Level ${n.level}`}><NuvoArt id={n.speciesId} prismatic={n.prismatic} size={39}/></span>)}</div><small>{save.caught.length} discovered <i>·</i> {save.coins.toLocaleString()} coins</small></div>}
+   {save&&<div className="lobby-crew"><div>{save.party.map(n=><span key={n.uid} title={`Level ${n.level}`}><NuvoArt id={n.speciesId} prismatic={n.prismatic} size={39}/></span>)}</div><small>{caughtFormCount(save)} Nuvo collected <i>·</i> {save.coins.toLocaleString()} coins</small></div>}
   </section>
   <section className="lobby-feature" aria-label="Featured season reward"><span className="feature-mythic"><Sparkles size={13}/> MYTHICAL · ASTRAL / BLOOM</span><h2>Solunelle</h2><p>The first-light companion</p><button onClick={()=>open('season')}>Yours at tier 100 <ArrowUpRight size={14}/></button></section>
   <div className="lobby-dock">

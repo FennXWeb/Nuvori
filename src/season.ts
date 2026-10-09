@@ -1,6 +1,7 @@
 import { createNuvo } from "./data";
 import type { Save } from "./game";
 import type { OrbKind } from "./expansion";
+import {recordForms} from './collection';
 export const SEASON = {id:"s1",name:"First Light",subtitle:"The Starlace Expedition",starts:Date.UTC(2026,9,9),ends:Date.UTC(2027,0,9),tiers:100,xpPerTier:300};
 export interface PassProgress {xp:number;claimed:number[];boosts:number;boostUntil:number}
 export type SeasonReward = {tier:number;kind:"coins"|"potions"|"orbs"|"boost"|"cosmetic"|"nuvo";amount:number;name:string;icon:string;orb?:OrbKind;cosmetic?:string};
@@ -52,5 +53,5 @@ export function claimPassReward(save:Save,tier:number):Save{
    const nuvo=createNuvo("solunelle",5,false);
    next={...next,party:next.party.length<6?[...next.party,nuvo]:next.party,box:next.party.length>=6?[...next.box,nuvo]:next.box,seen:[...new Set([...next.seen,"solunelle"])],caught:[...new Set([...next.caught,"solunelle"])]};
  }
- return next;
+ return recordForms(next);
 }

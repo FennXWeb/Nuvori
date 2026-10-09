@@ -1,4 +1,5 @@
 import {spawnTableAt,weightedSpawn} from './worldContent';
+import {recordForms,validFormRecords} from './collection';
 import {
   BASE_SPECIES,
   MOVE_BY_ID,
@@ -39,6 +40,9 @@ export interface Save {
   coins: number;
   seen: string[];
   caught: string[];
+  /** Exact species IDs; caught/seen above remain legacy family progress. */
+  caughtForms?: string[];
+  seenForms?: string[];
   visited: string[];
   landmarks: string[];
   claimed?: string[];
@@ -75,6 +79,8 @@ export function newSave(player: Player, starter: string): Save {
     coins: 300,
     seen: [starter],
     caught: [starter],
+    caughtForms: [starter],
+    seenForms: [starter],
     visited: ["mossbell"],
     landmarks: [],
     steps: 0,
@@ -115,6 +121,7 @@ export function validateSave(value: unknown): value is Save {
     );
   return (
     s.version === 1 &&
+    validFormRecords(s.caughtForms) && validFormRecords(s.seenForms) &&
     validPasses(s.passes) &&
     (s.cosmetics === undefined || (Array.isArray(s.cosmetics) && s.cosmetics.length <= 100 && s.cosmetics.every(id => ["s1-top-8","s1-top-9","s1-hat-4","s1-hat-5"].includes(id)))) &&
     (s.player?.appearance === undefined || validAppearance(s.player.appearance)) &&
@@ -411,6 +418,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       s.caught = [
         ...new Set([...s.caught, SPECIES_BY_ID[caught.speciesId].base]),
       ];
+      s = recordForms(s,[caught.speciesId]);
       logs.push(
         `${SPECIES_BY_ID[caught.speciesId].name} joined ${s.party.length > 5 && s.box.some((n) => n.uid === caught.uid) ? "your reserve" : "your team"}!`,
       );
@@ -540,6 +548,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
     }
   }
   s.seen = [...new Set([...s.seen, SPECIES_BY_ID[b.wild.speciesId].base])];
+  s = recordForms(s,[],[battle.wild.speciesId,b.wild.speciesId]);
   b.turn++;
   b.log = [...b.log, ...logs].slice(-40);
   return { save: s, battle: b };

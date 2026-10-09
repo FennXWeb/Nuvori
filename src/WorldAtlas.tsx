@@ -6,6 +6,7 @@ import {getTerrain,terrainColor,isUnderground,WORLD_COLUMNS,WORLD_ROWS} from "./
 import type {Save} from "./game";
 import {NuvoArt} from "./components";
 import {travelFare,travelReason} from './travel';
+import {caughtBefore} from './adventure';
 import "./atlas.css";
 
 export function TerrainMap({region,x,y,detail=false}:{region:Region;x?:number;y?:number;detail?:boolean}){
@@ -46,7 +47,7 @@ export function WorldAtlas({save,onTravel}:{save:Save|null;onTravel?:(id:string)
   </div><aside className="atlas-destination"><span className="nu-kicker">{r.hidden?'BEYOND THE WAKING WORLD':r.kind==='Town'?'A PLACE TO CALL HOME':isUnderground(r)?'BENEATH THE SURFACE':'THE WILD CALLS'}</span><h3>{r.name}</h3><p className="atlas-subtitle">{r.subtitle}</p><span className={`discovery-tag ${known?'known':''}`}>{r.id===save?.region?'⌖ Current location':known?'✓ Discovered':'◇ Yet to discover'}</span><p>{r.description}</p><div className="atlas-landmark"><small>LANDMARK</small><strong>✧ {r.landmark}</strong></div>
    <section className="skyway-ticket"><span className="nu-kicker">AURALIS SKYWAYS</span><h4>{fare!==null?`${fare} coins`:'Your next horizon'}</h4><p>{reason||'Travel directly to this discovered area. Your crew’s health stays unchanged.'}</p>{!reason&&!onTravel&&<p>Finish your current battle before travelling.</p>}{confirm&&<p className="travel-confirm" role="status">Spend {fare} coins to visit {r.name}? You’ll have {save!.coins-fare!} coins left.</p>}<button className="nu-button primary" disabled={Boolean(reason)||!onTravel} onClick={()=>{if(confirm){onTravel?.(r.id);setConfirm(false);}else setConfirm(true);}}>{confirm?`Confirm · ${fare} coins`:'✦ Fast travel'}</button>{confirm&&<button className="text-button" onClick={()=>setConfirm(false)}>Cancel</button>}<small>Your purse · {save?.coins.toLocaleString()??0} coins</small></section>
    <div className="atlas-connections"><span className="nu-kicker">CONNECTING TRAILS</span>{Object.entries(r.links).map(([side,id])=><button key={side} onClick={()=>select(id!)}>{({north:'↑',south:'↓',east:'→',west:'←'})[side]} {REGION_BY_ID[id!].name}</button>)}</div>
-   <section className="atlas-habitats"><h4>{!habitatSpecies.length?'Rest, prepare, explore.':'Nuvo found here'}</h4><p>{!habitatSpecies.length?'A safe haven. Follow the connecting trails for wild encounters.':`${authoredCell(r.id)?'Levels vary by habitat':`Lv. ${r.level[0]}–${r.level[1]}`} · ${isUnderground(r)?'Search the loose gravel.':'Search the tall grass.'}`}</p>{!!habitatSpecies.length&&<div className="atlas-nuvo-list">{habitatSpecies.map(n=>{return <span key={n.id}><NuvoArt id={n.id} size={45}/><small>{save?.caught.includes(n.base)?'✓ ':''}{n.name}</small></span>;})}</div>}</section>
+   <section className="atlas-habitats"><h4>{!habitatSpecies.length?'Rest, prepare, explore.':'Nuvo found here'}</h4><p>{!habitatSpecies.length?'A safe haven. Follow the connecting trails for wild encounters.':`${authoredCell(r.id)?'Levels vary by habitat':`Lv. ${r.level[0]}–${r.level[1]}`} · ${isUnderground(r)?'Search the loose gravel.':'Search the tall grass.'}`}</p>{!!habitatSpecies.length&&<div className="atlas-nuvo-list">{habitatSpecies.map(n=>{return <span key={n.id}><NuvoArt id={n.id} size={45}/><small>{caughtBefore(save,n.id)?'✓ ':''}{n.name}</small></span>;})}</div>}</section>
   </aside></div>
  </div>;
 }

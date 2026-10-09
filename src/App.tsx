@@ -1,5 +1,6 @@
 import {regionWildSpecies} from './data';
 import {spawnTableAt} from './worldContent';
+import {GUIDE_SPECIES,GUIDE_NUMBER,formRecords,caughtFormCount,recordForms,evolveCompanion} from './collection';
 import {BattleView} from './BattleScreen';
 export {BattleView} from './BattleScreen';
 import {fastTravel} from './travel';
@@ -67,7 +68,6 @@ import {
   TYPE_SYMBOLS,
   maxHp,
   xpToNext,
-  evolve,
   learnedMoves,
   type Nuvo,
   type Species,
@@ -517,12 +517,12 @@ export default function App() {
     setBattle(b);
     setSave((v) =>
       v
-        ? {
+        ? recordForms({
             ...v,
             seen: [
               ...new Set([...v.seen, SPECIES_BY_ID[b.wild.speciesId].base]),
             ],
-          }
+          },[],[b.wild.speciesId])
         : v,
     );
     sound("battle", audio);
@@ -722,8 +722,8 @@ export default function App() {
   const startEvolution=(nuvo:Nuvo,id:string)=>{
     const current=state.current;if(!current||evolutionScene)return;
     const before=[...current.party,...current.box].find(n=>n.uid===nuvo.uid);if(!before||!readyToEvolve(before)||!SPECIES_BY_ID[before.speciesId].evolvesTo.includes(id))return;
-    const after=evolve(before,id),key=evolutionKey(before);
-    const next=awardPassXp({...current,x:position.current.x,y:position.current.y,party:current.party.map(n=>n.uid===before.uid?after:n),box:current.box.map(n=>n.uid===before.uid?after:n),evolutionNotices:[...new Set([...(current.evolutionNotices??[]),key])]},100);
+    const evolved=evolveCompanion(current,before.uid,id),after=evolved.after,key=evolutionKey(before);
+    const next=awardPassXp({...evolved.save,x:position.current.x,y:position.current.y,evolutionNotices:[...new Set([...(current.evolutionNotices??[]),key])]},100);
     // Commit once before the cinematic: skip, refresh and closing the view cannot re-award it.
     writeSave(next,user?.id||"guest");state.current=next;setSave(next);keys.current.clear();setEvolutionNotice(null);setPanel(null);setEvolutionScene({before,after});
   };
@@ -772,7 +772,7 @@ export default function App() {
               {item.id === "team" && save && <small>{save.party.length}</small>}
               {item.id === "friends" && social.friends.some(f => f.status === "pending" && f.incoming) && <small className="request-dot">!</small>}
               {item.id === "guide" && save && (
-                <small>{save.caught.length}/{ALL_FAMILIES.length}</small>
+                <small>{caughtFormCount(save)}/{GUIDE_SPECIES.length}</small>
               )}
             </button>
           ))}
@@ -1702,26 +1702,29 @@ export default function App() {
   );
 }
 
-function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
+export function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
   const [tab, setTab] = useState<"nuvo" | "moves">("nuvo"),
     [query, setQuery] = useState(""),
     [type, setType] = useState("All types"),
+    [collection,setCollection] = useState('All forms'),
     [selected, setSelected] = useState<Species | null>(null),
     [detailTab, setDetailTab] = useState("Evolution paths"),
     [movePreview, setMovePreview] = useState<string | null>(null),
     [animationKey, setAnimationKey] = useState(0);
-  const filtered = ALL_FAMILIES.filter(
+  const records=formRecords(save);
+  const filtered = GUIDE_SPECIES.filter(
     (s) =>
       (type === "All types" || s.types.includes(type as Element)) &&
-      s.name.toLowerCase().includes(query.toLowerCase()),
+      `${s.name} ${SPECIES_BY_ID[s.base].name}`.toLowerCase().includes(query.trim().toLowerCase()) &&
+      (collection==='All forms'||(collection==='Caught'?records.caught.has(s.id):collection==='Seen'?records.seen.has(s.id):!records.caught.has(s.id))),
   );
   return (
     <Modal
       title={selected ? selected.name : "The Nuvopedia"}
       eyebrow={
         selected
-          ? `NO. ${String(selected.dex).padStart(3, "0")} · ${selected.title}`
-          : `${ALL_FAMILIES.length} FAMILIES · ${SPECIES.length} EVOLUTION FORMS`
+          ? `NO. ${String(GUIDE_NUMBER[selected.id]).padStart(3, "0")} · ${selected.title}`
+          : `${GUIDE_SPECIES.length} NUVO · ${ALL_FAMILIES.length} FAMILIES · EVERY FORM COUNTS`
       }
       onClose={onClose}
       wide
@@ -1742,6 +1745,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
               <NuvoArt id={selected.id} size={210} />
             </div>
             <div>
+              <p className="guide-form-status">{records.caught.has(selected.id)?<span className="caught-badge"><Check size={12}/> Caught</span>:records.seen.has(selected.id)?'Seen · Not caught':'Not caught'} <span>Stage {selected.stage+1} · {SPECIES_BY_ID[selected.base].name} family</span></p>
               <div className="type-row">
                 {selected.types.map((t) => (
                   <TypeBadge type={t} key={t} />
@@ -1786,7 +1790,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
               <p className="section-intro">
                 {selected.id === "oneirune" ? "Oneirune is a singular mythical being. It has no further evolution." : "Explore every possibility below. Each family has its own stages and choices; select a form to follow its branches."}
               </p>
-              <EvolutionTree base={SPECIES_BY_ID[selected.base]} selected={selected} onSelect={setSelected} />
+              <EvolutionTree base={SPECIES_BY_ID[selected.base]} selected={selected} onSelect={setSelected} caught={records.caught} />
             </>
           ) : (
             <div className="table-scroll">
@@ -1844,7 +1848,7 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                 className={tab === "nuvo" ? "active" : ""}
                 onClick={() => setTab("nuvo")}
               >
-                Nuvo <span>{ALL_FAMILIES.length}</span>
+                Nuvo <span>{GUIDE_SPECIES.length}</span>
               </button>
               <button
                 className={tab === "moves" ? "active" : ""}
@@ -1873,10 +1877,11 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                   <option key={t}>{t}</option>
                 ))}
               </select>
+              {tab==='nuvo'&&<select aria-label="Filter by collection" value={collection} onChange={e=>setCollection(e.target.value)}>{['All forms','Caught','Seen','Not caught'].map(value=><option key={value}>{value}</option>)}</select>}
             </div>
           </div>
           {tab === "nuvo" ? (
-            <div className="nuvo-grid">
+            <><p className="guide-progress" role="status"><strong>{records.caught.size} / {GUIDE_SPECIES.length} caught</strong><span>{filtered.length} forms shown · Each evolution is recorded separately.</span></p><div className="nuvo-grid">
               {filtered.map((s) => (
                 <button
                   key={s.id}
@@ -1887,29 +1892,30 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
                   }}
                 >
                   <div className="dex-number">
-                    <span>#{String(s.dex).padStart(3, "0")}</span>
-                    {save?.caught.includes(s.id) ? (
-                      <span className="caught-badge" title="Previously caught"><Check size={12}/> Caught</span>
-                    ) : save?.seen.includes(s.id) ? (
+                    <span>#{String(GUIDE_NUMBER[s.id]).padStart(3, "0")}</span>
+                    {records.caught.has(s.id) ? (
+                      <span className="caught-badge" title="You have obtained this exact form"><Check size={12}/> Caught</span>
+                    ) : records.seen.has(s.id) ? (
                       <span>Seen</span>
                     ) : null}
                   </div>
                   <NuvoArt id={s.id} size={130} />
                   <h3>{s.name}</h3>
+                  <small className="dex-family">Stage {s.stage+1} · {SPECIES_BY_ID[s.base].name} family</small>
                   <div className="type-row">
                     {s.types.map((t) => (
                       <TypeBadge key={t} type={t} />
                     ))}
                   </div>
                   <span className="dex-evolutions">
-                    <GitBranch size={13} />{SPECIES.filter(form=>form.base===s.id).length-1} possible evolutions
+                    <GitBranch size={13} />{s.evolvesTo.length?`${s.evolvesTo.length} next ${s.evolvesTo.length===1?'evolution':'evolutions'}`:'Final form'}
                   </span>
                 </button>
               ))}
               {filtered.length === 0 && (
                 <p className="empty-state">No Nuvo match that search.</p>
               )}
-            </div>
+            </div></>
           ) : (
             <>
               <p className="section-intro">
@@ -1977,14 +1983,14 @@ function Guide({ onClose, save }: { onClose: () => void; save: Save | null }) {
     </Modal>
   );
 }
-function EvolutionTree({ base, selected:current, onSelect }: { base: Species; selected:Species; onSelect:(s:Species)=>void }) {
+function EvolutionTree({ base, selected:current, onSelect,caught }: { base: Species; selected:Species; onSelect:(s:Species)=>void;caught:Set<string> }) {
   const family=SPECIES.filter(s=>s.base===base.id);
   const path=[current.id];
   while(path[0]!==base.id){const parent=family.find(s=>s.evolvesTo.includes(path[0]));if(!parent)break;path.unshift(parent.id);}
   return <section className="evolution-explorer">
     <nav className="evolution-breadcrumbs" aria-label="Evolution lineage">{path.map((id,index)=><button key={id} onClick={()=>onSelect(SPECIES_BY_ID[id])}>{index>0?"→ ":""}{SPECIES_BY_ID[id].name}</button>)}</nav>
     <div className="evolution-current"><NuvoArt id={current.id} size={115}/><div><strong>{current.name}</strong><small>Stage {current.stage+1} of this path · {current.rarity}</small><small>{current.evolvesTo.length?`${current.evolvesTo.length} next ${current.evolvesTo.length===1?"form":"choices"} at level ${current.evolveLevel}`:"Final form on this branch"}</small><div className="type-row">{current.types.map(t=><TypeBadge key={t} type={t}/>)}</div></div></div>
-    <div className="evolution-options">{current.evolvesTo.map(id=>{const s=SPECIES_BY_ID[id];return <button key={id} onClick={()=>onSelect(s)}><small>LV. {current.evolveLevel} · STAGE {s.stage+1}</small><NuvoArt id={id} size={104}/><strong>{s.name}</strong><small>{s.evolvesTo.length?`${s.evolvesTo.length} paths continue →`:"Final form"}</small></button>;})}</div>
+    <div className="evolution-options">{current.evolvesTo.map(id=>{const s=SPECIES_BY_ID[id];return <button key={id} onClick={()=>onSelect(s)}><small>LV. {current.evolveLevel} · STAGE {s.stage+1}</small><NuvoArt id={id} size={104}/><strong>{s.name}</strong>{caught.has(id)&&<span className="caught-badge"><Check size={12}/> Caught</span>}<small>{s.evolvesTo.length?`${s.evolvesTo.length} paths continue →`:"Final form"}</small></button>;})}</div>
     <p className="nursery-note">{family.length} forms · up to {Math.max(...family.map(s=>s.stage))+1} stages. Select a form to inspect its moves and follow its next branches. Use the lineage above to explore another path.</p>
     {path.length>1&&<button className="text-button" onClick={()=>onSelect(base)}>← Back to {base.name}</button>}
   </section>;

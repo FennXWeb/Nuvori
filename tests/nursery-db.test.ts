@@ -4,7 +4,8 @@ import {readFile} from "node:fs/promises";
 import {PGlite} from "@electric-sql/pglite";
 import {newSave,validateSave,type Save} from "../src/game";
 import {createNuvo} from "../src/data";
-import {breedingDetails} from "../src/nursery";
+import {breedingDetails,normalizeSave} from "../src/nursery";
+import {recordForms,formRecords} from '../src/collection';
 import {writeCloudAdventure} from '../src/cloudSave';
 import type {SupabaseClient} from '@supabase/supabase-js';
 test("PostgreSQL nursery: account isolation, server timer, escrow, immutable sex, retries, cancellation, and Dreamweaver lifetime quota",async()=>{
@@ -37,15 +38,17 @@ test("PostgreSQL nursery: account isolation, server timer, escrow, immutable sex
     }})};
   }} as unknown as SupabaseClient;
   // Autosave and pre-League/pre-nursery flushes use this same client function.
-  await writeCloudAdventure(updateClient,user,{...started,coins:started.coins+10});
+  await writeCloudAdventure(updateClient,user,recordForms({...started,coins:started.coins+10}));
   const preserved=(await db.query<{data:Save}>('select data from keeper_saves where user_id=$1',[user])).rows[0].data;
   assert.deepEqual(preserved.nursery,job);assert.equal(preserved.coins,started.coins+10);
+  assert.ok(preserved.caughtForms?.includes(a.speciesId));assert.ok(preserved.caughtForms?.includes(b.speciesId));assert.ok(!preserved.caughtForms?.includes('spriglet'),'uncollected nursery offspring is not owned');
   await assert.rejects(writeCloudAdventure(updateClient,user,original),/nursery changed/);
   await assert.rejects(db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(original),user]),/nursery changed/);
   // Advance only the fixture's database clock equivalent, leaving the advertised duration intact.
   const delta=job.readyAt+1000-Date.now();const ready={...started,nursery:{...job,startedAt:job.startedAt-delta,readyAt:job.readyAt-delta}};
   await db.exec("select set_config('nuvori.nursery_write','on',false)");await db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(ready),user]);await db.exec("select set_config('nuvori.nursery_write','off',false);set role authenticated");
   const collected=await rpc("collect",null,null,job.id);assert.ok(validateSave(collected));assert.equal(collected.party.length,4);assert.equal(collected.nursery,undefined);assert.deepEqual(await rpc("collect",null,null,job.id),collected);
+  assert.ok(formRecords(normalizeSave(collected)).caught.has('spriglet'),'cloud nursery collection records the exact offspring on load');
   await db.exec('reset role');await writeCloudAdventure(updateClient,user,collected);await db.exec('set role authenticated');
   const visit=await rpc("start",a.uid,b.uid);const cancelled=await rpc("cancel",null,null,visit.nursery!.id);assert.equal(cancelled.party.length,4);assert.ok(validateSave(cancelled));
   await db.exec("reset role");const changedSex=structuredClone(cancelled);changedSex.party[0].sex=changedSex.party[0].sex==="male"?"female":"male";await assert.rejects(db.query("update keeper_saves set data=$1 where user_id=$2",[JSON.stringify(changedSex),user]),/assigned sex/);
