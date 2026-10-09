@@ -40,11 +40,12 @@ export function FriendsPanel({ social, error, remote, refresh, notify, onClose }
   </Modal>;
 }
 
-export function ChatDock({ userId, cell, cellName, blockedIds, ready, onSignIn, notify, refresh }: {
+export function ChatDock({ userId, cell, cellName, blockedIds, ready, onSignIn, notify, refresh, embedded=false, needsKeeper=false, onCreate }: {
   userId?: string; cell: string; cellName: string; blockedIds: string[]; ready: boolean;
   onSignIn: () => void; notify: (text: string) => void; refresh: () => Promise<void>;
+  embedded?:boolean;needsKeeper?:boolean;onCreate?:()=>void;
 }) {
-  const [open, setOpen] = useState(false), [scope, setScope] = useState<"global" | "local">("global");
+  const [open, setOpen] = useState(embedded), [scope, setScope] = useState<"global" | "local">("global");
   const [messages, setMessages] = useState<ChatMessage[]>([]), [draft, setDraft] = useState(""), [error, setError] = useState(""), [busy, setBusy] = useState(false);
   const feed = useRef<HTMLDivElement>(null), room = scope === "global" ? "global" : cell;
   const revision = useRef(0);
@@ -80,8 +81,8 @@ export function ChatDock({ userId, cell, cellName, blockedIds, ready, onSignIn, 
     finally { setBusy(false); }
   };
   return <section className={`chat-dock ${open ? "expanded" : ""}`} aria-label="Keeper chat">
-    <button className="chat-toggle" aria-expanded={open} onClick={() => setOpen(!open)}><MessageCircle size={18}/><strong>Trail chat</strong><span>Global & local</span>{open ? <X size={16}/> : <span className="chat-live-dot"/>}</button>
-    {open && <div className="chat-body">{!userId ? <div className="chat-login"><p>Sign in to talk with other keepers.</p><button className="primary-button" onClick={onSignIn}>Connect your account</button></div> : <>
+    {!embedded&&<button className="chat-toggle" aria-expanded={open} onClick={() => setOpen(!open)}><MessageCircle size={18}/><strong>Trail chat</strong><span>Global & local</span>{open ? <X size={16}/> : <span className="chat-live-dot"/>}</button>}
+    {open && <div className="chat-body">{!userId ? <div className="chat-login"><p>Sign in to talk with other keepers.</p><button className="primary-button" onClick={onSignIn}>Connect your account</button></div> : needsKeeper?<div className="chat-login"><p>Give your keeper a name before joining the conversation.</p><button className="primary-button" onClick={onCreate}>Create your keeper</button></div>: <>
       <div className="chat-tabs" role="tablist" aria-label="Chat channels"><button role="tab" aria-selected={scope === "global"} onClick={() => setScope("global")}># Global</button><button role="tab" aria-selected={scope === "local"} onClick={() => setScope("local")}># Local · {cellName}</button></div>
       <div className="chat-messages" ref={feed} role="log" aria-live="polite" aria-label={`${scope} messages`}>
         {!messages.filter(m => !blockedIds.includes(m.sender)).length && <p className="quiet-copy">{ready ? "The trail is quiet. Say hello!" : "Connecting your keeper profile…"}</p>}

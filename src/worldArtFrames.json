@@ -1,4 +1,138 @@
 {
+  "town-buildings.png": {
+    "width": 1774,
+    "height": 887,
+    "sha256": "178c5dfba70860c98ca4287050bc2ddb6fab1c58c7aefa69adff907a965f3ea9",
+    "frames": [
+      {
+        "x": 19,
+        "y": 27,
+        "width": 425,
+        "height": 405
+      },
+      {
+        "x": 464,
+        "y": 30,
+        "width": 419,
+        "height": 404
+      },
+      {
+        "x": 896,
+        "y": 29,
+        "width": 426,
+        "height": 414
+      },
+      {
+        "x": 1351,
+        "y": 43,
+        "width": 406,
+        "height": 392
+      },
+      {
+        "x": 46,
+        "y": 442,
+        "width": 353,
+        "height": 431
+      },
+      {
+        "x": 454,
+        "y": 448,
+        "width": 405,
+        "height": 422
+      },
+      {
+        "x": 893,
+        "y": 529,
+        "width": 433,
+        "height": 335
+      },
+      {
+        "x": 1359,
+        "y": 484,
+        "width": 393,
+        "height": 385
+      }
+    ]
+  },
+  "town-decor.png": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "e5dfc26161278498a202881b4a586a7f875f024e3c5fce4d93f06585e9ea7783",
+    "frames": [
+      {
+        "x": 47,
+        "y": 191,
+        "width": 240,
+        "height": 222
+      },
+      {
+        "x": 352,
+        "y": 154,
+        "width": 252,
+        "height": 262
+      },
+      {
+        "x": 673,
+        "y": 126,
+        "width": 234,
+        "height": 284
+      },
+      {
+        "x": 1047,
+        "y": 148,
+        "width": 121,
+        "height": 276
+      },
+      {
+        "x": 49,
+        "y": 515,
+        "width": 242,
+        "height": 268
+      },
+      {
+        "x": 348,
+        "y": 557,
+        "width": 269,
+        "height": 208
+      },
+      {
+        "x": 675,
+        "y": 541,
+        "width": 240,
+        "height": 228
+      },
+      {
+        "x": 981,
+        "y": 490,
+        "width": 245,
+        "height": 287
+      },
+      {
+        "x": 87,
+        "y": 877,
+        "width": 155,
+        "height": 253
+      },
+      {
+        "x": 363,
+        "y": 868,
+        "width": 220,
+        "height": 270
+      },
+      {
+        "x": 655,
+        "y": 931,
+        "width": 259,
+        "height": 197
+      },
+      {
+        "x": 980,
+        "y": 882,
+        "width": 235,
+        "height": 240
+      }
+    ]
+  },
   "illustrated-grass.png": {
     "width": 1659,
     "height": 948,

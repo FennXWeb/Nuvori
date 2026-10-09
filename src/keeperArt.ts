@@ -38,27 +38,33 @@ const jaws=[[241,240,240,239],[479,477,477,477],[718,713,715,716],[947,947,947,9
  [248,246,246,246],[486,484,484,484],[713,712,712,712],[993,988,988,988],[1211,1208,1208,1208],[1463,1460,1460,1460]];
 
 /** Layered illustrated keeper: anchored head, separate cloth, articulated legs and arms. */
-export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:number,size:number,a:Appearance,direction=0,phase=0,moving=false){
+export function keeperStep(phase:number,moving:boolean,running=false){
+ const stride=moving?Math.sin(phase):0;
+ return {stride,bob:moving?Math.abs(Math.cos(phase*2))*(running?2.6:1.5):Math.sin(phase)*.35,swing:stride*(running?.65:.42),lift:running?6:3.5};
+}
+export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:number,size:number,a:Appearance,direction=0,phase=0,moving=false,running=false){
  const dir=Math.max(0,Math.min(3,direction)),side=dir===1||dir===2;
  const headFile=a.hairStyle<6?'keeper-heads-a.png':'keeper-heads-b.png',headIndex=(a.hairStyle%6)*4+dir;
  const topFile=a.top<5?'keeper-tops-a.png':'keeper-tops-b.png';
  const head=part(headFile,headIndex,a,'head'),top=part(topFile,(a.top%5)*4+dir,a,'top'),bottom=part('keeper-bottoms.png',a.bottom*4+dir,a,'bottom');
  if(!head||!top||!bottom)return;
  c.save();c.translate(x,y);c.scale(size/100,size/100);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
- const stride=moving?Math.sin(phase):0,bob=moving?Math.abs(stride)*1.5:Math.sin(phase)*.35;
+ const {stride,bob,swing,lift}=keeperStep(phase,moving,running);
  const bw=side?24:32,bh=30;
- // Fixed waist joins both independently swinging legs; side steps also move forward/back.
- c.save();c.beginPath();c.rect(-bw/2,-bh,bw,bh*.4);c.clip();c.drawImage(bottom,-bw/2,-bh,bw,bh);c.restore();
+ // Cropped limb sources pivot around their hips. Boots are never clipped at their old position.
+ const waist=.38,legHeight=bh*(1-waist),sourceY=bottom.height*waist;
  for(const leg of [-1,1]){
-  c.save();c.beginPath();c.rect(leg<0?-bw/2:0,-bh*.64,bw/2,24);c.clip();
-  c.translate(side?stride*leg*1.6:0,-Math.max(0,stride*leg)*3);c.drawImage(bottom,-bw/2,-bh,bw,bh);c.restore();
+  c.save();const hip=side?leg*2:leg*bw*.24;c.translate(hip,-legHeight-bob*.3);c.rotate(side?swing*leg:stride*leg*.08);
+  if(side&&leg<0)c.filter='brightness(.85)';
+  c.drawImage(bottom,leg<0?0:bottom.width/2,sourceY,bottom.width/2,bottom.height-sourceY,-bw/4,0,bw/2,legHeight-Math.max(0,stride*leg)*lift);c.restore();
  }
+ c.drawImage(bottom,0,0,bottom.width,sourceY+bottom.height*.08,-bw/2,-bh-bob*.3,bw,bh*(waist+.08));
  const long=[5,8,9].includes(a.top),tw=side?32:44,th=long?49:40,ty=-62-bob;
  c.save();c.translate(0,ty);c.rotate(stride*.018);
- if(side)c.drawImage(top,-tw/2,0,tw,th);
+ if(side){c.save();c.transform(1,0,-stride*(running?.09:.05),1,0,0);c.drawImage(top,-tw/2,0,tw,th);c.restore();}
  else{
   // Outer sleeves pivot at the shoulders while the chest stays attached to the waist.
-  for(const arm of [-1,0,1]){c.save();if(arm){c.translate(arm*tw*.29,th*.19);c.rotate(stride*arm*.085);c.translate(-arm*tw*.29,-th*.19);}
+  for(const arm of [-1,0,1]){c.save();if(arm){c.translate(arm*tw*.29,th*.19);c.rotate(stride*arm*(running?.23:.16));c.translate(-arm*tw*.29,-th*.19);}
    c.beginPath();c.rect(arm<0?-tw/2:arm>0?tw*.285:-tw*.30,0,arm?tw*.215:tw*.60,th);c.clip();c.drawImage(top,-tw/2,0,tw,th);c.restore();}
  }
  c.restore();

@@ -197,6 +197,7 @@ export interface Battle {
   over?: "won" | "caught" | "lost" | "fled";
   reward: number;
   animation?: { move: string; side: "player" | "wild"; key: number };
+  scenes?: BattleScene[];
   trainerId?: string;
   trainerName?: string;
   opponentQueue?: Nuvo[];
@@ -205,6 +206,7 @@ export interface Battle {
   keeperMaxHp?: number;
   dreamAwakening?: boolean;
 }
+export interface BattleScene {kind:'attack'|'damaged'|'faint'|'summon'|'recall';side:'player'|'wild';nuvo:Nuvo;move?:string;duration:number}
 export function encounter(save: Save, random = Math.random): Battle {
   const r = REGION_BY_ID[save.region];
   if(!r||r.kind==="Town"||save.interior||!r.pool.length)throw new Error("Wild Nuvo live on routes, not in towns or shops.");
@@ -330,6 +332,10 @@ export function battleTurn(
   let wildActs = true;
   let playerActs = false;
   let playerMove = "";
+  b.scenes=[];
+  b.animation=undefined;
+  const scene=(kind:BattleScene['kind'],side:BattleScene['side'],nuvo:Nuvo,move?:string)=>b.scenes!.push({kind,side,nuvo:structuredClone(nuvo),move,duration:kind==='attack'?800:kind==='damaged'?420:kind==='recall'?500:850});
+  const hitScene=(side:BattleScene['side'],before:Nuvo,after:Nuvo)=>{if(after.hp<before.hp)scene('damaged',side,after);if(before.hp>0&&after.hp<=0)scene('faint',side,after);};
   const fail = (error: string) => ({ save, battle, error });
   if (b.lastStand === "choice") {
     if (action.type === "stand") {
@@ -346,18 +352,21 @@ export function battleTurn(
   if (b.lastStand === "fighting" && (action.type === "move" || action.type === "switch" || action.type === "struggle")) return fail("Your crew needs to rest. Use your keeper abilities.");
   if (b.lastStand !== "fighting" && (action.type === "strike" || action.type === "brace")) return fail("Only a keeper making a last stand can use that ability.");
   if (action.type === "strike") {
+    const before=structuredClone(b.wild);
     const damage = 10 + Math.floor(s.party.reduce((sum,n) => sum+n.level,0)/s.party.length*1.5);
     b.wild.hp = Math.max(0,b.wild.hp-damage); logs.push(`${s.player.name} used Courage Strike! ${damage} damage.`);
     b.animation = { move: "metal-1", side: "player", key: b.turn+1 };
+    scene('attack','player',p,'metal-1');hitScene('wild',before,b.wild);
   }
   if (action.type === "brace") { logs.push("You brace for impact. The next hit is reduced by 70%."); }
   if (action.type === "struggle") {
     if (p.hp <= 0 || p.moves.some(id => p.pp[id] > 0)) return fail("Struggle is available when all your moves are out of energy.");
-    const damage = 5 + p.level;
+    const beforeWild=structuredClone(b.wild),beforePlayer=structuredClone(p),damage = 5 + p.level;
     b.wild.hp = Math.max(0, b.wild.hp - damage);
     p.hp = Math.max(0, p.hp - Math.max(1, Math.floor(maxHp(p) * .05)));
     logs.push(`${SPECIES_BY_ID[p.speciesId].name} struggles for ${damage} damage, taking recoil.`);
     b.animation = { move: "metal-1", side: "player", key: b.turn + 1 };
+    scene('attack','player',p,'metal-1');hitScene('wild',beforeWild,b.wild);hitScene('player',beforePlayer,p);
   }
   if (action.type === "move") {
     if (
@@ -424,8 +433,10 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       action.index === b.active
     )
       return fail("Choose another healthy Nuvo.");
+    scene('recall','player',p);
     b.active = action.index;
     p = s.party[b.active];
+    scene('summon','player',p);
     logs.push(`Go, ${SPECIES_BY_ID[p.speciesId].name}!`);
   }
   const wildOptions = b.wild.moves.filter((m) => b.wild.pp[m] > 0);
@@ -442,34 +453,46 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
   const attackPlayer = () => {
     if (!wildActs || (p.hp <= 0 && b.lastStand !== "fighting") || b.wild.hp <= 0) return;
     if (b.lastStand === "fighting") {
+      scene('attack','wild',b.wild,wildMove||'metal-1');
       const hit = Math.max(1,Math.floor((8+b.wild.level*1.1)*(action.type === "brace" ? .3 : 1)));
       b.keeperHp = Math.max(0,b.keeperHp!-hit); logs.push(`${SPECIES_BY_ID[b.wild.speciesId].name} hits you for ${hit} HP.`); return;
     }
     if (wildMove) {
+      const beforeP=structuredClone(p),beforeW=structuredClone(b.wild);
       const res = useMove(b.wild, p, wildMove, random);
       b.wild = res.attacker;
       p = res.defender;
       logs.push(...res.log);
+      // A sleeping or stunned Nuvo does not play an attack it never performed.
+      if(b.wild.pp[wildMove]<beforeW.pp[wildMove])scene('attack','wild',b.wild,wildMove);
+      hitScene('player',beforeP,p);hitScene('wild',beforeW,b.wild);
     } else {
+      const beforeP=structuredClone(p),beforeW=structuredClone(b.wild);
       p.hp = Math.max(0, p.hp - 5);
       b.wild.hp = Math.max(0, b.wild.hp - 2);
       logs.push("The wild Nuvo struggled!");
+      scene('attack','wild',b.wild,'metal-1');hitScene('player',beforeP,p);hitScene('wild',beforeW,b.wild);
     }
   };
   if (wildFirst) attackPlayer();
   if (playerActs && p.hp > 0 && b.wild.hp > 0) {
+    const beforeP=structuredClone(p),beforeW=structuredClone(b.wild);
     const res = useMove(p, b.wild, playerMove, random);
     p = res.attacker;
     b.wild = res.defender;
     logs.push(...res.log);
     b.animation = { move: playerMove, side: "player", key: b.turn + 1 };
+    if(p.pp[playerMove]<beforeP.pp[playerMove])scene('attack','player',p,playerMove);
+    hitScene('wild',beforeW,b.wild);hitScene('player',beforeP,p);
   }
   if (!wildFirst) attackPlayer();
   if (!b.over) {
     for (const n of [p, b.wild]) {
       if (n.hp > 0 && (n.status === "burn" || n.status === "poison")) {
+        const before=structuredClone(n);
         const hurt = Math.max(1, Math.floor(maxHp(n) / 12));
         n.hp = Math.max(0, n.hp - hurt);
+        hitScene(n===p?'player':'wild',before,n);
         logs.push(
           `${SPECIES_BY_ID[n.speciesId].name} lost ${hurt} HP to ${n.status}.`,
         );
@@ -486,7 +509,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
     logs.push(
       `Victory! +${reward} XP · Crew +${Math.floor(reward*.2)} XP each · +${20 + b.wild.level * 5} coins`,
     );
-    if (b.opponentQueue?.length) { b.wild = b.opponentQueue.shift()!; logs.push(`${b.trainerName} sends out ${SPECIES_BY_ID[b.wild.speciesId].name}!`); }
+    if (b.opponentQueue?.length) { b.wild = b.opponentQueue.shift()!;scene('summon','wild',b.wild); logs.push(`${b.trainerName} sends out ${SPECIES_BY_ID[b.wild.speciesId].name}!`); }
     else { b.over = "won"; if (b.trainerId) s.defeatedTrainers = [...new Set([...(s.defeatedTrainers || []), b.trainerId])]; }
   }
   if (!b.over && b.lastStand === "fighting" && b.keeperHp! <= 0) {
@@ -500,6 +523,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       logs.push("Your crew has fallen. Step in yourself, or accept a rescue to the Healing Lodge.");
     } else {
       b.active = next;
+      scene('summon','player',s.party[next]);
       logs.push(`Go, ${SPECIES_BY_ID[s.party[next].speciesId].name}!`);
     }
   }

@@ -1,0 +1,265 @@
+{
+  "mode": "built-in image_gen",
+  "transparent_background": true,
+  "description": "Source PNGs preserved intact. Silhouette rectangles measured from alpha; runtime rigs animate the intact source artwork.",
+  "assets": [
+    {
+      "file": "motion-base.png",
+      "cols": 12,
+      "rows": 5,
+      "prompt": "Use case: stylized-concept. Production transparent sprite atlas for Nuvori. Input is an identity reference containing 25 distinct creatures in 5 columns by 5 rows. Make exactly 50 new full-body drawings, preserving every creature's individual design, color, age, appendages, anatomy and illustrated detailed game art. Output a large landscape atlas, ideally 3200x1600, EXACTLY 10 columns by 5 rows. Every reference cell expands into TWO adjacent cells in its same row: first a true RIGHT-FACING PROFILE (nose points right, visible flank), second a true REAR view (back toward viewer, looking up/away, NO visible face or eyes). Thus output columns 1/2 are views of reference column1, 3/4 reference column2, etc. Reference row order unchanged. All 25 creatures must appear twice. Same scale and ground baseline for both views. Preserve original silhouettes; do not invent species or repeat one in another's cell. Crisp fine dark outlines, richly shaded polished illustrated fantasy creature sprites exactly matching reference. Orthographic game camera with slight top-down angle, no perspective scene. Each sprite including tails/wings/glows must fit inside its own cell with at least 15% EMPTY TRANSPARENT padding on all sides. No touching, no cell borders, no floor, no lettering, no background, true transparent alpha. Front views are NOT requested. These are NEW side and back drawings for the provided creatures.",
+      "path": "C:/Users/prett/.codex/generated_images/01a0e01b-db23-75f3-9c3b-58ed2c6c59b7/exec-7ca5227a-a1bf-47ab-a078-981d499b6dbe.png"
+    },
+    {
+      "file": "motion-evolution-1-side.png",
+      "ref": "evolution-1-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-068bbb12-94ff-4519-876c-875be74b0cb4.png"
+    },
+    {
+      "file": "motion-evolution-1-rear.png",
+      "ref": "evolution-1-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-1979aeed-6df5-48a4-a692-4d4b64424c2f.png"
+    },
+    {
+      "file": "motion-evolution-2-side.png",
+      "ref": "evolution-2-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-a1b4261c-e0fa-4f63-9761-d61b0680c0b5.png"
+    },
+    {
+      "file": "motion-evolution-2-rear.png",
+      "ref": "evolution-2-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-32901fcb-ca96-47e2-bc0b-0222668a9d77.png"
+    },
+    {
+      "file": "motion-evolution-3-side.png",
+      "ref": "evolution-3-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-5b94c4d0-e3e6-4b9d-96cf-dd57420279be.png"
+    },
+    {
+      "file": "motion-evolution-3-rear.png",
+      "ref": "evolution-3-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-3126f7be-12d6-45dd-be62-dae1de194602.png"
+    },
+    {
+      "file": "motion-evolution-4-side.png",
+      "ref": "evolution-4-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-e70ff0f6-bb09-4636-a106-797350af71a8.png"
+    },
+    {
+      "file": "motion-evolution-4-rear.png",
+      "ref": "evolution-4-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-a172b00b-5985-4a82-b44d-a3579d630aac.png"
+    },
+    {
+      "file": "motion-evolution-5-side.png",
+      "ref": "evolution-5-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-e2758924-4e33-4a23-9db3-68c210c2b8c5.png"
+    },
+    {
+      "file": "motion-evolution-5-rear.png",
+      "ref": "evolution-5-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-efdc21cd-baf7-46a8-8d78-2939f620f732.png"
+    },
+    {
+      "file": "motion-evolution-6-side.png",
+      "ref": "evolution-6-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true RIGHT-facing side profile, nose and face pointing right, visible flank. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-9462fbbc-b397-4f9b-b0df-2d2a2294ca89.png"
+    },
+    {
+      "file": "motion-evolution-6-rear.png",
+      "ref": "evolution-6-v2.png",
+      "cols": 5,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Create a directional sprite sheet for this Nuvori creature reference atlas. Exactly 5 columns and 5 rows, 25 sprites total, same identity and cell ordering as reference. EVERY creature is shown in a true REAR view looking away/up, back of head and body toward viewer, NO eyes or face visible. Preserve each distinct evolved creature's color, species, age, silhouette, wings, tail, horns, outfit-like markings and fine illustrated shading. ALL 25 distinct identities in the SAME cells as reference. Single pose per creature, no duplicates, no text. Polished detailed 2D creature RPG raster game art matching original. Full silhouettes, 18% clear transparent margins in every grid cell. Each cell isolated; no overlaps, no floor or background. Square atlas, ideally 2048 by 2048. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-a6bcc73b-8f48-447d-807b-348a2dd25cc3.png"
+    },
+    {
+      "file": "motion-spriglet.png",
+      "ref": "spriglet-evolutions.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Input is a 2-column by 5-row atlas of 10 DISTINCT Nuvori evolutionary forms. Create exactly 20 directional sprites in 4 columns by 5 rows. In EVERY ROW: column1=RIGHT-FACING PROFILE of reference left creature; column2=REAR VIEW of that same left creature; column3=RIGHT-FACING PROFILE of reference right creature; column4=REAR VIEW of that same right creature. Back views show NO face/eyes, look away/up. Maintain all ten unique silhouettes, species, maturity, appendages, coloration and markings. Preserve finely shaded illustrated creature art quality. True transparent alpha with no colored backdrop, no floor, no frames or text. Keep each FULL silhouette including wings/glows inside its cell, 18% empty margins on all four sides. Exactly four sprites per row, five rows, no extras. Portrait sheet ideally 1600x2000.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-bb2174b1-5f68-472e-a494-7311ac2e365b.png"
+    },
+    {
+      "file": "motion-cindlet.png",
+      "ref": "cindlet-evolutions.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Input is a 2-column by 5-row atlas of 10 DISTINCT Nuvori evolutionary forms. Create exactly 20 directional sprites in 4 columns by 5 rows. In EVERY ROW: column1=RIGHT-FACING PROFILE of reference left creature; column2=REAR VIEW of that same left creature; column3=RIGHT-FACING PROFILE of reference right creature; column4=REAR VIEW of that same right creature. Back views show NO face/eyes, look away/up. Maintain all ten unique silhouettes, species, maturity, appendages, coloration and markings. Preserve finely shaded illustrated creature art quality. True transparent alpha with no colored backdrop, no floor, no frames or text. Keep each FULL silhouette including wings/glows inside its cell, 18% empty margins on all four sides. Exactly four sprites per row, five rows, no extras. Portrait sheet ideally 1600x2000.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-61b87d61-1ba5-4d7c-9905-652ffb4ec4b8.png"
+    },
+    {
+      "file": "motion-bubbfin.png",
+      "ref": "bubbfin-evolutions.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Input is a 2-column by 5-row atlas of 10 DISTINCT Nuvori evolutionary forms. Create exactly 20 directional sprites in 4 columns by 5 rows. In EVERY ROW: column1=RIGHT-FACING PROFILE of reference left creature; column2=REAR VIEW of that same left creature; column3=RIGHT-FACING PROFILE of reference right creature; column4=REAR VIEW of that same right creature. Back views show NO face/eyes, look away/up. Maintain all ten unique silhouettes, species, maturity, appendages, coloration and markings. Preserve finely shaded illustrated creature art quality. True transparent alpha with no colored backdrop, no floor, no frames or text. Keep each FULL silhouette including wings/glows inside its cell, 18% empty margins on all four sides. Exactly four sprites per row, five rows, no extras. Portrait sheet ideally 1600x2000.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-bb0ecfba-66ab-44ee-b5d7-439185f95fa5.png"
+    },
+    {
+      "file": "motion-wisplet.png",
+      "ref": "wisplet-evolutions.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Input is a 2-column by 5-row atlas of 10 DISTINCT Nuvori evolutionary forms. Create exactly 20 directional sprites in 4 columns by 5 rows. In EVERY ROW: column1=RIGHT-FACING PROFILE of reference left creature; column2=REAR VIEW of that same left creature; column3=RIGHT-FACING PROFILE of reference right creature; column4=REAR VIEW of that same right creature. Back views show NO face/eyes, look away/up. Maintain all ten unique silhouettes, species, maturity, appendages, coloration and markings. Preserve finely shaded illustrated creature art quality. True transparent alpha with no colored backdrop, no floor, no frames or text. Keep each FULL silhouette including wings/glows inside its cell, 18% empty margins on all four sides. Exactly four sprites per row, five rows, no extras. Portrait sheet ideally 1600x2000.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-7f6c5574-5c32-4379-a97f-ea6aa2629daf.png"
+    },
+    {
+      "file": "motion-voltik.png",
+      "ref": "voltik-evolutions.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Input is a 2-column by 5-row atlas of 10 DISTINCT Nuvori evolutionary forms. Create exactly 20 directional sprites in 4 columns by 5 rows. In EVERY ROW: column1=RIGHT-FACING PROFILE of reference left creature; column2=REAR VIEW of that same left creature; column3=RIGHT-FACING PROFILE of reference right creature; column4=REAR VIEW of that same right creature. Back views show NO face/eyes, look away/up. Maintain all ten unique silhouettes, species, maturity, appendages, coloration and markings. Preserve finely shaded illustrated creature art quality. True transparent alpha with no colored backdrop, no floor, no frames or text. Keep each FULL silhouette including wings/glows inside its cell, 18% empty margins on all four sides. Exactly four sprites per row, five rows, no extras. Portrait sheet ideally 1600x2000.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-a152ac8c-a31d-4c8c-b227-cdd45cd4d574.png"
+    },
+    {
+      "file": "motion-dreamweaver-beginnings.png",
+      "ref": "dreamweaver-beginnings.png",
+      "cols": 6,
+      "rows": 2,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 3 columns by 2 rows. Output EXACTLY 6 columns by 2 rows, 12 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-f9995d4b-d570-4657-aca6-691304e2d8a6.png"
+    },
+    {
+      "file": "motion-dreamweaver-ascendants.png",
+      "ref": "dreamweaver-ascendants.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 4 columns by 4 rows. Output EXACTLY 8 columns by 4 rows, 32 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-60a3b091-45c8-4122-8864-46b65426478b.png"
+    },
+    {
+      "file": "motion-dreamweaver-crown-0.png",
+      "ref": "dreamweaver-crown-0.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 4 columns by 4 rows. Output EXACTLY 8 columns by 4 rows, 32 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-10f963bc-2d7e-4571-a764-20a525d46b72.png"
+    },
+    {
+      "file": "motion-dreamweaver-crown-1.png",
+      "ref": "dreamweaver-crown-1.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 4 columns by 4 rows. Output EXACTLY 8 columns by 4 rows, 32 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-ca5aac07-f588-48c0-93a7-b044036c4b40.png"
+    },
+    {
+      "file": "motion-dreamweaver-crown-2.png",
+      "ref": "dreamweaver-crown-2.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 4 columns by 4 rows. Output EXACTLY 8 columns by 4 rows, 32 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-c2c4a8a2-1a6f-494d-8e43-e9a311fb467c.png"
+    },
+    {
+      "file": "motion-dreamweaver-crown-3.png",
+      "ref": "dreamweaver-crown-3.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 4 columns by 4 rows. Output EXACTLY 8 columns by 4 rows, 32 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Precisely count the columns and rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-b6d1b7c4-ebfc-4cc3-876a-c7e637a8f0ca.png"
+    },
+    {
+      "file": "motion-oneirune.png",
+      "ref": "oneirune.png",
+      "cols": 2,
+      "rows": 1,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 1 columns by 1 rows. Output EXACTLY 2 columns by 1 rows, 2 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Landscape two-sprite turnaround.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-8f0b9d4e-865c-4d7e-9703-660ff6ac0328.png"
+    },
+    {
+      "file": "motion-solunelle.png",
+      "ref": "solunelle.png",
+      "cols": 2,
+      "rows": 1,
+      "prompt": "Use case: identity-preserve. Create new directional game artwork from the reference atlas of 1 columns by 1 rows. Output EXACTLY 2 columns by 1 rows, 2 separate sprites. Preserve the identity and row order of EVERY referenced creature. Each reference cell becomes two adjacent output cells: RIGHT-facing profile with nose pointing RIGHT, then rear-facing view with back toward viewer looking away/up and no face or eyes. Never change the species, stage, colors, costume details, patterns or anatomy. Each individual has BOTH views. Fine dark outlines, rich detailed illustrated shading, consistent slight overhead RPG camera. Full silhouettes with ALL tails/wings/ribbons/horns contained. Very generous 20% empty transparent padding within EACH cell, no sprites touching. No glows extending beyond own cell. NO repeated extra creatures. No floor, background, text, borders. True transparent alpha. Landscape two-sprite turnaround.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-7e2062f3-71bc-4bdf-b584-5b6158eebf82.png"
+    },
+    {
+      "file": "town-buildings.png",
+      "ref": "illustrated-buildings.png",
+      "cols": 4,
+      "rows": 2,
+      "prompt": "Use case: stylized-concept. New Nuvori town building sprite atlas matching the reference's highly detailed charming hand-illustrated fantasy RPG style, fine dark outlines, rich wood/stone textures and roof shingles. EXACTLY FOUR columns by TWO rows, eight isolated FULL buildings. Row1: cozy copper-roof bakery with bread sign; jade-roof tea house with teapot sign; ornate glass greenhouse full of plants; indigo-roof small library with book sign. Row2: narrow warm stone clocktower; cozy red-roof mill house with four wooden windmill sails; striped canopy market stall overflowing with colorful fruit; small blue shingle boathouse with nautical decor. Slightly elevated orthographic top-down front facade view, same as reference, no isometric ground. Buildings roughly similar footprint, roof fully contained, 18% empty transparent margins all sides EVERY cell. No people, letters, floor, background or borders. True transparent alpha. Landscape 4 by 2 grid.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-1c6cfdfb-6845-4a6c-bbe1-82a02296c656.png"
+    },
+    {
+      "file": "town-decor.png",
+      "ref": "illustrated-decor.png",
+      "cols": 4,
+      "rows": 3,
+      "prompt": "Use case: stylized-concept. New Nuvori town decor sprite atlas, same warm polished hand-painted fantasy RPG shading and dark outlines as reference. EXACTLY FOUR columns by THREE rows, twelve isolated props. Row1: wooden wheeled fruit cart; wheeled flower cart with lush bouquets; carved roofed notice board covered in illegible papers; blue birdhouse-shaped mailbox on wooden post. Row2: stone planter overflowing with lavender and daisies; round cafe table with two little chairs and teapot; wooden cart with folded bolts of cloth; elegant ivy-covered stone arch garden gate. Row3: little carved fox stone statue on pedestal; quaint round stone well with tiled roof; wooden picnic table with basket and bread; festive wooden poles connected by a short colorful pennant string. Camera slight overhead 2D top-down RPG front view. Detailed full silhouettes, no floor, no scene, no people, no legible text. 20% clear transparent gutters around ALL objects; no touching or crossing cells. True transparent alpha.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-2f4ff796-947a-4ba5-a96d-6315d57acd88.png"
+    },
+    {
+      "file": "motion-bubbfin.png",
+      "ref": "motion-bubbfin.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: precise-object-edit. Repair this exact 4-column by 5-row transparent directional sprite atlas. Keep ALL 20 creatures, designs and slot ordering unchanged. RECOMPOSE SPACING: shrink every individual complete sprite to occupy ONLY 60% of its cell's width and height, centered in its cell, leaving 20% empty alpha on EVERY side. Keep a LARGE empty transparent gutter between every pair of sprites and rows. No wing, tail, particle, or glow may touch another sprite or its cell edge. Remove detached glow speckles. Do not duplicate or omit any cell. Each adjacent pair is same creature; first cell must face RIGHT (nose to right), second is REAR (back to viewer, no eyes). Correct any left-looking profiles to face right. Preserve the artwork's rich illustration, shape, colors, species, maturity, appendages. Transparent background, no boxes/borders/text. Exactly 4 columns, 5 rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-1070c727-1369-433d-be20-4d74cf961766.png",
+      "repair": true
+    },
+    {
+      "file": "motion-wisplet.png",
+      "ref": "motion-wisplet.png",
+      "cols": 4,
+      "rows": 5,
+      "prompt": "Use case: precise-object-edit. Repair this exact 4-column by 5-row transparent directional sprite atlas. Keep ALL 20 creatures, designs and slot ordering unchanged. RECOMPOSE SPACING: shrink every individual complete sprite to occupy ONLY 60% of its cell's width and height, centered in its cell, leaving 20% empty alpha on EVERY side. Keep a LARGE empty transparent gutter between every pair of sprites and rows. No wing, tail, particle, or glow may touch another sprite or its cell edge. Remove detached glow speckles. Do not duplicate or omit any cell. Each adjacent pair is same creature; first cell must face RIGHT (nose to right), second is REAR (back to viewer, no eyes). Correct any left-looking profiles to face right. Preserve the artwork's rich illustration, shape, colors, species, maturity, appendages. Transparent background, no boxes/borders/text. Exactly 4 columns, 5 rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-413bc8b7-deba-4aaa-8ea5-a142e8c91154.png",
+      "repair": true
+    },
+    {
+      "file": "motion-dreamweaver-ascendants.png",
+      "ref": "motion-dreamweaver-ascendants.png",
+      "cols": 8,
+      "rows": 4,
+      "prompt": "Use case: precise-object-edit. Repair this exact 8-column by 4-row transparent directional sprite atlas. Keep ALL 32 creatures, designs and slot ordering unchanged. RECOMPOSE SPACING: shrink every individual complete sprite to occupy ONLY 60% of its cell's width and height, centered in its cell, leaving 20% empty alpha on EVERY side. Keep a LARGE empty transparent gutter between every pair of sprites and rows. No wing, tail, particle, or glow may touch another sprite or its cell edge. Remove detached glow speckles. Do not duplicate or omit any cell. Each adjacent pair is same creature; first cell must face RIGHT (nose to right), second is REAR (back to viewer, no eyes). Correct any left-looking profiles to face right. Preserve the artwork's rich illustration, shape, colors, species, maturity, appendages. Transparent background, no boxes/borders/text. Exactly 8 columns, 4 rows.",
+      "path": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-3463270e-a303-4a28-aa80-3a212a8de87c.png",
+      "repair": true
+    },
+    {
+      "file": "town-decor.png",
+      "cols": 4,
+      "rows": 3,
+      "prompt": "Repair the attached transparent game prop atlas. Preserve exactly the 12 distinct illustrated cozy fantasy town props, their identities, order, detail, colors and art style. Output a precise 4 column by 3 row equal-cell sprite sheet, transparent background, no lettering added. CRITICAL: shrink EVERY prop to fit within only the middle 60 percent of its own cell width AND height. Leave at least 20 percent clear transparent padding on every side of every cell. Absolutely no part including shadows or foliage may cross a cell boundary or touch neighboring props. Especially separate last row picnic table and bunting poles. Keep complete silhouettes. Do not merge props.",
+      "path": "C:/Users/prett/.codex/generated_images/01a0e01b-db23-75f3-9c3b-58ed2c6c59b7/exec-da5e22ae-4ae4-4956-9703-cf0df4202cd8.png",
+      "repair": true
+    }
+  ]
+}

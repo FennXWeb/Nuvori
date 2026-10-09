@@ -5,6 +5,7 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 export const WORLD_ART_SHEETS: [string,number,number][] = [
+ ['town-buildings.png',4,2],['town-decor.png',4,3],
  ['illustrated-grass.png',4,2],['illustrated-decor.png',4,4],['illustrated-landmarks.png',4,3],['illustrated-buildings.png',4,2],
  ['keeper-heads-a.png',4,6],['keeper-heads-b.png',4,6],['keeper-tops-a.png',4,5],['keeper-tops-b.png',4,5],
  ['keeper-bottoms.png',4,4],['keeper-hats.png',4,5],['keeper-accessories.png',4,4],

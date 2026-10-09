@@ -1,3 +1,6 @@
+import {BattleActors} from './BattleActors';
+import {sceneDuration} from './battlePresentation';
+import {RESIDENTS} from './townLife';
 import {
   useState,
   useEffect,
@@ -116,10 +119,14 @@ import {CharacterStudio} from "./CharacterStudio";
 import {DEFAULT_APPEARANCE} from "./appearance";
 import {SeasonPass} from "./SeasonPass";
 import {MainMenu,AdventureMenu} from "./GameMenus";
+import {UpdateArchive} from './UpdateArchive';
+import type {MenuDestination} from './MainMenu';
 import {EvolutionSequence} from "./EvolutionSequence";
 import {awardAdventureProgress,awardPassXp,passTier} from "./season";
 import "./firstLight.css";
 type Panel =
+  | "updates"
+  | "menu-welcome"
   | "season"
   | "pause"
   | "menu"
@@ -537,6 +544,7 @@ export default function App() {
       if (kind === "breeder") setPanel("nursery");
       if (kind === "league") setPanel("league");
       if (kind.startsWith("trainer:")) setTrainerOffer(kind.slice(8));
+      if(kind.startsWith('resident:')){const person=RESIDENTS.find(p=>p.name===kind.slice(9));if(person)setDialog({title:person.name,text:person.line});}
       if (kind === "professor")
         setDialog({
           title: "Ranger Elowen",
@@ -580,21 +588,18 @@ export default function App() {
     if(result.save.region!==save.region||result.save.interior!==save.interior)position.current={x:result.save.x,y:result.save.y,dir:0,moving:false};
     setSave(result.save);
     setBattle(result.battle);
-    if (action.type === "move") gameAudio.move(action.id);
     if (action.type === "catch") {
       gameAudio.play("capture-throw");
       gameAudio.play("capture-shake", { delay: .25 });
       gameAudio.play(result.battle.over === "caught" ? "capture-success" : "capture-break", { delay: .65 });
     }
     if (action.type === "potion") gameAudio.play("heal");
-    if (action.type === "switch") gameAudio.cry(result.save.party[result.battle.active].speciesId);
     if (action.type === "strike" || action.type === "struggle") gameAudio.play("keeper-strike");
     if (action.type === "brace") gameAudio.play("guard");
-    if (result.save.party.some((n,i) => n.hp <= 0 && save.party[i]?.hp > 0)) gameAudio.play("faint", { delay: .35 });
     if (result.save.party.some((n,i) => n.level > (save.party[i]?.level ?? n.level))) gameAudio.play("level-up", { delay: .6 });
-    if (result.battle.over === "won" || result.battle.over === "lost") gameAudio.play(result.battle.over === "won" ? "victory" : "defeat", { delay: .3 });
+    if (result.battle.over === "won" || result.battle.over === "lost") gameAudio.play(result.battle.over === "won" ? "victory" : "defeat", { delay: sceneDuration(result.battle.scenes)/1000 });
     if (result.battle.dreamAwakening) gameAudio.play("prismatic", { delay: .8 });
-    setTimeout(() => setBusy(false), 1000);
+    setTimeout(() => setBusy(false), Math.max(1000,sceneDuration(result.battle.scenes)+80));
   };
   const finishBattle = () => {
     if (busy) return;
@@ -848,6 +853,7 @@ export default function App() {
             <div className="game-viewport">
               <World
                 save={save}
+                covered={mainMenu}
                 paused={
                   mainMenu || Boolean(evolutionScene) || otherTab ||
                   !save ||
@@ -983,7 +989,7 @@ export default function App() {
                 {saveStatus}
               </button>
             </div>
-            {save && <ChatDock userId={user?.id} cell={cellKey(save.region, save.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} onSignIn={() => open("online")} notify={notify} refresh={refreshSocial}/>}
+            {save && !mainMenu && <ChatDock userId={user?.id} cell={cellKey(save.region, save.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} onSignIn={() => open("online")} notify={notify} refresh={refreshSocial}/>}
             {save && <CrewStrip save={save} disabled={Boolean(battle)||Boolean(league.raid)||otherTab||mainMenu||Boolean(evolutionScene)||Boolean(panel)} onChange={next=>{setSave(next);gameAudio.play("ui-reorder");if(next.party[0].uid!==save.party[0].uid)gameAudio.cry(next.party[0].speciesId);}} onManage={()=>open("team")}/>}
 
           </section>
@@ -1275,11 +1281,13 @@ export default function App() {
           </div>
         </div>
       )}
-      {authReady&&mainMenu&&!panel&&!otherTab&&<MainMenu save={save} onPlay={()=>{setMainMenu(false);gameAudio.play("ui-confirm");}} onSettings={()=>setPanel("settings")} onOnline={()=>setPanel("online")}/>}
+      {authReady&&mainMenu&&!otherTab&&<MainMenu save={save} obscured={Boolean(panel)||Boolean(dialog)||updateOpen} online={Boolean(user)} status={onlineStatus} social={social} remote={remote} audio={audio} onAudio={()=>enableAudio(!audio)} onPlay={()=>{setMainMenu(false);if(league.raid)setPanel('league');gameAudio.play('ui-confirm');}} onOpen={(id:MenuDestination)=>{if(id==='friends'&&!user){setPanel('online');return;}if(!save&&['wheel','friends','team','journal'].includes(id)){setPanel('menu-welcome');return;}if(league.raid&&!['friends','settings','online','updates','map','guide'].includes(id)){setMainMenu(false);setPanel('league');return;}setPanel(id);}} chat={<ChatDock embedded userId={user?.id} cell={cellKey(save?.region||'mossbell',save?.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} needsKeeper={!save} onCreate={()=>setMainMenu(false)} onSignIn={()=>setPanel('online')} notify={notify} refresh={refreshSocial}/>}/>}
+      {panel==='menu-welcome'&&<Modal title="Every adventure begins with a keeper" eyebrow="YOUR NEXT CHAPTER" onClose={closePanel}><p className="quiet-copy">Create your keeper and choose a starter to collect daily gifts, build your crew and meet other keepers. Your rewards will belong to that adventure.</p><div className="menu-footer"><button className="primary-button" onClick={()=>{setPanel(null);setMainMenu(false);}}>Create your keeper <ArrowRight size={16}/></button>{!user&&<button className="secondary-button" onClick={()=>setPanel('online')}>Sign in first</button>}</div></Modal>}
+      {panel==='updates'&&<UpdateArchive onClose={closePanel}/>}
       {(panel==="pause"||panel==="menu")&&save&&<AdventureMenu pause={panel==="pause"} save={save} online={Boolean(user)} onOpen={id=>{if(battle){notify("Resume and finish your battle first.");return;}if(id==="nursery"&&!save.nursery){notify("Visit the Nuvo Nursery in any town to pair your companions.");return;}setPanel(id as Panel);}} onClose={closePanel} onSave={()=>void saveNow()} onHome={()=>{if(battle){notify("Finish your battle before returning to the main menu.");return;}void saveNow();setPanel(null);setMainMenu(true);}}/>}
-      {panel==="season"&&save&&<SeasonPass save={save} onClose={closePanel} onChange={next=>{writeSave(next,user?.id||"guest");state.current=next;setSave(next);}}/>}
+      {panel==="season"&&<SeasonPass save={save} onBegin={()=>{setPanel(null);setMainMenu(false);}} onClose={closePanel} onChange={next=>{writeSave(next,user?.id||"guest");state.current=next;setSave(next);}}/>}
       {evolutionScene&&<EvolutionSequence before={evolutionScene.before} after={evolutionScene.after} onDone={()=>setEvolutionScene(null)}/>}
-      <UpdateNotice safe={authReady&&!mainMenu&&!evolutionScene&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
+      <UpdateNotice safe={authReady&&!evolutionScene&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
       {(panel === "tailor" || panel === "barber") && save && <StyleShop save={save} kind={panel} onChange={setSave} onClose={closePanel} notify={notify}/>}
       {panel === "nursery" && save && <Nursery save={save} account={Boolean(user)} onAction={nurseryAction} onClose={()=>{if(!dailyBusy.current)closePanel();}}/>}
       {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{const serverSnapshot=JSON.stringify(result);if(state.current)result=awardAdventureProgress(state.current,result);position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=serverSnapshot;if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
@@ -2247,10 +2255,10 @@ function Team({
     </Modal>
   );
 }
-function BattleView({
+export function BattleView({
   battle,
   save,
-  busy,
+  busy:turnBusy,
   onAction,
   onFinish,
 }: {
@@ -2260,11 +2268,14 @@ function BattleView({
   onAction: (action: BattleAction) => void;
   onFinish: () => void;
 }) {
+  const [entering,setEntering]=useState(true);
+  useEffect(()=>{const timer=setTimeout(()=>setEntering(false),1750);return()=>clearTimeout(timer);},[]);
+  const busy=turnBusy||entering;
   const [showSwitch, setShowSwitch] = useState(false);
   const [orb,setOrb] = useState<OrbKind>("binding");
-  const p = save.party[battle.active],
-    ps = SPECIES_BY_ID[p.speciesId],
-    ws = SPECIES_BY_ID[battle.wild.speciesId];
+  const p = save.party[battle.active];
+  const [presented,setPresented]=useState({player:p,wild:battle.wild});
+  const shown=presented.player,wild=presented.wild,ps=SPECIES_BY_ID[shown.speciesId],ws=SPECIES_BY_ID[wild.speciesId];
   return (
     <div className="battle-backdrop">
       <section
@@ -2290,9 +2301,9 @@ function BattleView({
             <div>
               <strong>
                 {ws.name}
-                {battle.wild.prismatic ? " ✦" : ""}
+                {wild.prismatic ? " ✦" : ""}
               </strong>
-              <span>Lv. {battle.wild.level} · {sexLabel(battle.wild)}</span>
+              <span>Lv. {wild.level} · {sexLabel(wild)}</span>
             </div>
             <div className="type-row">
               {ws.types.map((t) => (
@@ -2300,40 +2311,25 @@ function BattleView({
               ))}
               {caughtBefore(save, ws.id) && <span className="caught-badge"><Check size={12}/> Already caught</span>}
             </div>
-            <Health nuvo={battle.wild} />
-            {battle.wild.status && (
-              <small>{battle.wild.status.toUpperCase()}</small>
+            <Health nuvo={wild} />
+            {wild.status && (
+              <small>{wild.status.toUpperCase()}</small>
             )}
           </div>
-          <div className="wild-nuvo" key={battle.animation?.key??0} data-impact={battle.animation&&MOVE_BY_ID[battle.animation.move].power>0?battle.animation.key:undefined}>
-            <NuvoArt
-              id={battle.wild.speciesId}
-              size={205}
-              prismatic={battle.wild.prismatic}
-            />
-          </div>
-          <div className="player-nuvo">
-            {battle.lastStand === "fighting" ? <PlayerArt palette={save.player.palette} look={save.player} size={240}/> : <NuvoArt id={p.speciesId} size={240} prismatic={p.prismatic} />}
-          </div>
+          <BattleActors battle={battle} player={p} onPresentation={setPresented} keeper={battle.lastStand==='fighting'?<PlayerArt palette={save.player.palette} look={save.player} size={240}/>:undefined}/>
           <div className="player-health battle-health">
             <div>
               <strong>{battle.lastStand === "fighting"?save.player.name:ps.name}</strong>
-              <span>{battle.lastStand === "fighting"?"LAST STAND":`Lv. ${p.level}`}</span>
+              <span>{battle.lastStand === "fighting"?"LAST STAND":`Lv. ${shown.level}`}</span>
             </div>
             <div className="type-row">
               {battle.lastStand !== "fighting" && ps.types.map((t) => (
                 <TypeBadge key={t} type={t} />
               ))}
             </div>
-            {battle.lastStand === "fighting"?<div className="health"><div className="health-track"><i style={{width:`${battle.keeperHp!/battle.keeperMaxHp!*100}%`}}/></div><span>{battle.keeperHp} / {battle.keeperMaxHp} HP</span></div>:<Health nuvo={p} />}
-            {battle.lastStand !== "fighting" && p.status && <small>{p.status.toUpperCase()}</small>}
+            {battle.lastStand === "fighting"?<div className="health"><div className="health-track"><i style={{width:`${battle.keeperHp!/battle.keeperMaxHp!*100}%`}}/></div><span>{battle.keeperHp} / {battle.keeperMaxHp} HP</span></div>:<Health nuvo={shown} />}
+            {battle.lastStand !== "fighting" && shown.status && <small>{shown.status.toUpperCase()}</small>}
           </div>
-          {battle.animation && (
-            <MoveAnimation
-              moveId={battle.animation.move}
-              animationKey={battle.animation.key}
-            />
-          )}
         </div>
         <div className="battle-console">
           <div className="battle-log" aria-live="polite">

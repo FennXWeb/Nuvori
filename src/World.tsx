@@ -15,13 +15,16 @@ import {keeperAppearance} from "./keeperArt";
 import {drawArt,preloadIllustratedArt} from "./illustratedArt";
 import {getTerrain,terrainAt,terrainBlocked,terrainPath,encounterTile,isUnderground} from "./terrain";
 import {drawTerrainTile,drawCaveMouth} from "./terrainArt";
+import {buildResidents,residentAt,drawFountainWater,type ResidentRoute} from './townLife';
+import {drawNuvoActor} from './nuvoAnimation';
 export const TILE = 32,
   WORLD_W = WORLD_COLUMNS,
   WORLD_H = WORLD_ROWS;
-export type Interaction = "nursery" | "breeder" | "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}`;
+export type Interaction = "nursery" | "breeder" | "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}` | `resident:${string}`;
 export interface WorldProps {
   save: Save | null;
   paused: boolean;
+  covered?: boolean;
   remote: RemoteKeeper[];
   friendIds?: string[];
   onMove: (
@@ -131,8 +134,10 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
     );
   }
   if(town) for(const [i,[xx,yy]] of [[3,9],[3,18],[14,23],[32,7],[32,23]].entries()) props.push({x:xx,y:yy,kind:30+i%4,size:132,solid:true});
-  if(town) for(const [row,yy] of [9,26,39,47].entries()) for(const [col,xx] of [36,50,65].entries()) props.push({x:xx,y:yy,kind:30+(col+row)%4,size:132,solid:true});
+  if(town) for(const [row,yy] of [9,26,39,47].entries()) for(const [col,xx] of [36,50,65].entries()) props.push({x:xx,y:yy,kind:row<3?50+(col+row*3)%8:30+(col+row)%4,size:146,solid:true});
   if(town){
+    for(const [i,[xx,yy]] of [[12,10],[22,10],[31,11],[14,17],[30,20],[24,24],[40,16],[54,17],[47,37],[61,35],[40,44],[59,46]].entries())props.push({x:xx,y:yy,kind:60+i,size:i===7?108:72,solid:true});
+    for(const [i,[xx,yy]] of [[6,14],[15,10],[24,10],[31,16],[41,29],[56,29],[41,35],[59,35],[34,43],[64,44]].entries())props.push({x:xx,y:yy,kind:64,size:48,solid:false});
     props.push({x:51,y:33,kind:11,size:175,solid:true});
     for(const xx of [9,18,27,43,59])for(const yy of [13,31,43])props.push({x:xx+1.9,y:yy+1.8,kind:41,size:56,solid:false});
     for(const xx of [47,55]){props.push({x:xx,y:34,kind:40,size:60,solid:true});props.push({x:xx,y:29,kind:2,size:100,solid:true});props.push({x:xx,y:35.5,kind:13,size:62,solid:false});}
@@ -285,6 +290,7 @@ function makeImage(path: string) {
 export function World({
   save,
   paused,
+  covered=false,
   remote,
   friendIds = [],
   onMove,
@@ -299,6 +305,7 @@ export function World({
     latest = useRef({
       save,
       paused,
+      covered,
       remote,
       friendIds,
       onMove,
@@ -311,6 +318,7 @@ export function World({
   latest.current = {
     save,
     paused,
+    covered,
     remote,
     friendIds,
     onMove,
@@ -349,6 +357,8 @@ export function World({
     const imageForNuvo=(id:string)=>{const path=nuvoAtlas(SPECIES_BY_ID[id]);return nuvoImages[path]??(nuvoImages[path]=makeImage(`assets/${path}`));};
     let route: [number, number][] = [],
       camera = { x: 0, y: 0, zoom: 1 };
+    const residents=new Map<string,ResidentRoute[]>(),motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
+    let keeperPhase=0,followDir=0,followMoving=false,companionUid='',summonedAt=-10;
     const tap = (event: PointerEvent) => {
       if (latest.current.paused || !latest.current.save) return;
       const rect = el.getBoundingClientRect();
@@ -431,6 +441,13 @@ export function World({
         gameAudio.updateFootsteps(0, null);
       }
       const props = getMap(r, s?.interior);
+      if(r.kind==='Town'&&!residents.has(r.id))residents.set(r.id,buildResidents(r,(a,b,c,d)=>findPath(a,b,c,d,r),(a,b)=>canWalk(a,b,r)));
+      const townsfolk=s?.interior?[]:(residents.get(r.id)??[]).map(person=>{
+        const previous=residentAt(person),near=Math.hypot(previous.x-x,previous.y-y)<48;
+        if(!state.paused&&!near)person.clock+=dt;
+        const position=residentAt(person);
+        return {person,...position,moving:position.moving&&!state.paused&&!near,direction:near?(Math.abs(x-position.x)>Math.abs(y-position.y)?x<position.x?1:2:y<position.y?3:0):position.direction};
+      });
       let dx = 0,
         dy = 0;
       let travelled = 0;
@@ -481,7 +498,7 @@ export function World({
             }
           }
         }
-        const nearby = props.find(
+        const nearby = [...props,...townsfolk.map(n=>({x:n.x/TILE,y:n.y/TILE,solid:false,interact:`resident:${n.person.name}` as Interaction,label:n.person.name}))].find(
           (p) =>
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < (p.solid ? 84 : 62),
@@ -527,6 +544,8 @@ export function World({
         ? (!s.interior&&terrainAt(x/TILE,y/TILE,r)==="bridge"?(isUnderground(r)?"stone":"wood"):footstepSurface(r.id, s.interior, terrainPath(terrainAt(x/TILE,y/TILE,r))))
         : null, sprinting);
       const followDistance = Math.hypot(x - fx, y - fy);
+      keeperPhase+=travelled*(sprinting?.1:.085);
+      const oldFx=fx,oldFy=fy;
       const companionGap = 30 + (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
       if (followDistance > companionGap + 7) {
         fx +=
@@ -536,11 +555,16 @@ export function World({
           ((y - fy) * Math.min(1, dt * 6) * (followDistance - companionGap)) /
           followDistance;
       }
+      followMoving=Math.hypot(fx-oldFx,fy-oldFy)>.025;
+      if(followMoving)followDir=Math.abs(fx-oldFx)>Math.abs(fy-oldFy)?fx<oldFx?1:2:fy<oldFy?3:0;
+      if(s&&companionUid!==s.party[0].uid){companionUid=s.party[0].uid;summonedAt=elapsed;}
       if (now - lastEmit > 300) {
         lastEmit = now;
         state.onMove(x, y, dir, moving, steps);
         steps = 0;
       }
+      // Keep position/presence current without drawing a second animated scene behind the lobby.
+      if(state.covered){raf=requestAnimationFrame(frame);return;}
       const zoom = w < 600 ? 1.05 : w > 1500 ? 1.6 : 1.32,
         vw = w / zoom,
         vh = h / zoom;
@@ -599,12 +623,15 @@ export function World({
             const seed=Array.from(p.label??'Elowen').reduce((n,ch)=>n+ch.charCodeAt(0),0);
             drawDressedKeeper(ctx,p.x*TILE,p.y*TILE,58,{...DEFAULT_APPEARANCE,skin:seed%6,hairStyle:seed%12,hairTint:seed%5,top:s?.interior==='lodge'?5:s?.interior==='barber'?7:seed%8,topTint:s?.interior==='lodge'?4:seed%12,bottomTint:seed%4},0,elapsed*2);
             text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 68, "#f4deb0");
-          } else if (p.kind>=40) drawTownDetail(ctx,p.x*TILE,p.y*TILE,p.kind,elapsed);
+          } else if(p.kind>=60)drawArt(ctx,'town-decor.png',p.kind-60,p.x*TILE,p.y*TILE+4,p.size,p.size);
+          else if(p.kind>=50)drawArt(ctx,'town-buildings.png',p.kind-50,p.x*TILE,p.y*TILE+8,p.size,p.size);
+          else if (p.kind>=40) drawTownDetail(ctx,p.x*TILE,p.y*TILE,p.kind,elapsed);
           else if (p.kind>=30){drawArt(ctx,'illustrated-buildings.png',4+p.kind-30,p.x*TILE,p.y*TILE+8,150,150);drawTownDetail(ctx,p.x*TILE,p.y*TILE,42,elapsed);}
           else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
           else if(['nursery','tailor','barber','league'].includes(p.interact??''))drawArt(ctx,'illustrated-buildings.png',['nursery','tailor','barber','league'].indexOf(p.interact!),p.x*TILE,p.y*TILE+7,p.size,p.size);
           else if(s?.interior&&p.kind===13)drawArt(ctx,'illustrated-decor.png',7,p.x*TILE,p.y*TILE+6,44,52);
           else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
+          if(p.kind===11)drawFountainWater(ctx,p.x*TILE,p.y*TILE,p.size,elapsed);
           if (["tailor","barber","league","nursery"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size-6,"#ffe3b0");
           if (
             p.interact &&
@@ -642,21 +669,15 @@ export function World({
         ctx.ellipse(px, py, 12, 5, 0, 0, Math.PI * 2);
         ctx.fill();
         const sprint = keys.current.has("shift");
-        drawDressedKeeper(ctx,px,py,58,keeperAppearance(palette,look),direction,elapsed*(sprint?14:8),isMoving);
+        const local=look===s?.player;
+        drawDressedKeeper(ctx,px,py,58,keeperAppearance(palette,look),direction,local?keeperPhase:elapsed*8,isMoving,local&&sprint);
         ctx.restore();if(name)text(name,px,py-70,'#fff7d9');
       };
       if (s) {
         sorted.push(
           {
             y: fy,
-            draw: () =>
-              drawNuvo(
-                s.party[0].speciesId,
-                fx,
-                fy,
-                s.party[0].prismatic,
-                moving,
-              ),
+            draw: () => {const n=s.party[0];drawNuvoActor(ctx,n.speciesId,fx,fy,58+SPECIES_BY_ID[n.speciesId].stage*13,followDir,n.hp<=0?'faint':elapsed-summonedAt<.85?'summon':followMoving?'walk':'idle',n.hp<=0?.85:elapsed-summonedAt<.85?elapsed-summonedAt:elapsed,n.prismatic,motionPreference.matches);},
           },
           { y, draw: () => drawKeeper(x, y, dir, moving, s.player.palette,undefined,s.player) },
         );
@@ -664,6 +685,10 @@ export function World({
         sorted.push({ y, draw: () => drawKeeper(x, y, 0, false, 0) });
       }
       const neighbors = state.remote.filter(p => cellKey(p.region, p.interior) === cell);
+      for(const resident of townsfolk)sorted.push({y:resident.y,draw:()=>{
+        drawDressedKeeper(ctx,resident.x,resident.y,58,resident.person.look,resident.direction,resident.person.clock*7,resident.moving);
+        if(Math.hypot(resident.x-x,resident.y-y)<95)text(resident.person.name,resident.x,resident.y-69,'#f7e4bb');
+      }});
       for (const other of neighbors) {
         sorted.push({
           y: other.y,

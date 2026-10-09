@@ -1,0 +1,28 @@
+{
+  "artDirection": "Nuvori First Light cinematic main menu",
+  "records": [
+    {
+      "asset": "public/assets/menu-sanctuary.png",
+      "mode": "built-in image_gen",
+      "references": [],
+      "prompt": "Create a breathtaking premium illustrated fantasy game main-menu BACKGROUND PLATE for Nuvori, landscape 16:9 composition, high detail polished art direction. A magical starlit sanctuary on floating islands above a luminous cloud sea at first dawn. Deep navy and muted teal sky, one distant luminous crescent moon high on the RIGHT, subtle tiny constellations, gilded fragments and glowing gold threads in the air. Ancient pale stone crescent arch and worn circular summoning dais on the RIGHT foreground, moss, blue-green flowers, rich dark turquoise leafy silhouettes at the edges. Distant waterfall rivers fall from islands into the mist. Elegant cinematic painted artwork, exquisite material shading, soft volumetric rays through clouds, warm pale gold dawn at horizon, sophisticated cozy fantasy, a sense of scale and wonder. The central-right dais is EMPTY for a creature to be composited later. LEFT 38 PERCENT intentionally quiet dark sky and mist to hold an interface, no distracting large objects there. Main architectural interest around right 60% and lower right. No characters, no creatures, NO text, no lettering, no interface, no watermarks. Full bleed landscape, opaque background.",
+      "source": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-f017efc8-83dc-41eb-a9db-be10983218b7.png"
+    },
+    {
+      "asset": "public/assets/menu-solunelle.png",
+      "mode": "built-in image_gen",
+      "references": [
+        "public/assets/solunelle.png"
+      ],
+      "prompt": "Use the attached Solunelle creature as a STRICT CHARACTER IDENTITY reference. Create a spectacular premium fantasy game key art illustration of this exact mythical celestial fox-dragon, full body on a fully transparent background, no environment, no letters. Preserve creamy white fur, long majestic teal and midnight-blue leaf-woven plume tail, four legs with dark navy feet and golden claws, huge pointed leaf-feather ears, small golden crescent above brow, gold star ornaments, luminous turquoise eyes. Composition: dynamic elegant three-quarter LEFT-facing pose, floating as if stepping lightly through the air, front paw lifted, head on left, magnificent curling leaf tail sweeping up and out to the RIGHT. More painterly and sophisticated than a small sprite: luxurious feather and fur texture, crisp expressive face, beautiful dimensional shading, delicate warm gold rim light from upper right, subtle cyan secondary light. Wonder and nobility with original friendly creature-collector charm. Polished high-end animated fantasy film concept art, not photoreal, no aggressive teeth. Single complete character, unclipped ears/tail/paws, ample 12% transparent margin all around. No large glow clouds. Wide landscape creature composition.",
+      "source": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-0e6bc7db-84f8-432f-a79f-78770b071188.png"
+    },
+    {
+      "asset": "public/assets/menu-rewards.png",
+      "mode": "built-in image_gen",
+      "references": [],
+      "prompt": "Create a transparent premium fantasy RPG inventory sprite atlas, exactly 3 columns and 3 rows, 9 distinct objects with 22% EMPTY transparent margin in every equal square cell. Nuvori cozy illustrated creature collector style: polished richly shaded jewel-like materials, warm gold/brass hardware, crisp dark fine outlines, magical luminous accents, luxurious readable silhouettes. Row1 col1 a small pile of gold keeper coins with a leaf-and-star stamp, col2 a corked glass healing potion with rose liquid and leafy brass collar, col3 a pearl and teal creature binding orb with gold equator and tiny star clasp. Row2 col1 emerald verdant orb wrapped by elegant gold leaves, col2 sapphire tide orb encircled by a translucent water wave, col3 violet dusk orb with crescent moon hardware. Row3 col1 light cyan swift orb with swept feather fins, col2 iridescent prism orb with prismatic crystal facets, col3 an hourglass of glowing golden stardust in a navy and gold frame, representing a temporary XP boost. Single complete object grouping per cell. Orthographic three-quarter inventory illustration, no floor, no background or scene, no words, no lettering, no cell borders. Everything including shadows/glows contained inside central 56% of each cell. Native transparent alpha.",
+      "source": "C:\\Users\\prett\\.codex\\generated_images\\01a0e01b-db23-75f3-9c3b-58ed2c6c59b7\\exec-432919cf-4853-44d0-b17b-365bbdb6d777.png"
+    }
+  ]
+}

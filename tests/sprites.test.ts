@@ -5,7 +5,7 @@ import { PNG } from "pngjs";
 import { measureAtlas, NUVO_SHEETS } from "../scripts/measure-sprites";
 import { SPECIES } from "../src/data";
 import { SPRITE_ATLASES, nuvoSprite, spriteFill, fitSprite } from "../src/sprites";
-import { drawCompanion } from "../src/spriteMotion";
+import { drawRig, gaitFor } from "../src/nuvoAnimation";
 
 test('the original crowded evolution sheet is rejected instead of silently clipping it', () => {
   const original = readFileSync(new URL('../public/assets/evolution-1.png', import.meta.url));
@@ -40,19 +40,17 @@ test('every portrait preserves aspect ratio and has space around the full silhou
   }
 });
 
-test('animated followers draw the same complete, intact crop used by portraits', () => {
+test('articulated followers never sample pixels outside their measured silhouette', () => {
   for (const species of SPECIES) {
     const { frame, atlas } = nuvoSprite(species);
     const image = { complete: true, naturalWidth: atlas.width, width: atlas.width, height: atlas.height } as HTMLImageElement;
     const calls: number[][] = [];
     const noop = () => {};
-    const ctx = { beginPath: noop, ellipse: noop, fill: noop, save: noop, restore: noop, translate: noop,
-      scale: noop, rotate: noop, fillRect: noop, drawImage: (_image: unknown, ...args: number[]) => calls.push(args) } as unknown as CanvasRenderingContext2D;
-    drawCompanion(ctx, image, species.id, 100, 100, 1.4, true, 1, true);
-    assert.equal(calls.length, 1, species.id);
-    const [sx, sy, sw, sh, , , dw, dh] = calls[0];
-    assert.deepEqual([sx, sy, sw, sh], [frame.x, frame.y, frame.width, frame.height]);
-    assert.ok(Math.abs(dw / dh - sw / sh) < 1e-10, species.id);
+    const ctx = { beginPath: noop, moveTo:noop,lineTo:noop,closePath:noop,clip:noop,transform:noop,save: noop, restore: noop,
+      drawImage: (_image: unknown, ...args: number[]) => calls.push(args) } as unknown as CanvasRenderingContext2D;
+    drawRig(ctx,image,frame,100,100,gaitFor(species.id),.7,.15);
+    assert.equal(calls.length,72,species.id);
+    for(const call of calls)assert.deepEqual(call.slice(0,4),[frame.x,frame.y,frame.width,frame.height],species.id);
   }
 });
 

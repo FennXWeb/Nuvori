@@ -1,5 +1,17 @@
 Nuvori release notes.
 
+## 1.3.0 · Living Auralis (web)
+
+- A cinematic main menu starring Solunelle, with a layered starlit sanctuary, animated creature artwork, drifting particles, pointer parallax and a shimmering Nuvori logo.
+- An illustrated, animated 100-tier pass gallery with keeper cosmetic previews, reward claims, XP boosts and a guest preview before character creation.
+- Daily wheel and reset countdown, global/local chat, friends and requests, in-game update history, account controls, settings, crew, journal and world atlas directly from the lobby.
+- Responsive menu layouts, keyboard-accessible controls and reduced-motion support. The world stops rendering while covered by the lobby.
+- Four directional facings for all 312 Nuvo forms, with walking, hopping, flying, swimming, crawling or floating movement and idle, attack, damage, faint, summon and recall actions.
+- Animated followers and ordered wild/trainer battle scenes; Champions animations follow confirmed multiplayer updates.
+- More expressive keeper walk/sprint strides, with existing customization retained.
+- Eight new town building styles, twelve decorative props, animated fountain water and wandering residents with conversations.
+- Complete sprite bounds, battle ordering and resident navigation checks. Existing saves remain compatible; no database migration is required.
+
 ## 1.2.2 · Illustrated Auralis (web)
 
 - Remade customized keepers and NPCs with illustrated layered sprites, four facings, walking/sprinting and all existing appearance choices.

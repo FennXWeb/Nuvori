@@ -12,7 +12,7 @@ import {getTerrain} from '../src/terrain';
 test('new illustrated sheets have measured complete non-overlapping silhouettes',()=>{
  let total=0;
  for(const [file,cols,rows] of WORLD_ART_SHEETS){const measured=measureWorldArt(readFileSync(new URL('../public/assets/'+file,import.meta.url)),cols,rows);assert.deepEqual(WORLD_ART[file],measured,file);total+=measured.frames.length;}
- assert.equal(total,184);
+ assert.equal(total,204);
 });
 test('every customization choice has four illustrated facing frames',()=>{
  assert.equal(WORLD_ART['keeper-heads-a.png'].frames.length+WORLD_ART['keeper-heads-b.png'].frames.length,APPEARANCE_LIMITS.hairStyle*4);

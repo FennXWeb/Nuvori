@@ -14,7 +14,7 @@ function glyph(c:CanvasRenderingContext2D,type:Element,size:number,t:number){
  else {c.arc(0,0,size,0,TAU);}
  c.fill();
 }
-export function MoveAnimation({moveId,animationKey}:{moveId:string;animationKey:number}){
+export function MoveAnimation({moveId,animationKey,side='player',duration=1100}:{moveId:string;animationKey:number;side?:'player'|'wild';duration?:number}){
  const ref=useRef<HTMLCanvasElement>(null);
  useEffect(()=>{
   const canvas=ref.current!,c=canvas.getContext("2d")!,move=MOVE_BY_ID[moveId];if(!move)return;
@@ -23,8 +23,9 @@ export function MoveAnimation({moveId,animationKey}:{moveId:string;animationKey:
   let raf=0,start=0;
   const ring=(x:number,y:number,r:number,alpha:number)=>{c.globalAlpha=alpha;c.strokeStyle=color;c.lineWidth=3;c.beginPath();c.ellipse(x,y,r,r*.6,-.25,0,TAU);c.stroke();};
   const draw=(time:number)=>{
-   if(!start)start=time;const p=(time-start)/(reduced?500:1100);c.clearRect(0,0,w,h);if(p>1)return;
+   if(!start)start=time;const p=(time-start)/(reduced?Math.min(500,duration):duration);c.clearRect(0,0,w,h);if(p>1)return;
    c.save();c.globalCompositeOperation="source-over";
+   if(side==='wild'){c.translate(w,h+25);c.scale(-1,-1);}
    if(reduced){ring(targetX,targetY,55,p<.5?p*1.4:(1-p)*1.4);c.restore();raf=requestAnimationFrame(draw);return;}
    const charge=Math.min(1,p/.24),flight=Math.max(0,Math.min(1,(p-.22)/.36)),impact=Math.max(0,(p-.56)/.44);
    c.shadowColor=color;c.shadowBlur=13;c.fillStyle=color;c.strokeStyle=color;
@@ -47,6 +48,6 @@ export function MoveAnimation({moveId,animationKey}:{moveId:string;animationKey:
    c.restore();raf=requestAnimationFrame(draw);
   };
   raf=requestAnimationFrame(draw);return()=>cancelAnimationFrame(raf);
- },[moveId,animationKey]);
+ },[moveId,animationKey,side,duration]);
  return <canvas ref={ref} className="move-animation" aria-hidden="true"/>;
 }
