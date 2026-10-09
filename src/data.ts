@@ -896,6 +896,8 @@ export interface Region {
   pos: [number, number];
   biome?: "meadow" | "desert" | "marsh" | "storm" | "dream";
   hidden?: boolean;
+  music?: string;
+  landmarkPosition?: [number,number];
 }
 export const REGIONS: Region[] = [
   {
@@ -1045,7 +1047,27 @@ REGIONS.push(
 );
 // Spread map labels across the expanded archipelago.
 const mapPositions: Record<string,[number,number]> = { mossbell:[13,77],verdant:[13,53],hollow:[12,29],tideglass:[38,87],sunwake:[59,78],crystal:[39,57],emberfall:[58,57],frostmere:[45,29],starfall:[29,13] };
+REGIONS.push(
+  { id:"brookbend", name:"Brookbend Crossing", kind:"Wild zone", subtitle:"A river worth following", description:"A winding river divides flower meadows and wooded banks. Cross the timber bridges, follow the river bend, then take the north trail into Bramble Labyrinth.", color:"#7ebfa6", level:[3,8], pool:[0,2,4,6,10,18,20], links:{east:"mossbell",north:"bramble"}, landmark:"The Old Waterwheel", prop:11, pos:[8,77], music:"verdant" },
+  { id:"bramble", name:"Bramble Labyrinth", kind:"Wild zone", subtitle:"Take the path less certain", description:"Living hedges shelter a winding maze, quiet clearings, and a hidden rose court. Follow the trail markers through the switchbacks to Hollow Grove.", color:"#91ad72", level:[6,12], pool:[0,5,9,10,15,18,21], links:{south:"brookbend",east:"hollow"}, landmark:"The Roseheart Court", prop:9, pos:[8,39], music:"hollow" },
+  { id:"echohollow", name:"Echohollow Caverns", kind:"Wild zone", subtitle:"Listen beneath the mountain", description:"Crystal-lit chambers open beneath Crystal Steps. Stone bridges cross underground pools, while unlit gravel shelters cave Nuvo. The south passage descends into Glassvein Tunnel.", color:"#91abc4", level:[9,16], pool:[5,7,9,11,13,16,23,24], links:{north:"crystal",south:"glassvein"}, landmark:"The Singing Geode", prop:8, pos:[40,66], music:"crystal" },
+  { id:"glassvein", name:"Glassvein Tunnel", kind:"Wild zone", subtitle:"From mountain heart to open sea", description:"An old mining passage connects Echohollow to Tideglass Coast. Follow lanterns along the main tunnel, or explore branching crystal galleries and the flooded lower shaft.", color:"#aaa0bc", level:[7,14], pool:[1,7,11,13,16,22,24], links:{north:"echohollow",south:"tideglass"}, landmark:"The Lantern Junction", prop:8, pos:[40,80], music:"hollow" },
+  { id:"lanternlake", name:"Lantern Lake", kind:"Wild zone", subtitle:"Little islands, long summer evenings", description:"Reed-covered islands dot a deep turquoise lake. A chain of boardwalks and bridges links secluded Nuvo habitats. Threadhaven lies west; the north trail climbs Rimewind Pass.", color:"#69b5c4", level:[18,27], pool:[2,3,6,14,17,19,20], links:{west:"threadhaven",north:"rimewind"}, landmark:"The Moonlit Boathouse", prop:10, pos:[91,78], music:"tideglass" },
+  { id:"rimewind", name:"Rimewind Pass", kind:"Wild zone", subtitle:"Beyond the last snow line", description:"A glacial river cuts through switchback terraces and frozen pools. Cross the high bridges and stone stairways to reach Crownspire, or descend south toward Lantern Lake.", color:"#b6d9df", level:[25,36], pool:[3,8,11,12,14,17,23], links:{west:"crownspire",south:"lanternlake"}, landmark:"The Aurora Cairn", prop:8, pos:[91,25], music:"frostmere" },
+);
+const expandedLinks: Record<string,Partial<Region["links"]>> = {mossbell:{west:"brookbend"},hollow:{west:"bramble"},crystal:{south:"echohollow"},tideglass:{north:"glassvein"},threadhaven:{east:"lanternlake"},crownspire:{east:"rimewind"}};
+const landmarkPositions:Record<string,[number,number]>={brookbend:[28,8],bramble:[63,43],echohollow:[56,32],glassvein:[23,39],lanternlake:[53,31],rimewind:[67,45]};
+for(const r of REGIONS)if(landmarkPositions[r.id])r.landmarkPosition=landmarkPositions[r.id];
+for (const r of REGIONS) if(expandedLinks[r.id]) Object.assign(r.links,expandedLinks[r.id]);
+Object.assign(mapPositions,{mossbell:[23,77],verdant:[23,53],hollow:[23,29],starfall:[38,12],crystal:[40,49],frostmere:[54,25],tempest:[68,25],crownspire:[80,12],emberfall:[56,49],saffron:[71,49],sunwake:[57,79],threadhaven:[76,78],mirelight:[85,49],tideglass:[40,94]});
 for (const r of REGIONS) if (mapPositions[r.id]) r.pos = mapPositions[r.id];
 export const REGION_BY_ID = Object.fromEntries(
   REGIONS.map((r) => [r.id, r]),
 ) as Record<string, Region>;
+
+/** Encounter locations are authoritative; towns only keep pools for their trainers. */
+export const wildHabitats = (base: string) => REGIONS.filter(r=>r.kind!=="Town"&&!r.hidden&&r.pool.some(i=>BASE_SPECIES[i].id===base));
+for (const base of BASE_SPECIES) {
+  base.habitat=wildHabitats(base.id).map(r=>r.name).join(" · ");
+  for(const form of SPECIES.filter(s=>s.base===base.id)) form.habitat=base.habitat;
+}

@@ -1,4 +1,12 @@
-Nuvori 1.1.0 brings new generations and deeper evolution paths to Auralis.
+Nuvori release notes.
+
+## 1.2.1 · Wild Paths (web)
+
+- Six new connected regions: Brookbend Crossing, Bramble Labyrinth, Echohollow Caverns, Glassvein Tunnel, Lantern Lake, and Rimewind Pass.
+- Rivers, traversable bridges, cave chambers, lake islands, maze walls and switchback terraces across new and existing wild regions.
+- Every original Nuvo has at least two genuine wild habitats. Towns no longer advertise wild spawns; Nuvopedia habitat text comes from the encounter tables.
+- Terrain-accurate minimap and area atlas with route connections, landmarks and species lists. Cave encounters use gravel beds; roads and bridges remain safe.
+- Existing saves relocate safely if changed terrain covers the keeper; local chat supports the new regions.
 
 ## 1.2.0 · First Light (web)
 

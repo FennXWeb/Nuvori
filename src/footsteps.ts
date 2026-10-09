@@ -6,9 +6,9 @@ export type FootstepSurface = typeof FOOTSTEP_SURFACES[number];
 
 export function footstepSurface(region: string, interior?: Interior, onPath = false): FootstepSurface {
   if (interior) return "wood";
-  if (region === "frostmere" || region === "tempest") return "snow";
+  if (region === "frostmere" || region === "tempest" || region === "rimewind") return "snow";
   if (["saffron", "tideglass", "sunwake"].includes(region)) return "sand";
-  if (region === "crystal" || region === "crownspire") return "stone";
+  if (["crystal","crownspire","echohollow","glassvein"].includes(region)) return "stone";
   if (onPath) return REGION_BY_ID[region]?.kind === "Town" ? "stone" : "dirt";
   return "grass";
 }

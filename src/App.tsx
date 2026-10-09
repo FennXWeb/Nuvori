@@ -76,6 +76,8 @@ import {
   type BattleAction,
 } from "./game";
 import { World, type Interaction } from "./World";
+import {TerrainMap,WorldAtlas} from "./WorldAtlas";
+import {isUnderground} from "./terrain";
 import {
   NuvoArt,
   PlayerArt,
@@ -496,7 +498,7 @@ export default function App() {
   const onEncounter = useCallback(() => {
     if (battleLock.current) return;
     const s = state.current;
-    if (!s || s.party.every((n) => n.hp <= 0)) return;
+    if (!s || s.interior || REGION_BY_ID[s.region].kind==="Town" || s.party.every((n) => n.hp <= 0)) return;
     battleLock.current = true;
     const b = encounter(s);
     setBattle(b);
@@ -545,7 +547,7 @@ export default function App() {
           title: REGION_BY_ID[s.region].name,
           text:
             REGION_BY_ID[s.region].description +
-            " Use the signed paths at the edges of the area to travel. Wild Nuvo appear in the tall grass. Open trails are safe.",
+            " Use the signed paths at the edges of the area to travel. Wild Nuvo appear in tall grass and cave gravel. Open trails and bridges are safe. Check the area map for bridges, side paths, and habitats.",
         });
       if (kind === "landmark") {
         gameAudio.play("discovery");
@@ -880,23 +882,12 @@ export default function App() {
                 </span>
               </div>
               {!save?.interior && <button
-                className={`mini-map ${region.kind==="Town"?"town-map":"wild-map"}`}
+                className="mini-map actual-terrain"
                 aria-label="Open Auralis map"
                 onClick={() => open("map")}
               >
-                <span className="mini-river" />
-                <span className="mini-path horizontal" />
-                <span className="mini-path vertical" />
-                <span className="mini-tree t1" />
-                <span className="mini-tree t2" />
-                <span className="mini-house" />
-                <i
-                  style={{
-                    left: `${(position.current.x / 2304) * 100}%`,
-                    top: `${(position.current.y / 1664) * 100}%`,
-                  }}
-                />
-                <span className="mini-label">N</span>
+                <TerrainMap region={region} x={position.current.x} y={position.current.y}/>
+                <span>N</span>
               </button>}
               {save?.interior && <button className="room-exit" onClick={() => onInteract("exit")}><LogOut size={15}/> Return outside</button>}
               {nearby && save && !panel && !battle && !mainMenu && !evolutionScene && (
@@ -1026,11 +1017,11 @@ export default function App() {
             <div className="nearby-card">
               <div className="section-title">
                 <h3>In this area</h3>
-                <span>{region.pool.length} species{region.hidden ? " + a myth" : ""}</span>
+                <span>{region.kind==="Town"?"Safe haven":`${region.pool.length} species${region.hidden ? " + 2 myths" : ""}`}</span>
               </div>
-              <p>A few faces you might meet.</p>
+              <p>{region.kind==="Town"?"Visit the map to explore nearby wild habitats.":"A few faces you might meet."}</p>
               <div className="nearby-creatures">
-                {region.pool.slice(0, 3).map((index) => {
+                {(region.kind==="Town"?[]:region.pool.slice(0,3)).map((index) => {
                   const n = BASE_SPECIES[index];
                   return (
                     <button
@@ -1048,7 +1039,7 @@ export default function App() {
                 <Leaf size={15} />
                 {region.kind === "Town"
                   ? "Find wild Nuvo on the nearby trails"
-                  : "Step off the trail to find wild Nuvo"}
+                  : isUnderground(region)?"Explore gravel beds for cave Nuvo":"Search the tall grass for wild Nuvo"}
               </div>
             </div>
             <div className="field-note">
@@ -1303,72 +1294,7 @@ export default function App() {
           onClose={closePanel}
           wide
         >
-          <div className="world-map">
-            <svg
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              {REGIONS.filter(r=>!r.hidden||save?.visited.includes(r.id)).flatMap((r) =>
-                Object.values(r.links)
-                  .filter((id) => id && r.id < id)
-                  .map((id) => {
-                    const next = REGION_BY_ID[id!];
-                    return (
-                      <line
-                        key={`${r.id}-${id}`}
-                        x1={r.pos[0]}
-                        y1={r.pos[1]}
-                        x2={next.pos[0]}
-                        y2={next.pos[1]}
-                        stroke="#c9bfa1"
-                        strokeWidth=".45"
-                        strokeDasharray="1.2 1"
-                      />
-                    );
-                  }),
-              )}
-            </svg>
-            <span className="map-ocean-label">THE LUMINOUS SEA</span>
-            {REGIONS.filter(r=>!r.hidden||save?.visited.includes(r.id)).map((r) => (
-              <button
-                key={r.id}
-                className={`map-node ${save?.region === r.id ? "current" : ""} ${save?.visited.includes(r.id) ? "visited" : ""}`}
-                style={
-                  {
-                    left: `${r.pos[0]}%`,
-                    top: `${r.pos[1]}%`,
-                    "--region": r.color,
-                  } as CSSProperties
-                }
-                onClick={() =>
-                  setDialog({
-                    title: r.name,
-                    text: `${r.description} ${save?.visited.includes(r.id) ? "You have discovered this place." : "Follow the connecting trails to discover this place."} Wild Nuvo: levels ${r.level[0]}–${r.level[1]}.`,
-                  })
-                }
-              >
-                <span>
-                  {r.kind === "Town" ? (
-                    <Flag size={18} />
-                  ) : r.kind === "Landmark" ? (
-                    <Sparkles size={18} />
-                  ) : (
-                    <Leaf size={18} />
-                  )}
-                </span>
-                <strong>{r.name}</strong>
-                <small>{save?.region === r.id ? "You are here" : r.kind}</small>
-              </button>
-            ))}
-          </div>
-          <div className="map-legend">
-            <span>
-              <i className="legend-dot" /> {save?.visited.filter(id=>!REGION_BY_ID[id]?.hidden).length || 0} / 14
-              places discovered
-            </span>
-            <span>Walk along signed trails to reach the next area.</span>
-          </div>
+          <WorldAtlas save={save}/>
         </Modal>
       )}
       {panel === "team" && save && (

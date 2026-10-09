@@ -64,3 +64,7 @@ References: [Google OAuth](https://supabase.com/docs/guides/auth/social-login/au
 ## Nursery
 
 `nuvori_nursery` starts, cancels and collects visits under the signed-in account and a locked save row. The server validates both parents, creates a level-1 base-form offspring, computes the rarity/level/stage timer, and returns parents and offspring atomically. A trigger protects visits, collection receipts, established companion sex and the lifetime Dreamweaver capture ledger from stale uploads. Anonymous RPC execution is revoked. See [nursery rules](NURSERY.md) and `tests/nursery-db.test.ts` for the formula and isolated PostgreSQL regression checks.
+
+## Wild Paths · 2026-10-09
+
+Applied `202610090002_trail_expansion.sql` to the live project. The SQL Editor confirmed the stored `keeper_chat_channel_check` includes Brookbend, Bramble, Echohollow, Glassvein, Lantern Lake and Rimewind. Existing global/region/interior channels, rows, RLS policies and authenticated RPC rate limits are unchanged. The migration also passes an isolated PostgreSQL regression test.

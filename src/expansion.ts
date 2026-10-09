@@ -44,7 +44,7 @@ export const OUTFITS = [
 export const HAIRSTYLES = ["Trail tousle", "Cropped", "Swept fringe", "Long braid", "Twin buns", "Wild spikes"] as const;
 export const HAIR_COLORS = ["#503c36", "#e2bc6f", "#a75a40", "#322d43", "#b2c5d1", "#b878b2"];
 export interface Trainer { id: string; name: string; region: string; x: number; y: number; species: string[]; level: number; quote: string }
-const names = ["Scout Rowan", "Keeper Sable", "Sailor Marin", "Courier Wren", "Botanist Juniper", "Miner Flint", "Ranger Ash", "Skater Lumi", "Astronomer Vega", "Nomad Sol", "Tailor Lark", "Lanternkeeper Moss", "Stormchaser Rune", "Champion Iris"];
+const names = ["Scout Rowan", "Keeper Sable", "Sailor Marin", "Courier Wren", "Botanist Juniper", "Miner Flint", "Ranger Ash", "Skater Lumi", "Astronomer Vega", "Nomad Sol", "Tailor Lark", "Lanternkeeper Moss", "Stormchaser Rune", "Champion Iris", "Bridgekeeper Reed", "Gardener Briar", "Caver Opal", "Surveyor Mica", "Boater Willow", "Climber Neve"];
 export const TRAINERS: Trainer[] = REGIONS.filter(r => !r.hidden).map((r, i) => ({
   id: `${r.id}-keeper`, name: names[i], region: r.id, x: 22, y: 14.8,
   species: r.pool.slice(0, r.kind === "Town" ? 1 : 2).map(index => BASE_SPECIES[index].id),

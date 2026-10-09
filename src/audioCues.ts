@@ -14,7 +14,7 @@ export function soundscape(region?: string, interior?: Interior, battle?: "wild"
   if (battle) return { music: battle === "keeper" ? "last-stand" : `battle-${battle}`, ambience: null };
   if (!region) return { music: "title", ambience: null };
   if (interior) return { music: interior === "lodge" ? "lodge" : "shops", ambience: null };
-  return { music: REGION_BY_ID[region] ? region : "mossbell", ambience: region === "dreamland" ? "ambience-dream" : ["tideglass", "sunwake"].includes(region) ? "ambience-coast" : ["tempest", "crownspire"].includes(region) ? "ambience-storm" : "ambience-forest" };
+  return { music: REGION_BY_ID[region]?.music || (REGION_BY_ID[region] ? region : "mossbell"), ambience: ["echohollow","glassvein","dreamland"].includes(region) ? "ambience-dream" : ["tideglass", "sunwake","lanternlake","brookbend"].includes(region) ? "ambience-coast" : ["tempest", "crownspire","rimewind"].includes(region) ? "ambience-storm" : "ambience-forest" };
 }
 export function moveSound(id: string) {
   const move = MOVE_BY_ID[id];

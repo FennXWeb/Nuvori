@@ -6,12 +6,14 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 
 **Windows / SMOG:** [Download the portable build](https://github.com/FennXWeb/Nuvori/releases/latest), or add `FennXWeb/Nuvori` in SMOG. Extract the full ZIP and run `smog_launch.bat` to play without installing Node.js. Desktop saves live in `%APPDATA%\FennXWeb\Nuvori`. F11 toggles fullscreen. See [Windows publishing](docs/SMOG.md).
 
+See [Wild Paths](docs/WILD-PATHS.md) for the expanded routes, terrain atlas and overlapping habitats.
+
 See [First Light](docs/FIRST-LIGHT.md) for the full-screen world, expanded character studio, evolution cinema and free 100-tier seasonal pass.
 
 ## Included
 
 - Character creation, four outfit palettes, five starters, animated four-direction walking/sprinting, and a following lead Nuvo.
-- Fourteen connected regions with five towns, unique landmarks, trainers, and a hidden Dream Land. The new frontier includes Saffron Expanse, Threadhaven, Mirelight Fen, Tempest Shelf, and Crownspire.
+- Twenty connected public regions with five safe towns, unique landmarks, 20 trainers, and a separate hidden Dream Land. Rivers, bridges, lake islands, cliff stairways, a hedge maze, Echohollow Caverns and Glassvein Tunnel shape the routes. Every original Nuvo family appears in at least two wild habitats; the area atlas and Nuvopedia show the actual encounter locations.
 - **28 Nuvo families and 312 playable forms**, each with illustrated portraits and animated follower gaits. The five starters span five stages with choices at the first, third and final evolution (levels 12, 22, 34 and 44). Other families have varied depths and branch patterns.
 - Male and female Nuvo, plus walkable nurseries in all five towns. Breed opposite-sex companions from the same family, including different branches, for a level-1 base-form offspring. Rarity, parent levels and stages determine the wait; online visits persist on the account and use the server clock.
 - Mythical Dreamweaver has **85 forms across four stages**: 1 → 4 → 16 → 64. Each adventure can catch one wild male and one wild female; nursery descendants do not reset or consume that lifetime allowance. Oneirune remains a separate mythical family.

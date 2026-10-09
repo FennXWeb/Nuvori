@@ -11,6 +11,8 @@ import { gameAudio } from "./audio";
 import { footstepSurface } from "./footsteps";
 import {WORLD_COLUMNS,WORLD_ROWS,roadAt,tallGrassAt,drawTallGrass,drawTownDetail} from "./worldScenery";
 import {drawDressedKeeper} from "./appearance";
+import {getTerrain,terrainAt,terrainBlocked,terrainPath,encounterTile,isUnderground} from "./terrain";
+import {drawTerrainTile,drawCaveMouth} from "./terrainArt";
 export const TILE = 32,
   WORLD_W = WORLD_COLUMNS,
   WORLD_H = WORLD_ROWS;
@@ -107,8 +109,8 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
   } else {
     props.push(
       {
-        x: 18,
-        y: 7,
+        x: region.landmarkPosition?.[0]??18,
+        y: region.landmarkPosition?.[1]??7,
         kind: region.prop,
         size: 150,
         solid: true,
@@ -135,9 +137,11 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
   }
   const trainer=TRAINERS.find(t => t.region===region.id);
   if(trainer) props.push({x:trainer.x,y:trainer.y,kind:-1,size:64,solid:false,interact:`trainer:${trainer.id}`,label:trainer.name});
+  if(isUnderground(region))for(const [xx,yy] of [[16,6],[29,13],[50,18],[52,30],[26,38],[17,48]])props.push({x:xx,y:yy,kind:41,size:56,solid:false});
   for (let y = 1; y < WORLD_H-1; y += 2)
     for (let x = 1; x < WORLD_W-1; x += 2) {
-      if (roadAt(x,y,town) || Math.abs(x - 18) < 3 || Math.abs(y - 13) < 2 || (town && x>32 && y>5 && y<49)) continue;
+      if (terrainPath(terrainAt(x,y,region)) || terrainBlocked(terrainAt(x,y,region)) || Math.abs(x - 18) < 3 || Math.abs(y - 13) < 2 || (town && x>32 && y>5 && y<49) || getTerrain(region).features.some(f=>Math.hypot(f.x-x,f.y-y)<3)) continue;
+      if ([[-1,0],[1,0],[0,-1],[0,1]].some(([dx,dy])=>terrainPath(terrainAt(x+dx,y+dy,region)))) continue;
       if (props.some((p) => Math.hypot(p.x - x, p.y - y) < 4)) continue;
       if (
         (x < 4 ||
@@ -151,7 +155,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
           x: x + noise(x, y) * 0.6,
           y: y + noise(y, x) * 0.6,
           kind:
-            region.id === "hollow"
+            isUnderground(region) ? (noise(x,y)>.5?8:12) : region.id === "hollow"
               ? 3
               : region.id === "frostmere" || region.biome === "storm"
                 ? 1
@@ -160,7 +164,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
                   : noise(x, y) > 0.85
                     ? 2
                     : 0,
-          size: 78 + noise(x, y) * 35,
+          size: isUnderground(region)?45+noise(x,y)*25:78 + noise(x, y) * 35,
           solid: true,
         });
       }
@@ -169,7 +173,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
     const x = 4 + noise(i, 3) * (WORLD_W-8),
       y = 4 + noise(i, 8) * (WORLD_H-8);
     if (
-      roadAt(x,y,town) || Math.abs(x - 18) < 3 ||
+      terrainPath(terrainAt(x,y,region)) || terrainBlocked(terrainAt(x,y,region)) || isUnderground(region) || Math.abs(x - 18) < 3 ||
       Math.abs(y - 13) < 2 ||
       props.some((p) => Math.hypot(p.x - x, p.y - y) < 2)
     )
@@ -186,14 +190,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
   return props;
 }
 export function isWater(x: number, y: number, r: Region) {
-  return (
-    r.kind !== "Town" &&
-    x > 25 &&
-    x < 34 &&
-    y > 4 &&
-    y < 10 &&
-    Math.hypot((x - 29) / 1.5, y - 7) < 4
-  );
+  return terrainAt(x,y,r)==="water";
 }
 export function isPath(x: number, y: number, town=false) {
   return roadAt(x,y,town);
@@ -210,7 +207,7 @@ export function canWalk(
     return false;
   const tx = x / TILE,
     ty = y / TILE;
-  if (!interior && isWater(tx, ty, region)) return false;
+  if (!interior && [[0,0],[-.16,-.16],[.16,-.16],[-.16,.16],[.16,.16]].some(([dx,dy])=>terrainBlocked(terrainAt(tx+dx,ty+dy,region)))) return false;
   return !props.some(
     (p) =>
       p.solid &&
@@ -218,6 +215,16 @@ export function canWalk(
       y > p.y * TILE - (p.kind >= 20 ? 65 : 24) &&
       y < p.y * TILE + 9,
   );
+}
+/** Rescue legacy positions covered by new terrain without resetting an adventure. */
+export function safeWorldPosition(x:number,y:number,region:Region,interior?:Interior):[number,number] {
+ const props=getMap(region,interior);if(canWalk(x,y,region,props,interior))return [x,y];
+ const sx=Math.floor(x/32),sy=Math.floor(y/32);
+ for(let radius=1;radius<Math.max(WORLD_W,WORLD_H);radius++)for(let yy=sy-radius;yy<=sy+radius;yy++)for(let xx=sx-radius;xx<=sx+radius;xx++){
+  if(Math.max(Math.abs(xx-sx),Math.abs(yy-sy))!==radius)continue;
+  const px=xx*32+16,py=yy*32+16;if(canWalk(px,py,region,props,interior)&&findPath(560,496,px,py,region,interior).length)return [px,py];
+ }
+ return [560,496];
 }
 export function findPath(
   x: number,
@@ -413,8 +420,7 @@ export function World({
       if (lastRegion !== cell || lastKeeper !== (s?.started || "")) {
         lastRegion = cell;
         lastKeeper = s?.started || "";
-        x = s?.x || 560;
-        y = s?.y || 496;
+        [x,y] = safeWorldPosition(s?.x || 560,s?.y || 496,r,s?.interior);
         fx = x - 30 - (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
         fy = y + 20;
         lastEncounter = elapsed;
@@ -462,7 +468,7 @@ export function World({
             steps++;
             distance = 0;
             if (
-              !s.interior && tallGrassAt(Math.floor(x/32)+.5,Math.floor(y/32)+.5,r) &&
+              !s.interior && encounterTile(terrainAt(x/32,y/32,r)) &&
               r.kind !== "Town" &&
               elapsed - lastEncounter > 5 &&
               Math.random() < 0.22
@@ -516,7 +522,7 @@ export function World({
       }
       // Match the rendered ground tile, rather than treating an entire town as paving.
       gameAudio.updateFootsteps(travelled, s && !state.paused
-        ? footstepSurface(r.id, s.interior, isPath(Math.floor(x / TILE) + .5, Math.floor(y / TILE) + .5,r.kind==="Town"))
+        ? (!s.interior&&terrainAt(x/TILE,y/TILE,r)==="bridge"?(isUnderground(r)?"stone":"wood"):footstepSurface(r.id, s.interior, terrainPath(terrainAt(x/TILE,y/TILE,r))))
         : null, sprinting);
       const followDistance = Math.hypot(x - fx, y - fy);
       const companionGap = 30 + (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
@@ -546,7 +552,7 @@ export function World({
       ctx.scale(zoom, zoom);
       ctx.translate(-cx, -cy);
       ctx.imageSmoothingEnabled = false;
-      const frost = r.id === "frostmere",
+      const frost = r.id === "frostmere" || r.id==="rimewind",
         night = r.id === "starfall" || r.id === "hollow" || r.biome === "marsh" || r.biome === "dream" || r.biome === "storm",
         volcano = r.id === "emberfall",
         beach = r.id === "tideglass" || r.id === "sunwake";
@@ -572,11 +578,13 @@ export function World({
       else for (let gy = Math.max(0,Math.floor(cy/32)); gy < Math.min(WORLD_H,Math.ceil((cy+vh)/32)); gy++)
         for (let gx = Math.max(0,Math.floor(cx/32)); gx < Math.min(WORLD_W,Math.ceil((cx+vw)/32)); gx++) {
           const n = noise(gx, gy, r.name.length);
+          const tile=terrainAt(gx+.5,gy+.5,r);
+          if(drawTerrainTile(ctx,gx,gy,r,elapsed,tile))continue;
           ctx.fillStyle = n > 0.5 ? grass : grass2;
           ctx.fillRect(gx * 32, gy * 32, 33, 33);
-          const path = isPath(gx + 0.5, gy + 0.5,r.kind==="Town");
+          const path = terrainPath(tile);
           if (path) {
-            ctx.fillStyle = night ? "#b6b3a0" : frost ? "#d8e1d5" : "#ded2a4";
+            ctx.fillStyle = isUnderground(r)?"#a49f96":night ? "#b6b3a0" : frost ? "#d8e1d5" : "#ded2a4";
             ctx.fillRect(gx * 32, gy * 32, 33, 33);
             if(r.kind==="Town"){ctx.strokeStyle="#aaa18a55";ctx.strokeRect(gx*32+1,gy*32+1,30,14);ctx.strokeRect(gx*32-15,gy*32+17,30,14);}
             if (n > 0.6) {
@@ -614,9 +622,11 @@ export function World({
           }
         }
       // Functional trail exits are signed directly on the walkable route.
+      if(!s?.interior)for(const f of getTerrain(r).features)if(Math.hypot(x-f.x*32,y-f.y*32)<190)text(f.name,f.x*32,f.y*32-46,"#e6ecc6");
       for (const [side, id] of Object.entries(s?.interior ? {} : r.links)) {
         const px = side === "west" ? 85 : side === "east" ? WORLD_W*TILE-86 : 576,
           py = side === "north" ? 56 : side === "south" ? WORLD_H*TILE-47 : 417;
+        if(isUnderground(REGION_BY_ID[id!])&&!isUnderground(r))drawCaveMouth(ctx,px,py,REGION_BY_ID[id!].name);
         text(
           `${side === "north" ? "↑ " : side === "south" ? "↓ " : side === "west" ? "← " : "→ "}${REGION_BY_ID[id!].name}`,
           px,

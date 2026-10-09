@@ -4,6 +4,7 @@ import {newSave,validateSave} from "../src/game";
 import {SEASON,PASS_REWARDS,awardPassXp,awardAdventureProgress,activatePassBoost,claimPassReward,passProgress,passTier} from "../src/season";
 import {DEFAULT_APPEARANCE,APPEARANCE_LIMITS,validAppearance,cosmeticFor} from "../src/appearance";
 import {REGIONS,REGION_BY_ID,SPECIES_BY_ID,BASE_SPECIES,createNuvo} from "../src/data";
+import {terrainAt,terrainPath} from "../src/terrain";
 import {WORLD_W,WORLD_H,getMap,canWalk,findPath} from "../src/World";
 import {tallGrassAt,roadAt} from "../src/worldScenery";
 import {startBreeding} from "../src/nursery";
@@ -63,6 +64,6 @@ test("outdoor cells quadruple in area; travel gates and town services remain rea
 });
 test("tall grass forms broad encounter patches outside towns and roads",()=>{
  const r=REGION_BY_ID.verdant;let tiles=0;
- for(let y=0;y<WORLD_H;y++)for(let x=0;x<WORLD_W;x++){if(tallGrassAt(x+.5,y+.5,r)){tiles++;assert.equal(roadAt(x+.5,y+.5),false);}assert.equal(tallGrassAt(x+.5,y+.5,REGION_BY_ID.mossbell),false);}
+ for(let y=0;y<WORLD_H;y++)for(let x=0;x<WORLD_W;x++){if(tallGrassAt(x+.5,y+.5,r)){tiles++;assert.equal(terrainPath(terrainAt(x+.5,y+.5,r)),false);}assert.equal(tallGrassAt(x+.5,y+.5,REGION_BY_ID.mossbell),false);}
  assert.ok(tiles>500&&tiles<2500);
 });

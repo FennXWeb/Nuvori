@@ -207,6 +207,7 @@ export interface Battle {
 }
 export function encounter(save: Save, random = Math.random): Battle {
   const r = REGION_BY_ID[save.region];
+  if(!r||r.kind==="Town"||save.interior||!r.pool.length)throw new Error("Wild Nuvo live on routes, not in towns or shops.");
   const index = r.pool[Math.floor(random() * r.pool.length)];
   const level =
     r.level[0] + Math.floor(random() * (r.level[1] - r.level[0] + 1));

@@ -1,14 +1,8 @@
 import type {Region} from "./data";
-export const WORLD_COLUMNS=72, WORLD_ROWS=52, WORLD_PIXEL_WIDTH=2304, WORLD_PIXEL_HEIGHT=1664;
-export const terrainNoise=(x:number,y:number,seed=1)=>{const n=Math.sin(x*127.1+y*311.7+seed*74.7)*43758.5453;return n-Math.floor(n);};
-export function roadAt(x:number,y:number,town=false){
- return Math.abs(x-18)<1.7||Math.abs(y-13)<1.5|| (town && ((y>5&&y<46&&[9,27,43,59].some(v=>Math.abs(x-v)<1.3))|| (x>5&&x<64&&[20,31,43].some(v=>Math.abs(y-v)<1.2)) || (x>38&&x<64&&y>27&&y<35)));
-}
+import {terrainAt,terrainNoise} from "./terrain";
+export {WORLD_COLUMNS,WORLD_ROWS,WORLD_PIXEL_WIDTH,WORLD_PIXEL_HEIGHT,terrainNoise,roadAt} from "./terrain";
 export function tallGrassAt(x:number,y:number,r:Region){
- if(r.kind==="Town"||roadAt(x,y)||x<3||y<3||x>69||y>49)return false;
- if(x>24&&x<35&&y>3&&y<11)return false;
- // Broad islands produce readable encounter zones, with ragged borders.
- return Math.sin(x*.27+r.name.length)*Math.cos(y*.31)+Math.sin((x+y)*.13)>.04;
+ return terrainAt(x,y,r)==="grass";
 }
 export function drawTallGrass(c:CanvasRenderingContext2D,gx:number,gy:number,t:number,r:Region,nearX:number,nearY:number,front=false){
  const px=gx*32,py=gy*32,n=terrainNoise(gx,gy),near=Math.hypot(nearX-px-16,nearY-py-16)<35;
