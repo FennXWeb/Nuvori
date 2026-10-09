@@ -1,3 +1,4 @@
+import {worldRevision} from './worldContent';
 import type {Region} from "./data";
 import {getTerrain,terrainAt,terrainNoise,isUnderground,WORLD_COLUMNS,WORLD_ROWS,type TerrainTile} from "./terrain";
 import {drawArt,paintSurface,surfaceTile} from "./illustratedArt";
@@ -30,7 +31,9 @@ function texture(index:number){
 interface GroundLayer {canvas:HTMLCanvasElement;c:CanvasRenderingContext2D;painted:Uint8Array;cells:BlendCell[][];patch:ImageData}
 // Retain at most two regions, with tiles composed once as they enter the viewport.
 const layers=new Map<string,GroundLayer>();
+let layerRevision=-1;
 function layer(r:Region){
+ if(layerRevision!==worldRevision()){layers.clear();layerRevision=worldRevision();}
  const existing=layers.get(r.id);if(existing){layers.delete(r.id);layers.set(r.id,existing);return existing;}
  const canvas=document.createElement('canvas');canvas.width=WORLD_COLUMNS*32;canvas.height=WORLD_ROWS*32;
  const c=canvas.getContext('2d')!,geometry=getTerrain(r);

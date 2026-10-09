@@ -1,3 +1,5 @@
+import {regionWildSpecies} from './data';
+import {spawnTableAt} from './worldContent';
 import {BattleView} from './BattleScreen';
 export {BattleView} from './BattleScreen';
 import {fastTravel} from './travel';
@@ -506,12 +508,12 @@ export default function App() {
     );
     setNearby("");
   }, []);
-  const onEncounter = useCallback(() => {
+  const onEncounter = useCallback((x?:number,y?:number) => {
     if (battleLock.current) return;
     const s = state.current;
-    if (!s || s.interior || REGION_BY_ID[s.region].kind==="Town") return;
+    if (!s || s.interior || !(spawnTableAt(s.region,(x??s.x)/32,(y??s.y)/32)?.enabled??REGION_BY_ID[s.region].kind!=="Town")) return;
     battleLock.current = true;
-    const b = encounter(s);
+    const b = encounter({...s,x:x??s.x,y:y??s.y});
     setBattle(b);
     setSave((v) =>
       v
@@ -625,6 +627,7 @@ export default function App() {
   };
   const active = save?.party[0],
     region = REGION_BY_ID[save?.region || "mossbell"];
+  const nearbySpecies=regionWildSpecies(region);
   const currentObjective = save
     ? objectives.find((o) => !save.claimed?.includes(o.id))
     : objectives[0];
@@ -1027,12 +1030,11 @@ export default function App() {
             <div className="nearby-card">
               <div className="section-title">
                 <h3>In this area</h3>
-                <span>{region.kind==="Town"?"Safe haven":`${region.pool.length} species${region.hidden ? " + 2 myths" : ""}`}</span>
+                <span>{!nearbySpecies.length?"Safe haven":`${nearbySpecies.length} species`}</span>
               </div>
-              <p>{region.kind==="Town"?"Visit the map to explore nearby wild habitats.":"A few faces you might meet."}</p>
+              <p>{!nearbySpecies.length?"Visit the map to explore nearby wild habitats.":"A few faces you might meet."}</p>
               <div className="nearby-creatures">
-                {(region.kind==="Town"?[]:region.pool.slice(0,3)).map((index) => {
-                  const n = BASE_SPECIES[index];
+                {nearbySpecies.slice(0,3).map((n) => {
                   return (
                     <button
                       key={n.id}
@@ -1047,7 +1049,7 @@ export default function App() {
               </div>
               <div className="area-type">
                 <Leaf size={15} />
-                {region.kind === "Town"
+                {!nearbySpecies.length
                   ? "Find wild Nuvo on the nearby trails"
                   : isUnderground(region)?"Explore gravel beds for cave Nuvo":"Search the tall grass for wild Nuvo"}
               </div>

@@ -1,3 +1,4 @@
+import {spawnTableAt,weightedSpawn} from './worldContent';
 import {
   BASE_SPECIES,
   MOVE_BY_ID,
@@ -209,14 +210,21 @@ export interface Battle {
 export interface BattleScene {kind:'attack'|'damaged'|'faint'|'summon'|'recall';side:'player'|'wild';nuvo:Nuvo;move?:string;duration:number}
 export function encounter(save: Save, random = Math.random): Battle {
   const r = REGION_BY_ID[save.region];
-  if(!r||r.kind==="Town"||save.interior||!r.pool.length)throw new Error("Wild Nuvo live on routes, not in towns or shops.");
+  const authored=spawnTableAt(save.region,save.x/32,save.y/32);
+  if(!r||save.interior||(authored?!authored.enabled||!authored.entries.length:r.kind==="Town"||!r.pool.length))throw new Error("Wild Nuvo live on routes, not in towns or shops.");
   const index = r.pool[Math.floor(random() * r.pool.length)];
-  const level =
+  let level =
     r.level[0] + Math.floor(random() * (r.level[1] - r.level[0] + 1));
   const roll = random();
   const availableSexes = SEXES.filter(sex=>canCatchDreamweaver(save,{speciesId:"dreamweaver",sex,uid:"encounter"} as Nuvo));
-  const id = r.id === "dreamland" && roll < .08 && availableSexes.length ? "dreamweaver" : r.id === "dreamland" && roll < .20 ? "oneirune" : BASE_SPECIES[index].id;
-  const sex = id === "dreamweaver" ? availableSexes[Math.floor(random()*availableSexes.length)] : random()<.5?"male":"female";
+  let id = r.id === "dreamland" && roll < .08 && availableSexes.length ? "dreamweaver" : r.id === "dreamland" && roll < .20 ? "oneirune" : BASE_SPECIES[index].id;
+  if(authored){
+    const eligible=authored.entries.filter(e=>SPECIES_BY_ID[e.species]?.base!=='dreamweaver'||availableSexes.length>0);
+    const chosen=weightedSpawn(eligible,random());
+    if(!chosen)throw new Error('No eligible wild Nuvo in this habitat.');
+    id=chosen.species;level=chosen.minLevel+Math.floor(random()*(chosen.maxLevel-chosen.minLevel+1));
+  }
+  const sex = SPECIES_BY_ID[id].base === "dreamweaver" ? availableSexes[Math.floor(random()*availableSexes.length)] : random()<.5?"male":"female";
   const wild = {...createNuvo(id,level,random()<1/512,sex),origin:"wild" as const};
   return {
     wild,

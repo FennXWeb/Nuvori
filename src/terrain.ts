@@ -1,3 +1,4 @@
+import {authoredCell,worldRevision} from './worldContent';
 import type { Region } from "./data";
 
 export const WORLD_COLUMNS=72, WORLD_ROWS=52, WORLD_PIXEL_WIDTH=2304, WORLD_PIXEL_HEIGHT=1664;
@@ -11,10 +12,14 @@ export function roadAt(x:number,y:number,town=false){
 }
 export const isUnderground=(r:Region)=>r.id==="echohollow"||r.id==="glassvein";
 const cache=new Map<string,Terrain>();
+let cacheRevision=-1;
 
 /** Authored tile geometry is shared by rendering, collisions, encounters and the map. */
 export function getTerrain(r:Region):Terrain {
+ if(cacheRevision!==worldRevision()){cache.clear();cacheRevision=worldRevision();}
  const cached=cache.get(r.id);if(cached)return cached;
+ const authored=authoredCell(r.id);
+ if(authored){const result={tiles:authored.tiles,features:authored.features,underground:isUnderground(r),bridgeAxes:bridgeDirections(authored.tiles)};cache.set(r.id,result);return result;}
  const underground=isUnderground(r),town=r.kind==="Town";
  const tiles:TerrainTile[][]=Array.from({length:WORLD_ROWS},()=>Array<TerrainTile>(WORLD_COLUMNS).fill(underground?"cliff":"ground"));
  const features:TrailFeature[]=[];
@@ -133,3 +138,12 @@ export const terrainBlocked=(tile:TerrainTile)=>tile==="water"||tile==="cliff"||
 export const terrainPath=(tile:TerrainTile)=>tile==="path"||tile==="bridge"||tile==="steps";
 export const encounterTile=(tile:TerrainTile)=>tile==="grass"||tile==="rubble";
 export const terrainColor=(tile:TerrainTile,underground=false)=>({ground:"#85b779",grass:"#5b9259",path:underground?"#a9a49b":"#dccd9d",water:"#428b9b",bridge:"#bfa371",cliff:"#546476",hedge:"#356e4d",cave:"#656978",rubble:"#82858c",steps:"#b4b7b1"}[tile]);
+
+export function bridgeDirections(tiles:TerrainTile[][]){
+ const axes=new Map<string,boolean>();
+ for(let y=0;y<tiles.length;y++)for(let x=0;x<tiles[y].length;x++)if(tiles[y][x]==='bridge'){
+  const span=(dx:number,dy:number)=>{let n=0;for(const d of [-1,1])for(let k=1;tiles[y+dy*k*d]?.[x+dx*k*d]==='bridge';k++)n++;return n;};
+  axes.set(`${x},${y}`,span(1,0)>=span(0,1));
+ }
+ return axes;
+}

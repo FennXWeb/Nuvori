@@ -9,3 +9,5 @@ playwright-report/
 .sites-runtime/
 __pycache__/
 release/
+
+.world-editor/

@@ -12,6 +12,8 @@ See [Wild Paths](docs/WILD-PATHS.md) for the expanded routes, terrain atlas and 
 
 See [First Light](docs/FIRST-LIGHT.md) for the full-screen world, expanded character studio, evolution cinema and free 100-tier seasonal pass.
 
+**Private World Studio:** run `npm run world:editor` (or open `Nuvori World Studio.cmd`) to paint terrain, arrange buildings and interiors, author weighted Nuvo habitats, save local drafts, and publish validated world data to the private testing branch. Access is restricted to the local FennXWeb GitHub session. See the [studio guide](docs/WORLD-STUDIO.md).
+
 ## Included
 
 - Character creation, four outfit palettes, five starters, animated four-direction walking/sprinting, and a following lead Nuvo.

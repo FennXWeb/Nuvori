@@ -1,3 +1,4 @@
+import {authoredCell} from './worldContent';
 export const TYPES = [
   "Bloom",
   "Flame",
@@ -1065,8 +1066,14 @@ export const REGION_BY_ID = Object.fromEntries(
   REGIONS.map((r) => [r.id, r]),
 ) as Record<string, Region>;
 
-/** Encounter locations are authoritative; towns only keep pools for their trainers. */
-export const wildHabitats = (base: string) => REGIONS.filter(r=>r.kind!=="Town"&&!r.hidden&&r.pool.some(i=>BASE_SPECIES[i].id===base));
+/** The editor's encounter tables are authoritative when a cell has been authored. */
+export function regionWildSpecies(r:Region):Species[]{
+ const cell=authoredCell(r.id);
+ if(!cell)return r.kind==='Town'?[]:r.pool.map(i=>BASE_SPECIES[i]);
+ if(!cell.encounters.enabled)return [];
+ return [...new Set([...cell.encounters.entries,...cell.encounters.zones.flatMap(z=>z.entries)].map(e=>e.species))].map(id=>SPECIES_BY_ID[id]).filter(Boolean);
+}
+export const wildHabitats = (base: string) => REGIONS.filter(r=>!r.hidden&&regionWildSpecies(r).some(s=>s.base===base));
 for (const base of BASE_SPECIES) {
   base.habitat=wildHabitats(base.id).map(r=>r.name).join(" · ");
   for(const form of SPECIES.filter(s=>s.base===base.id)) form.habitat=base.habitat;
