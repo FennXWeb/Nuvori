@@ -1,89 +1,27 @@
-import { interiorName, type Interior } from "./adventure";
+import {interiorName,type Interior} from './adventure';
+import {drawArt,paintSurface} from './illustratedArt';
 
-// Room art shares the world's tile grid so walking, followers and multiplayer stay continuous.
-export function drawInterior(ctx: CanvasRenderingContext2D, room: Interior, time: number) {
-  const lodge = room === "lodge" || room === "nursery";
-  ctx.fillStyle = "#1b2d31"; ctx.fillRect(0, 0, 1152, 832);
-  ctx.fillStyle = "#0d1e254d"; ctx.fillRect(244, 170, 674, 560);
-  ctx.fillStyle = lodge ? "#629797" : "#8f6e54"; ctx.fillRect(256, 128, 640, 560);
-  ctx.fillStyle = lodge ? "#bad4c9" : "#ecd5a0"; ctx.fillRect(268, 144, 616, 64);
-  ctx.fillStyle = "#304745"; ctx.fillRect(256, 202, 640, 12);
-  for (let y = 7; y < 21; y++) for (let x = 8; x < 28; x++) {
-    ctx.fillStyle = (x + y) % 2 ? "#c6a777" : "#d3b688";
-    ctx.fillRect(x*32, y*32, 32, 32);
-    ctx.fillStyle = "#9b80552b"; ctx.fillRect(x*32, y*32+30, 32, 2);
-  }
-  // A woven runner leads from the door to the counter.
-  ctx.fillStyle = lodge ? "#5d9b98" : "#a06b66"; ctx.fillRect(520, 366, 112, 305);
-  ctx.strokeStyle = "#e8d59c"; ctx.lineWidth = 3; ctx.strokeRect(530, 378, 92, 282);
-  for (let i=0;i<8;i++) { ctx.fillStyle="#f4e7bd77"; ctx.fillRect(554,395+i*32, 44,3); }
-  // Windows and warm pools of light.
-  for (const x of [336,752]) {
-    ctx.fillStyle="#315051";ctx.fillRect(x,149,64,48);
-    ctx.fillStyle=lodge?"#b9e6df":"#f8d786";ctx.fillRect(x+5,153,54,39);
-    ctx.fillStyle="#f7f1cb";ctx.fillRect(x+29,153,5,39);ctx.fillRect(x+5,171,54,4);
-    ctx.fillStyle="#fff3b413";ctx.beginPath();ctx.moveTo(x,208);ctx.lineTo(x+64,208);ctx.lineTo(x+110,390);ctx.lineTo(x-45,390);ctx.fill();
-  }
-  ctx.fillStyle="#344e47";ctx.fillRect(484,151,184,42);
-  ctx.font="bold 17px Georgia";ctx.textAlign="center";ctx.fillStyle="#f3e4af";
-  ctx.fillText(interiorName(room).toUpperCase(),576,178);
-  // Framed wall pennants.
-  for (const x of [292,850]) { ctx.fillStyle=lodge?"#dce9d5":"#d4a66d";ctx.fillRect(x,153,18,45);ctx.fillStyle="#ede1aa";ctx.fillRect(x+7,161,4,18); }
-  // Door, threshold, and a softly pulsing exit rune.
-  ctx.fillStyle="#283c39";ctx.fillRect(528,666,96,30);
-  ctx.fillStyle="#dcb57c";ctx.fillRect(535,670,82,16);
-  ctx.globalAlpha=.6+.2*Math.sin(time*2);ctx.fillStyle="#f9eabc";
-  ctx.beginPath();ctx.moveTo(566,676);ctx.lineTo(586,676);ctx.lineTo(576,685);ctx.fill();ctx.globalAlpha=1;
-  ctx.font="11px sans-serif";ctx.fillStyle="#d4e3d0";ctx.fillText("↓ OUTSIDE",576,712);
-  if (room === "nursery") {
-    for (let i=0;i<7;i++) { const x=370+i*65; ctx.strokeStyle="#b7c6a1";ctx.beginPath();ctx.moveTo(x,212);ctx.lineTo(x,228+Math.sin(time+i)*3);ctx.stroke();ctx.fillStyle=["#ebcfa1","#d7b3d1","#b5d6b4"][i%3];ctx.beginPath();ctx.ellipse(x,234+Math.sin(time+i)*3,7,9,0,0,Math.PI*2);ctx.fill(); }
-  }
+// Room boundaries and furniture anchors still match the existing walking grid.
+export function drawInterior(c:CanvasRenderingContext2D,room:Interior,time:number){
+ const mint=room==='lodge'||room==='nursery';
+ c.fillStyle='#18292c';c.fillRect(0,0,1152,832);
+ c.shadowColor='#071c2380';c.shadowBlur=30;c.fillStyle='#463b31';c.fillRect(252,145,648,554);c.shadowBlur=0;
+ c.fillStyle='#b68c59';c.fillRect(264,208,624,480);paintSurface(c,3,264,208,624,480,160);
+ c.fillStyle='#d6c5a0';c.fillRect(264,138,624,78);
+ for(let x=264;x<888;x+=78)drawArt(c,'illustrated-decor.png',15,x+39,228,84,94);
+ for(const x of [256,880]){c.fillStyle='#5c4933';c.fillRect(x,211,16,477);c.fillStyle='#bf975d';c.fillRect(x+4,211,4,477);}
+ // Patterned wool runner, with a recessed border and small stitched diamond motifs.
+ c.fillStyle='#122c293d';c.fillRect(514,353,124,323);c.fillStyle=mint?'#548d7c':room==='barber'?'#965366':'#665b86';c.fillRect(520,355,112,317);
+ c.strokeStyle='#d8bd7e';c.lineWidth=2;c.strokeRect(526,361,100,305);c.strokeStyle='#eee1b188';c.lineWidth=1;c.strokeRect(532,367,88,293);
+ for(let yy=392;yy<650;yy+=44){c.save();c.translate(576,yy);c.rotate(Math.PI/4);c.strokeStyle='#e8d39a';c.strokeRect(-8,-8,16,16);c.strokeRect(-3,-3,6,6);c.restore();}
+ for(const x of [361,786]){drawArt(c,'illustrated-decor.png',14,x,213,76,84);const g=c.createLinearGradient(0,216,0,420);g.addColorStop(0,'#fbe8ac25');g.addColorStop(1,'#fbe8ac00');c.fillStyle=g;c.beginPath();c.moveTo(x-24,216);c.lineTo(x+24,216);c.lineTo(x+76,420);c.lineTo(x-70,420);c.fill();}
+ c.fillStyle='#304b40';c.strokeStyle='#d1b977';c.lineWidth=2;c.beginPath();c.roundRect(470,162,212,36,8);c.fill();c.stroke();c.font='600 15px Georgia';c.textAlign='center';c.fillStyle='#f6e4b9';c.fillText(interiorName(room),576,185);
+ for(const x of [292,860])drawArt(c,'illustrated-decor.png',7,x,285,38,54);
+ c.fillStyle='#342e2c';c.fillRect(528,670,96,24);c.fillStyle='#c69c60';c.fillRect(534,674,84,12);c.globalAlpha=.65+Math.sin(time*2)*.15;c.fillStyle='#ffe9b5';c.beginPath();c.moveTo(566,677);c.lineTo(586,677);c.lineTo(576,685);c.fill();c.globalAlpha=1;c.font='11px sans-serif';c.fillStyle='#d4e3d0';c.fillText('↓ OUTSIDE',576,712);
 }
-
-export function drawFurniture(ctx: CanvasRenderingContext2D, kind: number, x: number, y: number, lodge: boolean, time: number) {
-  if (kind === 26) {
-    ctx.fillStyle="#70543e";ctx.fillRect(x-34,y-44,68,53);ctx.fillRect(x-29,y+8,7,10);ctx.fillRect(x+22,y+8,7,10);
-    ctx.fillStyle="#acc6a1";ctx.fillRect(x-29,y-39,58,37);
-    ctx.fillStyle="#f8ebd5";ctx.beginPath();ctx.ellipse(x,y-33,15,21,Math.sin(time*1.5)*.05,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#b3a0c4";for(const [dx,dy] of [[-5,-38],[5,-26],[4,-43]]){ctx.beginPath();ctx.arc(x+dx,y+dy,3,0,Math.PI*2);ctx.fill();}
-    ctx.fillStyle="#d7b786";for(let i=0;i<6;i++)ctx.fillRect(x-33+i*12,y-18,5,29);
-  } else if (kind === 20) {
-    // Resting cot with quilt, pillows and brass feet.
-    ctx.fillStyle="#755742";ctx.fillRect(x-31,y-64,62,74);ctx.fillRect(x-34,y-69,68,10);
-    ctx.fillStyle="#f6ead3";ctx.fillRect(x-26,y-62,52,60);
-    ctx.fillStyle="#81b8ad";ctx.fillRect(x-26,y-38,52,39);
-    ctx.fillStyle="#d6e8c8";ctx.fillRect(x-22,y-57,44,17);
-    ctx.strokeStyle="#e6d996";ctx.strokeRect(x-22,y-34,44,28);
-    ctx.fillStyle="#d9ba78";ctx.fillRect(x-31,y+7,7,9);ctx.fillRect(x+24,y+7,7,9);
-  } else if (kind === 21) {
-    ctx.fillStyle="#70543e";ctx.fillRect(x-35,y-35,70,44);
-    ctx.fillStyle=lodge?"#7b9f9b":"#ba8e53";ctx.fillRect(x-35,y-46,70,19);
-    ctx.fillStyle="#f4d99d";ctx.fillRect(x-35,y-29,70,4);
-    ctx.fillStyle=lodge?"#dcf1d4":"#d8b683";ctx.fillRect(x-11,y-56,22,10);
-    if (lodge) { ctx.fillStyle="#528a7c";ctx.fillRect(x-2,y-54,4,6);ctx.fillRect(x-5,y-52,10,2); }
-  } else if (kind === 22) {
-    ctx.fillStyle="#685240";ctx.fillRect(x-39,y-82,78,92);
-    for(let row=0;row<3;row++) {
-      ctx.fillStyle="#d3ae6e";ctx.fillRect(x-37,y-58+row*27,74,5);
-      for(let col=0;col<4;col++) {
-        ctx.fillStyle=["#7faea9","#d8968d","#b1bd79","#b4a1cb"][col];
-        ctx.fillRect(x-29+col*16,y-76+row*27,10,18);
-        ctx.fillStyle="#eee6bd";ctx.fillRect(x-27+col*16,y-79+row*27,6,4);
-      }
-    }
-  } else if (kind === 24) {
-    ctx.fillStyle="#614d46";ctx.fillRect(x-32,y-80,5,90);ctx.fillRect(x+27,y-80,5,90);ctx.fillRect(x-32,y-80,64,5);
-    for(let i=0;i<3;i++){ctx.fillStyle=["#76ad91","#c78197","#8d80bc"][i];ctx.fillRect(x-25+i*18,y-62,15,46);ctx.fillRect(x-29+i*18,y-62,23,12);ctx.strokeStyle="#e0c793";ctx.beginPath();ctx.moveTo(x-20+i*18,y-76);ctx.lineTo(x-27+i*18,y-63);ctx.lineTo(x-12+i*18,y-63);ctx.stroke();}
-  } else if (kind === 25) {
-    ctx.fillStyle="#745942";ctx.fillRect(x-30,y-84,60,72);ctx.fillStyle="#acd1d3";ctx.fillRect(x-25,y-79,50,60);
-    ctx.fillStyle="#e8f5e488";ctx.beginPath();ctx.moveTo(x-22,y-75);ctx.lineTo(x+10,y-75);ctx.lineTo(x-22,y-40);ctx.fill();
-    ctx.fillStyle="#604e68";ctx.fillRect(x-24,y-30,48,33);ctx.fillStyle="#c49a8a";ctx.fillRect(x-26,y-7,52,12);ctx.fillStyle="#888783";ctx.fillRect(x-3,y+4,6,13);
-  } else if (kind === 23) {
-    ctx.fillStyle="#88766a";ctx.fillRect(x-36,y-65,72,74);
-    ctx.fillStyle="#483d36";ctx.fillRect(x-25,y-36,50,42);
-    for(let i=0;i<4;i++) {
-      ctx.fillStyle=i%2?"#ffc270":"#e48857";ctx.beginPath();ctx.ellipse(x-18+i*12,y-5,7,15+Math.sin(time*8+i)*5,0,0,Math.PI*2);ctx.fill();
-    }
-    ctx.fillStyle="#bda58a";ctx.fillRect(x-40,y-68,80,10);
-  }
+export function drawFurniture(c:CanvasRenderingContext2D,kind:number,x:number,y:number,_lodge:boolean,time:number){
+ const frame:Record<number,number>={20:0,21:1,22:2,23:3,24:4,25:5,26:6};
+ const width=kind===21?76:kind===22?82:kind===23?89:77,height=kind===21?68:kind===20?88:98;
+ drawArt(c,'illustrated-decor.png',frame[kind]??7,x,y+12,width,height);
+ if(kind===23){const glow=c.createRadialGradient(x,y-10,3,x,y-10,55);glow.addColorStop(0,'#ffc36624');glow.addColorStop(1,'#ffc36600');c.fillStyle=glow;c.fillRect(x-55,y-65,110,110);c.save();c.globalAlpha=.25+Math.sin(time*7)*.08;c.fillStyle='#fff1b1';c.beginPath();c.ellipse(x,y-12,6,10,0,0,7);c.fill();c.restore();}
 }

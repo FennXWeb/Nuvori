@@ -6,6 +6,8 @@ An original 2D creature-collection game for the browser. Explore Auralis, collec
 
 **Windows / SMOG:** [Download the portable build](https://github.com/FennXWeb/Nuvori/releases/latest), or add `FennXWeb/Nuvori` in SMOG. Extract the full ZIP and run `smog_launch.bat` to play without installing Node.js. Desktop saves live in `%APPDATA%\FennXWeb\Nuvori`. F11 toggles fullscreen. See [Windows publishing](docs/SMOG.md).
 
+See [Illustrated Auralis](docs/ILLUSTRATED-AURALIS.md) for the matching keeper, terrain, landmark, town and interior artwork.
+
 See [Wild Paths](docs/WILD-PATHS.md) for the expanded routes, terrain atlas and overlapping habitats.
 
 See [First Light](docs/FIRST-LIGHT.md) for the full-screen world, expanded character studio, evolution cinema and free 100-tier seasonal pass.
@@ -22,7 +24,7 @@ See [First Light](docs/FIRST-LIGHT.md) for the full-screen world, expanded chara
 - Turn-based wild and trainer battles, six-Nuvo parties, reserve storage, capturing, progression, items, and move tutoring. Drag the bottom crew to reorder it; the far-left member leads. Other crew members receive 20% of active-member battle XP.
 - Five Champions League guardians with 900–3,400 HP. Sign in and battle solo or in four-player rooms, with shared boss health, individual crew actions, room codes, resumable trials, and crest rewards.
 - Six orb types: Binding, Verdant, Tide, Dusk, Swift, and Prism, with different capture affinities.
-- Walkable clothing stores and barbers with six owned outfits, six hairstyles, and six hair colors.
+- Walkable clothing stores and barbers with twelve hairstyles, ten tops, four bottoms, hats, accessories and color choices, including seasonal cosmetics.
 - A keeper last stand when the entire crew faints. Keeper defeat normally restores the crew at the last Healing Lodge; a 1-in-10,000 roll instead awakens them in Dream Land, where Oneirune and Dreamweaver can appear and be caught.
 - New-release detection with a save-and-apply popup, deferred until the current battle or activity ends.
 - Rare **Prismatic** color variants at a 1/512 wild-encounter probability. Rarity persists through capture, saves, and evolution.
@@ -74,7 +76,7 @@ The database migration enforces ownership with row-level security; guests cannot
 
 ## Art
 
-Logo, creature atlases, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [original art](docs/art-prompts.json), [expansion art](docs/EXPANSION-ART.md), [final evolution art](docs/EXPANSION-ART-FINALS.md), and [nursery and Dreamweaver art](docs/nursery-art-prompts.json). The nursery update adds 50 starter evolutions and all 85 Dreamweaver forms. PNG alpha and full silhouette bounds are checked automatically. All source artwork is included in `public/assets`.
+Logo, creature atlases, world props, and explorer frames were generated with OpenAI's built-in Imagegen tool. Exact prompts are recorded in [original art](docs/art-prompts.json), [expansion art](docs/EXPANSION-ART.md), [final evolution art](docs/EXPANSION-ART-FINALS.md), and [nursery and Dreamweaver art](docs/nursery-art-prompts.json). The nursery update adds 50 starter evolutions and all 85 Dreamweaver forms. PNG alpha and full silhouette bounds are checked automatically. The illustrated world update adds 184 scenery and modular keeper sprites, with [prompt specifications](docs/illustrated-art-prompts.json). All source artwork is included in `public/assets`.
 
 ## Save data
 

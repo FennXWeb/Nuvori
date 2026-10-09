@@ -5,12 +5,14 @@ import type { RemoteKeeper } from "./online";
 import { cellKey, edgeMarker, type Interior } from "./adventure";
 import { drawInterior, drawFurniture } from "./interiors";
 import { TRAINERS } from "./expansion";
-import { nuvoAtlas, drawCompanion, drawCustomization, keeperSheet } from "./spriteMotion";
+import { nuvoAtlas, drawCompanion } from "./spriteMotion";
 import { drawFrontierLandmark } from "./frontierScenery";
 import { gameAudio } from "./audio";
 import { footstepSurface } from "./footsteps";
 import {WORLD_COLUMNS,WORLD_ROWS,roadAt,tallGrassAt,drawTallGrass,drawTownDetail} from "./worldScenery";
-import {drawDressedKeeper} from "./appearance";
+import {drawDressedKeeper,DEFAULT_APPEARANCE} from "./appearance";
+import {keeperAppearance} from "./keeperArt";
+import {drawArt,preloadIllustratedArt} from "./illustratedArt";
 import {getTerrain,terrainAt,terrainBlocked,terrainPath,encounterTile,isUnderground} from "./terrain";
 import {drawTerrainTile,drawCaveMouth} from "./terrainArt";
 export const TILE = 32,
@@ -342,7 +344,6 @@ export function World({
       lastNearby = "",
       pressed = false;
     const art = makeImage("assets/world-atlas.png"),
-      explorer = makeImage("assets/explorer-atlas.png"),
       creatures = makeImage("assets/nuvo-atlas.png");
     const nuvoImages:Record<string,HTMLImageElement>={"nuvo-atlas.png":creatures};
     const imageForNuvo=(id:string)=>{const path=nuvoAtlas(SPECIES_BY_ID[id]);return nuvoImages[path]??(nuvoImages[path]=makeImage(`assets/${path}`));};
@@ -361,7 +362,7 @@ export function World({
       );
     };
     el.addEventListener("pointerdown", tap);
-    Promise.all([art.decode(), explorer.decode(), creatures.decode()])
+    Promise.all([art.decode(), preloadIllustratedArt(), creatures.decode()])
       .then(() => latest.current.onReady())
       .catch(() => latest.current.onReady());
     const ro = new ResizeObserver((entries) => {
@@ -374,6 +375,7 @@ export function World({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     });
     ro.observe(el);
+    void preloadIllustratedArt();
     const drawCell = (
       image: HTMLImageElement | HTMLCanvasElement,
       idx: number,
@@ -552,75 +554,17 @@ export function World({
       ctx.scale(zoom, zoom);
       ctx.translate(-cx, -cy);
       ctx.imageSmoothingEnabled = false;
-      const frost = r.id === "frostmere" || r.id==="rimewind",
-        night = r.id === "starfall" || r.id === "hollow" || r.biome === "marsh" || r.biome === "dream" || r.biome === "storm",
-        volcano = r.id === "emberfall",
-        beach = r.id === "tideglass" || r.id === "sunwake";
-      const grass = r.biome === "desert" ? "#d3b777" : r.biome === "dream" ? "#9280b8" : r.biome === "marsh" ? "#789784" : r.biome === "storm" ? "#8c99b2" : frost
-        ? "#c0d9d4"
-        : night
-          ? "#607f82"
-          : volcano
-            ? "#aaa66a"
-            : beach
-              ? "#a5c58b"
-              : "#8fc786";
-      const grass2 = r.biome === "desert" ? "#cfad6b" : r.biome === "dream" ? "#9b86be" : r.biome === "marsh" ? "#6e8e80" : r.biome === "storm" ? "#8492ac" : frost
-        ? "#b6d1cd"
-        : night
-          ? "#59797c"
-          : volcano
-            ? "#a3a167"
-            : beach
-              ? "#9fc186"
-              : "#88c180";
-      if (s?.interior) drawInterior(ctx, s.interior, elapsed);
-      else for (let gy = Math.max(0,Math.floor(cy/32)); gy < Math.min(WORLD_H,Math.ceil((cy+vh)/32)); gy++)
-        for (let gx = Math.max(0,Math.floor(cx/32)); gx < Math.min(WORLD_W,Math.ceil((cx+vw)/32)); gx++) {
-          const n = noise(gx, gy, r.name.length);
-          const tile=terrainAt(gx+.5,gy+.5,r);
-          if(drawTerrainTile(ctx,gx,gy,r,elapsed,tile))continue;
-          ctx.fillStyle = n > 0.5 ? grass : grass2;
-          ctx.fillRect(gx * 32, gy * 32, 33, 33);
-          const path = terrainPath(tile);
-          if (path) {
-            ctx.fillStyle = isUnderground(r)?"#a49f96":night ? "#b6b3a0" : frost ? "#d8e1d5" : "#ded2a4";
-            ctx.fillRect(gx * 32, gy * 32, 33, 33);
-            if(r.kind==="Town"){ctx.strokeStyle="#aaa18a55";ctx.strokeRect(gx*32+1,gy*32+1,30,14);ctx.strokeRect(gx*32-15,gy*32+17,30,14);}
-            if (n > 0.6) {
-              ctx.fillStyle = night ? "#a4a392" : "#cabc90";
-              ctx.fillRect(gx * 32 + n * 20, gy * 32 + 8, 4, 2);
-              ctx.fillRect(gx * 32 + 6, gy * 32 + 23, 2, 2);
-            }
-          } else if (isWater(gx + 0.5, gy + 0.5, r)) {
-            ctx.fillStyle = "#59a7ad";
-            ctx.fillRect(gx * 32, gy * 32, 33, 33);
-            ctx.fillStyle = "#a0d4cb";
-            ctx.globalAlpha = 0.5 + 0.3 * Math.sin(elapsed + gx);
-            ctx.fillRect(
-              gx * 32 + 4 + Math.sin(elapsed + gy) * 4,
-              gy * 32 + 12,
-              14,
-              2,
-            );
-            ctx.globalAlpha = 1;
-          } else if(tallGrassAt(gx+.5,gy+.5,r)){drawTallGrass(ctx,gx,gy,elapsed,r,x,y);
-          } else {
-            ctx.fillStyle = frost
-              ? "#dfede8"
-              : night
-                ? "#78978e"
-                : volcano
-                  ? "#bebb78"
-                  : "#a1d393";
-            ctx.fillRect(gx * 32 + 6 + n * 8, gy * 32 + 7, 2, 4);
-            ctx.fillRect(gx * 32 + 9 + n * 8, gy * 32 + 6, 2, 4);
-            if (n > 0.66) {
-              ctx.fillStyle = frost ? "#eaf4ee" : night ? "#b7a4d1" : "#e9e4a9";
-              ctx.fillRect(gx * 32 + 22, gy * 32 + 22, 3, 3);
-            }
-          }
+      const night = ['starfall','hollow'].includes(r.id)||['marsh','dream','storm'].includes(r.biome||'');
+      if (s?.interior) drawInterior(ctx,s.interior,elapsed);
+      else {for(let gy=Math.max(0,Math.floor(cy/32));gy<Math.min(WORLD_H,Math.ceil((cy+vh)/32));gy++)
+        for(let gx=Math.max(0,Math.floor(cx/32));gx<Math.min(WORLD_W,Math.ceil((cx+vw)/32));gx++){
+          const tile=terrainAt(gx+.5,gy+.5,r);drawTerrainTile(ctx,gx,gy,r,elapsed,tile);
         }
+        // Foliage is a separate pass: the next ground tile must not cut off its leaves.
+        for(let gy=Math.max(0,Math.floor(cy/32)-1);gy<Math.min(WORLD_H,Math.ceil((cy+vh)/32)+1);gy++)
+          for(let gx=Math.max(0,Math.floor(cx/32)-1);gx<Math.min(WORLD_W,Math.ceil((cx+vw)/32)+1);gx++)
+            if(tallGrassAt(gx,gy,r))drawTallGrass(ctx,gx,gy,elapsed,r,x,y);
+      }
       // Functional trail exits are signed directly on the walkable route.
       if(!s?.interior)for(const f of getTerrain(r).features)if(Math.hypot(x-f.x*32,y-f.y*32)<190)text(f.name,f.x*32,f.y*32-46,"#e6ecc6");
       for (const [side, id] of Object.entries(s?.interior ? {} : r.links)) {
@@ -652,13 +596,16 @@ export function World({
           ctx.fill();
           if (p.interact === "landmark" && drawFrontierLandmark(ctx,r.id,p.x*TILE,p.y*TILE,elapsed)) { /* Unique frontier monument. */ }
           else if (p.kind === -1) {
-            drawCell(explorer, 0, 4, p.x * TILE, p.y * TILE, 64);
-            text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 52, "#f4deb0");
+            const seed=Array.from(p.label??'Elowen').reduce((n,ch)=>n+ch.charCodeAt(0),0);
+            drawDressedKeeper(ctx,p.x*TILE,p.y*TILE,58,{...DEFAULT_APPEARANCE,skin:seed%6,hairStyle:seed%12,hairTint:seed%5,top:s?.interior==='lodge'?5:s?.interior==='barber'?7:seed%8,topTint:s?.interior==='lodge'?4:seed%12,bottomTint:seed%4},0,elapsed*2);
+            text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 68, "#f4deb0");
           } else if (p.kind>=40) drawTownDetail(ctx,p.x*TILE,p.y*TILE,p.kind,elapsed);
-          else if (p.kind>=30){ctx.save();ctx.filter=`hue-rotate(${[0,25,-15,160][p.kind-30]}deg)`;drawCell(art,4,4,p.x*TILE,p.y*TILE,160);ctx.restore();drawTownDetail(ctx,p.x*TILE,p.y*TILE,42,elapsed);}
+          else if (p.kind>=30){drawArt(ctx,'illustrated-buildings.png',4+p.kind-30,p.x*TILE,p.y*TILE+8,150,150);drawTownDetail(ctx,p.x*TILE,p.y*TILE,42,elapsed);}
           else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
+          else if(['nursery','tailor','barber','league'].includes(p.interact??''))drawArt(ctx,'illustrated-buildings.png',['nursery','tailor','barber','league'].indexOf(p.interact!),p.x*TILE,p.y*TILE+7,p.size,p.size);
+          else if(s?.interior&&p.kind===13)drawArt(ctx,'illustrated-decor.png',7,p.x*TILE,p.y*TILE+6,44,52);
           else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
-          if (["tailor","barber","league","nursery"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size*.76,"#ffe3b0");
+          if (["tailor","barber","league","nursery"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size-6,"#ffe3b0");
           if (
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < 85 &&
@@ -695,24 +642,8 @@ export function World({
         ctx.ellipse(px, py, 12, 5, 0, 0, Math.PI * 2);
         ctx.fill();
         const sprint = keys.current.has("shift");
-        const frame = isMoving
-          ? 1 + (Math.floor(elapsed * (sprint ? 14 : 8)) % 3)
-          : 0;
-        if(look.appearance){drawDressedKeeper(ctx,px,py,58,look.appearance,direction,elapsed*(sprint?14:8),isMoving);ctx.restore();if(name)text(name,px,py-58,"#fff7d9");return;}
-        drawCell(
-          keeperSheet(explorer,{palette,...look}) as HTMLCanvasElement,
-          direction * 4 + frame,
-          4,
-          px,
-          py +
-            (isMoving
-              ? Math.sin(elapsed * (sprint ? 28 : 16))
-              : Math.sin(elapsed * 2) * 0.6),
-          68,
-        );
-        ctx.restore();
-        drawCustomization(ctx,px,py,68,look,direction,isMoving?elapsed*16:0);
-        if (name) text(name, px, py - 55, "#fff7d9");
+        drawDressedKeeper(ctx,px,py,58,keeperAppearance(palette,look),direction,elapsed*(sprint?14:8),isMoving);
+        ctx.restore();if(name)text(name,px,py-70,'#fff7d9');
       };
       if (s) {
         sorted.push(

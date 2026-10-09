@@ -874,14 +874,6 @@ kbd {
   height: 100%;
   overflow: hidden;
 }
-.player-art {
-  display: inline-block;
-  flex-shrink: 0;
-  background-image: url("/assets/explorer-atlas.png");
-  background-size: 400% 400%;
-  background-position: 0 0;
-  image-rendering: pixelated;
-}
 .nuvo-art.stage-1 {
   filter: hue-rotate(var(--hue)) saturate(1.2) drop-shadow(0 0 5px #b5cb8a);
 }

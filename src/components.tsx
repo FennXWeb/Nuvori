@@ -1,7 +1,8 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { drawDressedKeeper } from "./appearance";
 import { X, Volume2, VolumeX } from "lucide-react";
-import { drawCustomization, keeperSheet } from "./spriteMotion";
+import {keeperAppearance} from "./keeperArt";
+import {preloadIllustratedArt} from "./illustratedArt";
 import { nuvoSprite, fitSprite, spriteFill } from "./sprites";
 import type { Player } from "./game";
 import {
@@ -76,10 +77,8 @@ export function PlayerArt({
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const el=canvas.current!, ctx=el.getContext("2d")!, im=new Image(); let alive=true;
-    if(look?.appearance){ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);ctx.imageSmoothingEnabled=false;drawDressedKeeper(ctx,size/2,size*.93,size*.9,look.appearance,direction);ctx.restore();return;}
-    im.src=import.meta.env.BASE_URL+"assets/explorer-atlas.png";
-    void im.decode().then(()=>{ if(!alive)return;ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);ctx.imageSmoothingEnabled=false;ctx.drawImage(keeperSheet(im,{palette,...look}),0,0,im.width/4,im.height/4,0,0,size,size);drawCustomization(ctx,size/2,size*.83,size,look || {});ctx.restore(); }).catch(()=>{});
+    const el=canvas.current!,ctx=el.getContext('2d')!;let alive=true;
+    void preloadIllustratedArt().then(()=>{if(!alive)return;ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);drawDressedKeeper(ctx,size/2,size*.95,size*.77,keeperAppearance(palette,look),direction);ctx.restore();});
     return()=>{alive=false;};
   },[size,palette,look?.outfit,look?.hair,look?.hairColor,look?.appearance,direction]);
   return (

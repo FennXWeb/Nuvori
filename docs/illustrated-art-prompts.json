@@ -1,0 +1,117 @@
+{
+  "tool": "OpenAI built-in ImageGen",
+  "date": "2026-10-09",
+  "styleReferences": [
+    "public/assets/nuvo-atlas.png",
+    "public/assets/world-atlas.png"
+  ],
+  "sharedDirection": "Production Nuvori RPG sprites matching the existing Nuvo: rich illustrated cel shading, fine dark outlines, textured materials, jewel tones, upper-left light, slightly elevated front view. Isolated complete sprites on transparent backgrounds, no labels or grid. Terrain sheets are opaque overhead material surfaces.",
+  "sheets": [
+    {
+      "file": "illustrated-decor.png",
+      "grid": [
+        4,
+        4
+      ],
+      "prompt": "Healing cot with mint quilt; apothecary counter; potion shelf; stone fireplace; coat rack; burgundy barber chair with gold mirror; nursery cradle with spotted egg; teal potted plant; garden bench; iron lantern; white picket fence; crates and barrel; tall wild grass tuft; mossy cave mouth; curtained cottage window; oak-trimmed plaster wall. Complete objects with generous padding."
+    },
+    {
+      "file": "illustrated-landmarks.png",
+      "grid": [
+        4,
+        3
+      ],
+      "prompt": "Ornate desert hourglass; ivy windmill; leviathan rib arch with amber lanterns; enchanted silver-violet harp; floating jeweled crown on marble plinth; crescent dream portal; stone watermill with teal roof; rose garden arch; turquoise amethyst geode; timber mine and crystal cart; lakeside boathouse; snowy sapphire cairn. Four columns in this order, isolated complete silhouettes."
+    },
+    {
+      "file": "illustrated-buildings.png",
+      "grid": [
+        4,
+        2
+      ],
+      "prompt": "Nursery cottage with egg emblem; plum-roof tailor with scissors and spool; teal-roof barber with striped pole; royal Champions Hall; terracotta cottage; half-timber blue townhouse; mushroom cottage; green-shingle stone cottage. Complete roofs, chimneys and doorsteps, transparent margins, no lettering."
+    },
+    {
+      "file": "keeper-heads-a.png",
+      "grid": [
+        4,
+        6
+      ],
+      "prompt": "Modular chibi heads only, no shoulders. Columns front, left profile, right profile, back. Rows tousled, cropped, side swept, long braid, twin buns, wild spikes. Peach skin, purple hair for recoloring, cyan irises. Same head anatomy and scale, complete hair silhouettes."
+    },
+    {
+      "file": "keeper-heads-b.png",
+      "grid": [
+        4,
+        6
+      ],
+      "prompt": "Companion to first head sheet, identical style and anatomy. Columns front, left, right, back. Rows ponytail, bob, long waves, curly crown, shaved stubble, mohawk. Peach skin, purple hair, cyan irises, transparent backgrounds and full silhouettes."
+    },
+    {
+      "file": "keeper-tops-a.png",
+      "grid": [
+        4,
+        5
+      ],
+      "prompt": "Headless chibi clothed torsos including peach neck and relaxed arms/hands, no legs. Front, left, right, back columns. Trail jacket, T-shirt, overalls bib, sailor shirt, hoodie rows. Teal primary cloth for recoloring with neutral cream, brass and leather trim. Rich seams and dimensional cloth folds."
+    },
+    {
+      "file": "keeper-tops-b.png",
+      "grid": [
+        4,
+        5
+      ],
+      "prompt": "Companion torso sheet with same proportions: long traveling coat, striped teal/cream sweater, buttoned vest, silver lunar Starlace cape-coat, gold sun-embroidered Dawnwarden regalia. Front, left, right, back; teal cloth, peach hands and neck; full coat tails."
+    },
+    {
+      "file": "keeper-bottoms.png",
+      "grid": [
+        4,
+        4
+      ],
+      "prompt": "Modular lower bodies waist-to-feet, short chibi legs and leather boots. Front, left, right, back. Blue trousers, blue shorts with bare knees, blue pleated skirt, reinforced blue work dungarees. Rich seams, stitching, boot laces, clear material colors for tinting."
+    },
+    {
+      "file": "keeper-hats.png",
+      "grid": [
+        4,
+        5
+      ],
+      "prompt": "Isolated headwear without heads: teal knit beanie, straw sunhat with rose ribbon, pink silk bow, silver sapphire starlace halo, ornate gold Dawnwarden crown. Front, left, right, back views. Detailed materials and generous transparent margins."
+    },
+    {
+      "file": "keeper-accessories.png",
+      "grid": [
+        4,
+        4
+      ],
+      "prompt": "Modular round bronze spectacles, russet scarf, brown crossbody satchel with brass buckle, turquoise drop earrings. Four directions front/left/right/back. No heads or bodies. Complete isolated accessories with shaded materials."
+    },
+    {
+      "file": "illustrated-terrain.png",
+      "grid": [
+        4,
+        4
+      ],
+      "prompt": "Opaque overhead 4x4 surface atlas, edge to edge without gutters. Lawn, dirt, cobbles, oak; turquoise water, cave water, snow, sand; cave floor, crystal rubble, hedge canopy, cliff rock; bridge planks, stone steps, lavender meadow, wildflower grass. Rich illustrated materials."
+    },
+    {
+      "file": "illustrated-ground.png",
+      "grid": [
+        4,
+        2
+      ],
+      "prompt": "Refined quieter ground atlas to reduce visual competition with characters: low contrast sage short lawn, beige dirt, small rounded warm gray cobbles, honey oak floor; blue-white snow, tan sand, dark slate cave floor, muted lavender grass. No raised objects, dense flowers or oversized leaves. Edge-to-edge opaque overhead surfaces."
+    },
+    {
+      "file": "illustrated-grass.png",
+      "grid": [
+        4,
+        2
+      ],
+      "prompt": "Eight detailed low wide clumps of long grass: four emerald wild grass variations with sparse tiny cream flowers; cattail marsh reeds; teal seaside grass; snowy grass; golden prairie grass. Transparent background, no soil or pots. Complete leaves, fine outlines and rich shading.",
+      "repair": "Shrink every clump within its cell and add wide transparent gutters. Preserve all eight designs and order; every leaf fully visible."
+    }
+  ],
+  "integration": "Original PNGs are preserved. scripts/measure-world-art.ts records connected silhouette bounds without changing pixels. Runtime layers recolor material shades, register jaws and animate limbs. Refined ground replaces the corresponding busy initial textures. Natural terrain patterns use wrapped feathered patches to conceal seams and avoid repeated mirror patterns. Paving and planks retain their alignment."
+}

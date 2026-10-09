@@ -1,5 +1,12 @@
 Nuvori release notes.
 
+## 1.2.2 · Illustrated Auralis (web)
+
+- Remade customized keepers and NPCs with illustrated layered sprites, four facings, walking/sprinting and all existing appearance choices.
+- Detailed terrain textures, tall grass, cave entrances, town furniture and twelve landmark illustrations matched to Nuvo art.
+- Distinct nursery, tailor, barber and Champions buildings, four residential styles, and furnished interiors with timber floors and decorated walls.
+- Full silhouette measurements prevent adjacent sprites from leaking into crops. Existing adventures and online compatibility are preserved.
+
 ## 1.2.1 · Wild Paths (web)
 
 - Six new connected regions: Brookbend Crossing, Bramble Labyrinth, Echohollow Caverns, Glassvein Tunnel, Lantern Lake, and Rimewind Pass.
