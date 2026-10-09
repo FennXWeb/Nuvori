@@ -18,7 +18,7 @@ for cue in plan['cues']:
     if cue['id'] != 'battle-start' and not cue['id'].startswith('step-'):
         continue
     receipt = receipts[cue['id']]
-    if receipt.get('processing', {}).get('version') == 'gentle-foley-1':
+    if receipt.get('processing'):
         continue
     path = ROOT / 'public' / cue['file']
     original = path.read_bytes()

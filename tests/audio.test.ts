@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { MOVES, SPECIES, REGIONS } from "../src/data";
 import { creatureSound, moveSound, soundscape, validMix } from "../src/audioCues";
-import { FootstepSequence, FootstepStride, FOOTSTEP_SURFACES, footstepSurface } from "../src/footsteps";
+import { FootstepSequence, FootstepStride, FOOTSTEP_SURFACES, FOOTSTEP_TAKES, footstepSurface } from "../src/footsteps";
 
 const manifest=JSON.parse(readFileSync(new URL('../src/audioManifest.json',import.meta.url),'utf8'));
 const receipts=JSON.parse(readFileSync(new URL('../docs/audio/generation.json',import.meta.url),'utf8'));
@@ -32,8 +32,8 @@ test('replacement battle and footstep files have controlled peaks and distinct r
   assert.ok(battle.duration<1,'the battle opening should stay brief');
   assert.ok(battle.peak<.4&&battle.rms<.09,'battle entrance must remain gently leveled');
   const takes=levels.filter(c=>c.id.startsWith('step-'));
-  assert.equal(takes.length,24);
-  assert.equal(new Set(takes.map(c=>receipts[c.id].sha256)).size,24);
+  assert.equal(takes.length,28);
+  assert.equal(new Set(takes.map(c=>receipts[c.id].sha256)).size,28);
   for(const take of takes) assert.ok(take.peak<.4&&take.rms<.10,take.id);
 });
 test('audio settings recover corrupt values and clamp volumes',()=>{
@@ -48,7 +48,7 @@ test('footsteps exhaust every surface take before repeating, including bag bound
     let previous='';
     for(let bag=0;bag<20;bag++){
       const ids=new Set<string>();
-      for(let take=0;take<4;take++){
+      for(let take=0;take<FOOTSTEP_TAKES[surface];take++){
         const cue=sequence.next(surface,bag%2===0);
         assert.equal(manifest[cue.id]?.available,true,cue.id);
         assert.notEqual(cue.id,previous);
@@ -57,9 +57,21 @@ test('footsteps exhaust every surface take before repeating, including bag bound
         assert.ok(Math.abs(cue.pan)<=.1);
         ids.add(cue.id);previous=cue.id;
       }
-      assert.equal(ids.size,4);
+      assert.equal(ids.size,FOOTSTEP_TAKES[surface]);
     }
   }
+});
+
+test('remade grass and UI recordings are new ElevenLabs responses, softly leveled and versioned',()=>{
+ const previous=JSON.parse(readFileSync(new URL('../docs/audio/pre-soft-trails.json',import.meta.url),'utf8'));
+ const levels=JSON.parse(readFileSync(new URL('../docs/audio/validation.json',import.meta.url),'utf8')) as {id:string;peak:number;rms:number;duration:number}[];
+ const ids=['ui-click','ui-confirm','ui-back','ui-error','ui-notify','ui-reorder','purchase','customize',...Array.from({length:8},(_,i)=>`step-grass-${i+1}`)];
+ for(const id of ids){const receipt=receipts[id],level=levels.find(c=>c.id===id)!;
+  assert.equal(receipt.provider,'ElevenLabs');assert.equal(receipt.processing.version,'soft-trails-2');
+  assert.ok(manifest[id].file.endsWith('-v2.mp3'));assert.ok(level.peak<.28&&level.rms<.06,id);
+  if(previous[id])assert.notEqual(receipt.processing.sourceSha256,previous[id].processing?.sourceSha256??previous[id].sha256,id);
+ }
+ assert.equal(new Set(ids.map(id=>receipts[id].processing.sourceSha256)).size,16);
 });
 
 test('footsteps follow actual travel at any frame rate, accelerate with sprinting, and stop at rest',()=>{

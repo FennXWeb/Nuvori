@@ -6,7 +6,7 @@ import type {RemoteKeeper} from './online';
 import {REGION_BY_ID} from './data';
 import {PlayerArt,NuvoArt} from './components';
 import {MenuScene} from './MenuScene';
-import {menuProgress} from './menuModel';
+import {menuProgress,RELEASES} from './menuModel';
 import {gameAudio} from './audio';
 import './mainMenu.css';
 
@@ -40,6 +40,6 @@ export function MainMenu({save,onPlay,onOpen,online,status,social,remote,audio,o
    <button className="lobby-card lobby-friends-card" onClick={()=>open('friends')}><span className="friends-card-icon"><Users size={28}/><i/></span><span className="lobby-card-copy"><small>BETTER TOGETHER</small><strong>Your trail companions <ChevronRight size={17}/></strong><span>{online?`${connected.length} friends online · ${friends.length} friends`:'Find friends. Share the adventure.'}</span><b className="friends-pill">{requests?`${requests} NEW REQUEST${requests===1?'':'S'}`:online?'MANAGE FRIENDS':'CONNECT YOUR ACCOUNT'}</b></span></button>
   </div>
   {chatOpen&&<aside className="lobby-chat-window" aria-label="Lobby community"><div className="lobby-chat-heading"><span><MessageCircle size={17}/> Keeper community</span><button aria-label="Close community chat" onClick={()=>setChatOpen(false)}><X size={18}/></button></div>{chat}<button className="lobby-chat-friends" onClick={()=>open('friends')}><Users size={14}/> Manage friends & requests <ArrowRight size={14}/></button></aside>}
-  <footer className="lobby-footer"><span><i className={online?'online-dot':''}/>{online?status:'SOLO ADVENTURE'}<span className="footer-separator">/</span> v1.3.0</span><p>{notice||'Your path. Their evolution.'}</p><button aria-expanded={chatOpen} onClick={()=>{setChatOpen(v=>!v);gameAudio.play('ui-click');}}><MessageCircle size={15}/> Trail chat <span>GLOBAL + LOCAL</span></button></footer>
+  <footer className="lobby-footer"><span><i className={online?'online-dot':''}/>{online?status:'SOLO ADVENTURE'}<span className="footer-separator">/</span> v{RELEASES[0].version}</span><p>{notice||'Your path. Their evolution.'}</p><button aria-expanded={chatOpen} onClick={()=>{setChatOpen(v=>!v);gameAudio.play('ui-click');}}><MessageCircle size={15}/> Trail chat <span>GLOBAL + LOCAL</span></button></footer>
  </div>;
 }

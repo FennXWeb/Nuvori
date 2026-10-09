@@ -1,6 +1,6 @@
 import manifest from "./audioManifest.json";
 import { DEFAULT_MIX, validMix, creatureSound, moveSound, type AudioMix } from "./audioCues";
-import { FootstepSequence, FootstepStride, type FootstepSurface } from "./footsteps";
+import { FootstepSequence, FootstepStride, FOOTSTEP_TAKES, type FootstepSurface } from "./footsteps";
 import { MOVE_BY_ID, TYPES } from "./data";
 
 interface Cue { title: string; kind: string; file: string; available: boolean; seconds: number; loopStart?: number | null; loopEnd?: number | null }
@@ -155,7 +155,7 @@ export class GameAudio {
       this.footstepGeneration++;
     }
     // Warm the next takes without queueing sounds while their downloads finish.
-    if (warm) for (let take = 1; take <= 4; take++) void this.buffer(`step-${surface}-${take}`);
+    if (warm) for (let take = 1; take <= FOOTSTEP_TAKES[surface]; take++) void this.buffer(`step-${surface}-${take}`);
     if (this.stride.advance(distance, sprinting)) {
       const { id, ...options } = this.footstepSequence.next(surface, sprinting);
       this.play(id, options);

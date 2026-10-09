@@ -31,51 +31,51 @@
   },
   {
     "id": "ui-click",
-    "duration": 0.48,
-    "peak": 0.4124,
-    "rms": 0.1281
+    "duration": 0.287,
+    "peak": 0.1154,
+    "rms": 0.01
   },
   {
     "id": "ui-confirm",
-    "duration": 0.6,
-    "peak": 0.2504,
-    "rms": 0.0308
+    "duration": 0.522,
+    "peak": 0.1751,
+    "rms": 0.0401
   },
   {
     "id": "ui-back",
-    "duration": 0.48,
-    "peak": 0.6748,
-    "rms": 0.1464
+    "duration": 0.366,
+    "peak": 0.1865,
+    "rms": 0.039
   },
   {
     "id": "ui-error",
-    "duration": 0.6,
-    "peak": 0.7406,
-    "rms": 0.0817
+    "duration": 0.418,
+    "peak": 0.2089,
+    "rms": 0.0187
   },
   {
     "id": "ui-notify",
-    "duration": 0.8,
-    "peak": 0.3945,
-    "rms": 0.0437
+    "duration": 0.679,
+    "peak": 0.2023,
+    "rms": 0.0304
   },
   {
     "id": "ui-reorder",
-    "duration": 0.48,
-    "peak": 1.193,
-    "rms": 0.1857
+    "duration": 0.34,
+    "peak": 0.2114,
+    "rms": 0.0159
   },
   {
     "id": "purchase",
-    "duration": 0.8,
-    "peak": 0.1296,
-    "rms": 0.0146
+    "duration": 0.601,
+    "peak": 0.1762,
+    "rms": 0.0186
   },
   {
     "id": "customize",
-    "duration": 1.0,
-    "peak": 1.3711,
-    "rms": 0.2589
+    "duration": 0.627,
+    "peak": 0.1859,
+    "rms": 0.0238
   },
   {
     "id": "door",
@@ -511,27 +511,27 @@
   },
   {
     "id": "step-grass-1",
-    "duration": 0.549,
-    "peak": 0.3102,
-    "rms": 0.0399
+    "duration": 0.392,
+    "peak": 0.2165,
+    "rms": 0.0274
   },
   {
     "id": "step-grass-2",
-    "duration": 0.549,
-    "peak": 0.2566,
-    "rms": 0.0199
+    "duration": 0.392,
+    "peak": 0.214,
+    "rms": 0.0303
   },
   {
     "id": "step-grass-3",
-    "duration": 0.549,
-    "peak": 0.283,
-    "rms": 0.0361
+    "duration": 0.392,
+    "peak": 0.2259,
+    "rms": 0.0123
   },
   {
     "id": "step-grass-4",
-    "duration": 0.549,
-    "peak": 0.3298,
-    "rms": 0.032
+    "duration": 0.392,
+    "peak": 0.2255,
+    "rms": 0.0279
   },
   {
     "id": "step-stone-1",
@@ -652,5 +652,29 @@
     "duration": 0.549,
     "peak": 0.3326,
     "rms": 0.0155
+  },
+  {
+    "id": "step-grass-5",
+    "duration": 0.392,
+    "peak": 0.203,
+    "rms": 0.022
+  },
+  {
+    "id": "step-grass-6",
+    "duration": 0.392,
+    "peak": 0.2255,
+    "rms": 0.0223
+  },
+  {
+    "id": "step-grass-7",
+    "duration": 0.392,
+    "peak": 0.1817,
+    "rms": 0.015
+  },
+  {
+    "id": "step-grass-8",
+    "duration": 0.392,
+    "peak": 0.2201,
+    "rms": 0.0363
   }
 ]

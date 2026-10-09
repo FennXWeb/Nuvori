@@ -1,5 +1,12 @@
 Nuvori release notes.
 
+## 1.3.1 · Soft Trails (web)
+
+- Eight new ElevenLabs grass footfalls with shuffled playback, plus remade selection, confirm, back, error, notification, reorder, purchase and customization cues.
+- Shorter, softly leveled effects with filtered harsh frequencies, clean attacks and faded tails. Versioned audio filenames refresh cached sounds.
+- Seamless repeating terrain materials, irregular blended path and paving edges, rounded corners, and curved shoreline washes. Bridge decks remain sharply defined.
+- Terrain composition is cached and bounded to two regions. Existing paths, collision rules, encounters and saves remain compatible.
+
 ## 1.3.0 · Living Auralis (web)
 
 - A cinematic main menu starring Solunelle, with a layered starlit sanctuary, animated creature artwork, drifting particles, pointer parallax and a shimmering Nuvori logo.

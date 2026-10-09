@@ -2,14 +2,14 @@
 
 ## Ready now
 
-- 100 ElevenLabs sound effects: 26 family cries (including Oneirune), 20 elemental attack sounds, 24 footstep takes, and 30 interface/gameplay cues.
+- 104 ElevenLabs sound effects: 26 family cries (including Oneirune), 20 elemental attack sounds, 28 footstep takes, and 30 interface/gameplay cues.
 - Four generated ambience loops: forest, coast, storm and Dream Land.
 - An opt-in Web Audio mixer with separate music, effects and ambience volumes; background-tab pause; lazy asset loading; limited voices and decoded-buffer cache; music ducking for reward stingers; scene transitions.
 - Five supplied Suno songs installed: title screen, Mossbell, Verdant, wild battles and trainer battles. The other 17 assignments still have copy-ready prompts for later handoffs.
 
 `generation.json` records provider, published file hash and credits for each generated asset. Processed foley also preserves the original hash and leveling settings. `validation.json` contains decoded duration, peak and RMS checks. This is technical validation, not a claim of human listening approval. No provider key ships to the browser.
 
-The battle entrance uses a short, leveled marimba cue with a soft attack and release, played at 42% cue gain across wild, trainer, and League battles. Wild encounter cries start after the chime at half their previous gain. Footsteps use four shuffled takes on each of six surfaces (grass, stone, sand, snow, dirt, wood), with no immediate repeats, subtle pitch/level/stereo variation, and cadence driven by actual travel distance. Sprinting uses a faster cadence. Pauses, collisions and travel reset the stride; slow downloads cannot queue late footfalls. Ground selection follows the rendered path tile, with snow in snowy towns and wood indoors.
+The battle entrance uses a short, leveled marimba cue with a soft attack and release, played at 42% cue gain across wild, trainer, and League battles. Wild encounter cries start after the chime at half their previous gain. Footsteps use eight shuffled grass takes and four takes on each of five other surfaces (stone, sand, snow, dirt, wood), with no immediate repeats, subtle pitch/level/stereo variation, and cadence driven by actual travel distance. Sprinting uses a faster cadence. Pauses, collisions and travel reset the stride; slow downloads cannot queue late footfalls. Ground selection follows the rendered path tile, with snow in snowy towns and wood indoors.
 
 ## Music handoff
 
@@ -54,4 +54,6 @@ FFmpeg must be on PATH or `imageio-ffmpeg` installed in `.sites-runtime/audio-to
 
 ## Release status
 
-Audio ships through the main-branch GitHub Pages workflow. The required Supabase migrations were installed and the live League checks passed on 2026-09-27; see `docs/BACKEND.md`. This release includes five Suno songs, 100 sound effects and four ambience loops. The remaining 17 music cues await later user-supplied batches.
+Audio ships through the main-branch GitHub Pages workflow. The required Supabase migrations were installed and the live League checks passed on 2026-09-27; see `docs/BACKEND.md`. This release includes five Suno songs, 104 sound effects and four ambience loops. The remaining 17 music cues await later user-supplied batches.
+
+The 1.3.1 Soft Trails update remakes eight grass footfalls and eight UI cues with ElevenLabs. See [SOFT-TRAILS.md](../SOFT-TRAILS.md) for prompts, provenance, leveling and validation.

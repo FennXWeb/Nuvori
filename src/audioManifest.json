@@ -198,73 +198,73 @@
     "available": false
   },
   "ui-click": {
-    "title": "Leaf tap",
+    "title": "Petal tap",
     "kind": "sfx",
-    "file": "audio/sfx/ui-click.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/ui-click-v2.mp3",
+    "seconds": 0.24,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "ui-confirm": {
-    "title": "A little yes",
+    "title": "A warm little yes",
     "kind": "sfx",
-    "file": "audio/sfx/ui-confirm.mp3",
-    "seconds": 0.6,
+    "file": "audio/sfx/ui-confirm-v2.mp3",
+    "seconds": 0.48,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "ui-back": {
-    "title": "Fold the page",
+    "title": "Turn the leaf",
     "kind": "sfx",
-    "file": "audio/sfx/ui-back.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/ui-back-v2.mp3",
+    "seconds": 0.32,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "ui-error": {
-    "title": "Not this time",
+    "title": "A gentle nudge",
     "kind": "sfx",
-    "file": "audio/sfx/ui-error.mp3",
-    "seconds": 0.6,
+    "file": "audio/sfx/ui-error-v2.mp3",
+    "seconds": 0.38,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "ui-notify": {
-    "title": "Trail message",
+    "title": "Firefly note",
     "kind": "sfx",
-    "file": "audio/sfx/ui-notify.mp3",
-    "seconds": 0.8,
+    "file": "audio/sfx/ui-notify-v2.mp3",
+    "seconds": 0.64,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "ui-reorder": {
-    "title": "Crew shuffle",
+    "title": "Companion shuffle",
     "kind": "sfx",
-    "file": "audio/sfx/ui-reorder.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/ui-reorder-v2.mp3",
+    "seconds": 0.3,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "purchase": {
-    "title": "Pocket treasure",
+    "title": "Pocket change",
     "kind": "sfx",
-    "file": "audio/sfx/purchase.mp3",
-    "seconds": 0.8,
+    "file": "audio/sfx/purchase-v2.mp3",
+    "seconds": 0.56,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "customize": {
-    "title": "A fresh look",
+    "title": "Tailor finish",
     "kind": "sfx",
-    "file": "audio/sfx/customize.mp3",
-    "seconds": 1.0,
+    "file": "audio/sfx/customize-v2.mp3",
+    "seconds": 0.6,
     "loopStart": null,
     "loopEnd": null,
     "available": true
@@ -918,37 +918,37 @@
     "available": true
   },
   "step-grass-1": {
-    "title": "Grass footstep 1",
+    "title": "Soft meadow step 1",
     "kind": "sfx",
-    "file": "audio/sfx/step-grass-1.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/step-grass-1-v2.mp3",
+    "seconds": 0.36,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "step-grass-2": {
-    "title": "Grass footstep 2",
+    "title": "Soft meadow step 2",
     "kind": "sfx",
-    "file": "audio/sfx/step-grass-2.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/step-grass-2-v2.mp3",
+    "seconds": 0.36,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "step-grass-3": {
-    "title": "Grass footstep 3",
+    "title": "Soft meadow step 3",
     "kind": "sfx",
-    "file": "audio/sfx/step-grass-3.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/step-grass-3-v2.mp3",
+    "seconds": 0.36,
     "loopStart": null,
     "loopEnd": null,
     "available": true
   },
   "step-grass-4": {
-    "title": "Grass footstep 4",
+    "title": "Soft meadow step 4",
     "kind": "sfx",
-    "file": "audio/sfx/step-grass-4.mp3",
-    "seconds": 0.5,
+    "file": "audio/sfx/step-grass-4-v2.mp3",
+    "seconds": 0.36,
     "loopStart": null,
     "loopEnd": null,
     "available": true
@@ -1129,6 +1129,42 @@
     "kind": "sfx",
     "file": "audio/sfx/step-wood-4.mp3",
     "seconds": 0.5,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-5": {
+    "title": "Soft meadow step 5",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-5-v2.mp3",
+    "seconds": 0.36,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-6": {
+    "title": "Soft meadow step 6",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-6-v2.mp3",
+    "seconds": 0.36,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-7": {
+    "title": "Soft meadow step 7",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-7-v2.mp3",
+    "seconds": 0.36,
+    "loopStart": null,
+    "loopEnd": null,
+    "available": true
+  },
+  "step-grass-8": {
+    "title": "Soft meadow step 8",
+    "kind": "sfx",
+    "file": "audio/sfx/step-grass-8-v2.mp3",
+    "seconds": 0.36,
     "loopStart": null,
     "loopEnd": null,
     "available": true

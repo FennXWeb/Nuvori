@@ -3,6 +3,7 @@ import type { Interior } from "./adventure";
 
 export const FOOTSTEP_SURFACES = ["grass", "stone", "sand", "snow", "dirt", "wood"] as const;
 export type FootstepSurface = typeof FOOTSTEP_SURFACES[number];
+export const FOOTSTEP_TAKES:Record<FootstepSurface,number>={grass:8,stone:4,sand:4,snow:4,dirt:4,wood:4};
 
 export function footstepSurface(region: string, interior?: Interior, onPath = false): FootstepSurface {
   if (interior) return "wood";
@@ -36,7 +37,7 @@ export class FootstepSequence {
   next(surface: FootstepSurface, sprinting: boolean) {
     let bag = this.bags.get(surface);
     if (!bag?.length) {
-      bag = [1, 2, 3, 4];
+      bag = Array.from({length:FOOTSTEP_TAKES[surface]},(_,i)=>i+1);
       for (let i = bag.length - 1; i > 0; i--) {
         const j = Math.floor(this.random() * (i + 1));
         [bag[i], bag[j]] = [bag[j], bag[i]];

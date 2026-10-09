@@ -322,67 +322,75 @@
     },
     {
       "id": "ui-click",
-      "title": "Leaf tap",
+      "title": "Petal tap",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/ui-click.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A soft wooden tick with one tiny glass sparkle, gentle menu selection."
+      "seconds": 0.24,
+      "file": "audio/sfx/ui-click-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. One tiny tactile soft felted-wood tap with a barely audible warm glass overtone. A precise understated menu selection. No beep, no chime melody, no high piercing click.",
+      "finalSeconds": 0.24
     },
     {
       "id": "ui-confirm",
-      "title": "A little yes",
+      "title": "A warm little yes",
       "kind": "sfx",
-      "seconds": 0.6,
-      "file": "audio/sfx/ui-confirm.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Two bright ascending soft mallet notes, friendly confirmation."
+      "seconds": 0.48,
+      "file": "audio/sfx/ui-confirm-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. Two short rounded wooden marimba notes rising gently, a soft thumb tap beneath. A warm, intimate confirmation, restrained and satisfying. No fanfare, no glitter explosion.",
+      "finalSeconds": 0.48
     },
     {
       "id": "ui-back",
-      "title": "Fold the page",
+      "title": "Turn the leaf",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/ui-back.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Soft parchment swish with a low wooden tap, close menu."
+      "seconds": 0.32,
+      "file": "audio/sfx/ui-back-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. One short soft cloth and paper fold followed by a muted low wooden tuck. A delicate descending gesture for closing a menu. No long whoosh, no harsh paper crackle.",
+      "finalSeconds": 0.32
     },
     {
       "id": "ui-error",
-      "title": "Not this time",
+      "title": "A gentle nudge",
       "kind": "sfx",
-      "seconds": 0.6,
-      "file": "audio/sfx/ui-error.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Two quiet rounded low blips, gentle invalid action, never harsh."
+      "seconds": 0.38,
+      "file": "audio/sfx/ui-error-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. Two small soft hollow wooden knocks, slightly descending in pitch, friendly and restrained. A gentle unavailable-action cue. No alarm, no buzzer, no electronic distortion.",
+      "finalSeconds": 0.38
     },
     {
       "id": "ui-notify",
-      "title": "Trail message",
+      "title": "Firefly note",
       "kind": "sfx",
-      "seconds": 0.8,
-      "file": "audio/sfx/ui-notify.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A delicate two-note bell notification with a small airy tail."
+      "seconds": 0.64,
+      "file": "audio/sfx/ui-notify-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. A single warm felted celesta ping with a very soft airy wooden resonance and short mellow decay. A quiet friendly message notification. No shrill bell, no long reverb.",
+      "finalSeconds": 0.64
     },
     {
       "id": "ui-reorder",
-      "title": "Crew shuffle",
+      "title": "Companion shuffle",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/ui-reorder.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A soft quick shuffle of cards and tiny landing pop."
+      "seconds": 0.3,
+      "file": "audio/sfx/ui-reorder-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. A tiny suede card slide and one padded wooden landing tap. Crisp but soft and very brief. Rearranging a creature team in a cozy fantasy menu. No snap, no high click.",
+      "finalSeconds": 0.3
     },
     {
       "id": "purchase",
-      "title": "Pocket treasure",
+      "title": "Pocket change",
       "kind": "sfx",
-      "seconds": 0.8,
-      "file": "audio/sfx/purchase.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. A small pouch of gold coins clinks with a cheerful subtle chime."
+      "seconds": 0.56,
+      "file": "audio/sfx/purchase-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. Three small softly clinking brass coins settle into a padded cloth pouch. Delicate small transaction, satisfying understated low metallic texture. No cash register, no jackpot, no melody.",
+      "finalSeconds": 0.56
     },
     {
       "id": "customize",
-      "title": "A fresh look",
+      "title": "Tailor finish",
       "kind": "sfx",
-      "seconds": 1.0,
-      "file": "audio/sfx/customize.mp3",
-      "prompt": "Original polished fantasy game sound effect for Nuvori. Clean isolated one-shot, immediate onset, no background music, no speech, no silence padding. Gentle cloth swoosh, quick magical sparkle, satisfying small flourish."
+      "seconds": 0.6,
+      "file": "audio/sfx/customize-v2.mp3",
+      "prompt": "Original Nuvori cozy fantasy game foley. Clean isolated dry studio one-shot, immediate onset, intimate and soft, no voices, music, environmental ambience, repeated actions or reverb. A delicate short swish of smooth linen with a tiny warm marimba sparkle at the end. Trying on a new outfit in a cozy fantasy game. Quiet close-up fabric, no magical explosion.",
+      "finalSeconds": 0.6
     },
     {
       "id": "door",
@@ -962,35 +970,39 @@
     },
     {
       "id": "step-grass-1",
-      "title": "Grass footstep 1",
+      "title": "Soft meadow step 1",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/step-grass-1.mp3",
-      "prompt": "Exactly ONE small gentle footfall on short soft grass, a padded heel landing and gentle leaf brush. Close dry natural game foley. Immediate onset, quick decay, less than half a second. One contact only, not a walking sequence. No heavy bass, sharp clicks, echo, background, music, speech or other sounds. Subtle and comfortable for repeated gameplay."
+      "seconds": 0.36,
+      "file": "audio/sfx/step-grass-1-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A light heel presses springy short blades and releases with a tiny soft leaf flick. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle.",
+      "finalSeconds": 0.36
     },
     {
       "id": "step-grass-2",
-      "title": "Grass footstep 2",
+      "title": "Soft meadow step 2",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/step-grass-2.mp3",
-      "prompt": "Exactly ONE small gentle footfall on fresh clover, a light toe landing with a tiny stem rustle. Close dry natural game foley. Immediate onset, quick decay, less than half a second. One contact only, not a walking sequence. No heavy bass, sharp clicks, echo, background, music, speech or other sounds. Subtle and comfortable for repeated gameplay."
+      "seconds": 0.36,
+      "file": "audio/sfx/step-grass-2-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A slightly fuller flat-soled landing on mossy earth and a brief fine grass brush. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle.",
+      "finalSeconds": 0.36
     },
     {
       "id": "step-grass-3",
-      "title": "Grass footstep 3",
+      "title": "Soft meadow step 3",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/step-grass-3.mp3",
-      "prompt": "Exactly ONE small gentle footfall on dry meadow grass, a rounded sole landing with a little crisp foliage. Close dry natural game foley. Immediate onset, quick decay, less than half a second. One contact only, not a walking sequence. No heavy bass, sharp clicks, echo, background, music, speech or other sounds. Subtle and comfortable for repeated gameplay."
+      "seconds": 0.36,
+      "file": "audio/sfx/step-grass-3-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A soft toe-first step, close leafy compression then a tiny boot scuff. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle.",
+      "finalSeconds": 0.36
     },
     {
       "id": "step-grass-4",
-      "title": "Grass footstep 4",
+      "title": "Soft meadow step 4",
       "kind": "sfx",
-      "seconds": 0.5,
-      "file": "audio/sfx/step-grass-4.mp3",
-      "prompt": "Exactly ONE small gentle footfall on thick mossy turf, a low soft boot landing with muted grass movement. Close dry natural game foley. Immediate onset, quick decay, less than half a second. One contact only, not a walking sequence. No heavy bass, sharp clicks, echo, background, music, speech or other sounds. Subtle and comfortable for repeated gameplay."
+      "seconds": 0.36,
+      "file": "audio/sfx/step-grass-4-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A cushioned heel-to-toe step with a lower earth tap and fresh stems bending. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle.",
+      "finalSeconds": 0.36
     },
     {
       "id": "step-stone-1",
@@ -1151,6 +1163,42 @@
       "seconds": 0.5,
       "file": "audio/sfx/step-wood-4.mp3",
       "prompt": "Exactly ONE small gentle footfall on wooden parquet, a gentle dry toe pat. Close dry natural game foley. Immediate onset, quick decay, less than half a second. One contact only, not a walking sequence. No heavy bass, sharp clicks, echo, background, music, speech or other sounds. Subtle and comfortable for repeated gameplay."
+    },
+    {
+      "id": "step-grass-5",
+      "kind": "sfx",
+      "title": "Soft meadow step 5",
+      "seconds": 0.36,
+      "finalSeconds": 0.36,
+      "file": "audio/sfx/step-grass-5-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A light boot brushes clover before landing on soft turf, gentle fibrous rustle. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle."
+    },
+    {
+      "id": "step-grass-6",
+      "kind": "sfx",
+      "title": "Soft meadow step 6",
+      "seconds": 0.36,
+      "finalSeconds": 0.36,
+      "file": "audio/sfx/step-grass-6-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A short firm step on thick lawn, a muted rounded thud and soft blade flutter. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle."
+    },
+    {
+      "id": "step-grass-7",
+      "kind": "sfx",
+      "title": "Soft meadow step 7",
+      "seconds": 0.36,
+      "finalSeconds": 0.36,
+      "file": "audio/sfx/step-grass-7-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A delicate step across fine meadow grass, a dry whisper of vegetation over padded soil. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle."
+    },
+    {
+      "id": "step-grass-8",
+      "kind": "sfx",
+      "title": "Soft meadow step 8",
+      "seconds": 0.36,
+      "finalSeconds": 0.36,
+      "file": "audio/sfx/step-grass-8-v2.mp3",
+      "prompt": "One isolated dry studio footfall of a soft leather boot on green grass and yielding earth. A gentle boot roll across dense green grass, warm low contact and a soft trailing leaf swish. Whole contact and release in first third of a second. Soft, intimate. No second step, voices, music, ambience, gravel, brittle crunch, squelch or plastic crinkle."
     }
   ]
 }

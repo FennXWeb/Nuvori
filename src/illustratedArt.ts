@@ -1,5 +1,6 @@
 import metadata from './worldArtFrames.json';
 import type {SpriteAtlas} from './sprites';
+import {periodicPixels} from './terrainBlend';
 
 export const WORLD_ART=metadata as Record<string,SpriteAtlas>;
 const images=new Map<string,HTMLImageElement>();
@@ -32,9 +33,12 @@ export function surfaceTile(index:number,period=128){
  const source=isQuiet?quiet[index]:index,col=source%4,row=Math.floor(source/4),x=xs[col]*image.width+3;
  const w=image.width/4-6,h=isQuiet?w:(ys[row+1]-ys[row])*image.height-6;
  const y=isQuiet?row*image.height/2+(image.height/2-h)/2:ys[row]*image.height+3;
+ const base=document.createElement('canvas');base.width=base.height=period;const bc=base.getContext('2d')!;
+ bc.drawImage(image,x,y,w,h,0,0,period,period);
+ const pixels=bc.getImageData(0,0,period,period);pixels.data.set(periodicPixels(pixels.data,period,period,Math.ceil(period*.18)));bc.putImageData(pixels,0,0);
  const out=document.createElement('canvas'),natural=![2,3,12,13].includes(index);
  out.width=out.height=period*(natural?4:2);const c=out.getContext('2d')!;
- for(let yy=0;yy<out.height/period;yy++)for(let xx=0;xx<out.width/period;xx++)c.drawImage(image,x,y,w,h,xx*period,yy*period,period,period);
+ for(let yy=0;yy<out.height/period;yy++)for(let xx=0;xx<out.width/period;xx++)c.drawImage(base,xx*period,yy*period);
  if(natural){
   // Overlapping, wrapped stamps remove repeated mirror rosettes and conceal source seams.
   const stamp=document.createElement('canvas');stamp.width=stamp.height=period;const sc=stamp.getContext('2d')!;
@@ -49,6 +53,7 @@ export function surfaceTile(index:number,period=128){
    }
   }
  }
+ const quilt=c.getImageData(0,0,out.width,out.height);quilt.data.set(periodicPixels(quilt.data,out.width,out.height,8));c.putImageData(quilt,0,0);
  surfaces.set(key,out);return out;
 }
 const patterns=new WeakMap<CanvasRenderingContext2D,Map<HTMLCanvasElement,CanvasPattern>>();

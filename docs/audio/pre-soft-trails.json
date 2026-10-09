@@ -1,0 +1,150 @@
+{
+  "ui-click": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-click.mp3",
+    "bytes": 8821,
+    "sha256": "1daa20d0f5dfe7dc314245cad9a92918fea0604a02e483b403d02b9244cc2112",
+    "generatedAt": "2026-09-27T18:36:18Z",
+    "credits": 5
+  },
+  "ui-confirm": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-confirm.mp3",
+    "bytes": 10493,
+    "sha256": "600d7fdc70d560e9225c882197f07ebeead3201702d8f33587adeaa4c285a7a5",
+    "generatedAt": "2026-09-27T18:37:44Z",
+    "credits": 6
+  },
+  "ui-back": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-back.mp3",
+    "bytes": 8821,
+    "sha256": "3ad7ba6d2fcd8a8890aa0feae5b9bbf962810682af1ef1f0bac30da314b5c475",
+    "generatedAt": "2026-09-27T18:37:47Z",
+    "credits": 5
+  },
+  "ui-error": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-error.mp3",
+    "bytes": 10493,
+    "sha256": "e17c3a5b50f2ad18bb5c557cf484d8605f7fdeb37085b7abb8144d24db8cc111",
+    "generatedAt": "2026-09-27T18:37:50Z",
+    "credits": 6
+  },
+  "ui-notify": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-notify.mp3",
+    "bytes": 13836,
+    "sha256": "a96379335876691c45cd3f66db38a78b9f2e4b7f08e1fd94b4836ee216124d4e",
+    "generatedAt": "2026-09-27T18:37:53Z",
+    "credits": 8
+  },
+  "ui-reorder": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/ui-reorder.mp3",
+    "bytes": 8821,
+    "sha256": "be32d728c1ac606afd51984d6c537ecac148e4e997f4cdac2c948f935b1b6c64",
+    "generatedAt": "2026-09-27T18:37:57Z",
+    "credits": 5
+  },
+  "purchase": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/purchase.mp3",
+    "bytes": 13836,
+    "sha256": "d1afa80103a248e230b5fcf18d347624cb4c33ed204ab002d1446ea4241842b8",
+    "generatedAt": "2026-09-27T18:38:01Z",
+    "credits": 8
+  },
+  "customize": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/customize.mp3",
+    "bytes": 17180,
+    "sha256": "deb89be732935c6e2a22b11ee9221e64f7399d48f78464da534f5ef5433d36d4",
+    "generatedAt": "2026-09-27T18:45:43Z",
+    "credits": 10
+  },
+  "step-grass-1": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-1.mp3",
+    "bytes": 8821,
+    "sha256": "d81fd87cad13809191b4fbe1705d0b19dc08df38d3ff1d7563cc0504a506aadd",
+    "generatedAt": "2026-09-28T18:35:15Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "6ec3bd2c41194f73d158512462bda80c338c4d9b60d7f78456e80763b1e09bd0",
+      "gain": 0.593525,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-2": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-2.mp3",
+    "bytes": 8821,
+    "sha256": "29b40a564eada897f8da9eb174be6917026f90b02331d5fea419552a237d913e",
+    "generatedAt": "2026-09-28T18:35:17Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "a200077fad9f451a7d2d0686b0756fc94037e2ab9f518de8473c94a37a1a71c9",
+      "gain": 0.466539,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-3": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-3.mp3",
+    "bytes": 8821,
+    "sha256": "ba779a8c800a8aac19d721043f5a3fb8cf3b64b9a5072eb885f6cd59474f5b32",
+    "generatedAt": "2026-09-28T18:35:19Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "86f77aa93e341f8203dee87ac23972e195f94d224fe6349815a9c43091cfde66",
+      "gain": 1.459102,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  },
+  "step-grass-4": {
+    "provider": "ElevenLabs",
+    "model": "eleven_text_to_sound_v2",
+    "file": "audio/sfx/step-grass-4.mp3",
+    "bytes": 8821,
+    "sha256": "b8d2ec21bbc05662334dc07af6d9e86fcf1b77d6eb4d458b3b807aea78954a59",
+    "generatedAt": "2026-09-28T18:35:21Z",
+    "credits": 5,
+    "processing": {
+      "version": "gentle-foley-1",
+      "sourceSha256": "63191e27b2eecd012465dd7925147b34807b372b0d5931591a6587d8e597441a",
+      "gain": 0.476024,
+      "trimmedLeadSeconds": 0.0,
+      "targetRms": 0.085,
+      "peakCeiling": 0.35,
+      "attackSeconds": 0.01,
+      "releaseSeconds": 0.1
+    }
+  }
+}
