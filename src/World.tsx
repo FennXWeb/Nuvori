@@ -9,9 +9,11 @@ import { nuvoAtlas, drawCompanion, drawCustomization, keeperSheet } from "./spri
 import { drawFrontierLandmark } from "./frontierScenery";
 import { gameAudio } from "./audio";
 import { footstepSurface } from "./footsteps";
+import {WORLD_COLUMNS,WORLD_ROWS,roadAt,tallGrassAt,drawTallGrass,drawTownDetail} from "./worldScenery";
+import {drawDressedKeeper} from "./appearance";
 export const TILE = 32,
-  WORLD_W = 36,
-  WORLD_H = 26;
+  WORLD_W = WORLD_COLUMNS,
+  WORLD_H = WORLD_ROWS;
 export type Interaction = "nursery" | "breeder" | "professor" | "heal" | "shop" | "landmark" | "sign" | "nurse" | "merchant" | "exit" | "tailor" | "barber" | "stylist" | "clothier" | "league" | `trainer:${string}`;
 export interface WorldProps {
   save: Save | null;
@@ -45,7 +47,9 @@ const noise = (x: number, y: number, seed = 1) => {
   const n = Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453;
   return n - Math.floor(n);
 };
+const mapCache = new Map<string,Prop[]>();
 export function getMap(region: Region, interior?: Interior): Prop[] {
+  const cached=mapCache.get(`${region.id}:${interior??"outside"}`);if(cached)return cached;
   const props: Prop[] = [];
   if (interior) return [
     { x: 18, y: 9, kind: -1, size: 62, solid: false, label: {lodge:"Nurse Liora",shop:"Shopkeeper Finch",tailor:"Tailor Lark",barber:"Stylist Rue",nursery:"Nurserist Clover"}[interior] },
@@ -122,17 +126,24 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
       },
     );
   }
+  if(town) for(const [i,[xx,yy]] of [[3,9],[3,18],[14,23],[32,7],[32,23]].entries()) props.push({x:xx,y:yy,kind:30+i%4,size:132,solid:true});
+  if(town) for(const [row,yy] of [9,26,39,47].entries()) for(const [col,xx] of [36,50,65].entries()) props.push({x:xx,y:yy,kind:30+(col+row)%4,size:132,solid:true});
+  if(town){
+    props.push({x:51,y:33,kind:11,size:175,solid:true});
+    for(const xx of [9,18,27,43,59])for(const yy of [13,31,43])props.push({x:xx+1.9,y:yy+1.8,kind:41,size:56,solid:false});
+    for(const xx of [47,55]){props.push({x:xx,y:34,kind:40,size:60,solid:true});props.push({x:xx,y:29,kind:2,size:100,solid:true});props.push({x:xx,y:35.5,kind:13,size:62,solid:false});}
+  }
   const trainer=TRAINERS.find(t => t.region===region.id);
   if(trainer) props.push({x:trainer.x,y:trainer.y,kind:-1,size:64,solid:false,interact:`trainer:${trainer.id}`,label:trainer.name});
-  for (let y = 1; y < 25; y += 2)
-    for (let x = 1; x < 35; x += 2) {
-      if (Math.abs(x - 18) < 3 || Math.abs(y - 13) < 2) continue;
+  for (let y = 1; y < WORLD_H-1; y += 2)
+    for (let x = 1; x < WORLD_W-1; x += 2) {
+      if (roadAt(x,y,town) || Math.abs(x - 18) < 3 || Math.abs(y - 13) < 2 || (town && x>32 && y>5 && y<49)) continue;
       if (props.some((p) => Math.hypot(p.x - x, p.y - y) < 4)) continue;
       if (
         (x < 4 ||
-          x > 32 ||
+          x > WORLD_W-4 ||
           y < 4 ||
-          y > 23 ||
+          y > WORLD_H-3 ||
           noise(x, y, region.name.length) > 0.62) &&
         !(x > 25 && y > 4 && y < 11 && !town)
       ) {
@@ -154,11 +165,11 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
         });
       }
     }
-  for (let i = 0; i < 12; i++) {
-    const x = 4 + noise(i, 3) * 28,
-      y = 4 + noise(i, 8) * 18;
+  for (let i = 0; i < 50; i++) {
+    const x = 4 + noise(i, 3) * (WORLD_W-8),
+      y = 4 + noise(i, 8) * (WORLD_H-8);
     if (
-      Math.abs(x - 18) < 3 ||
+      roadAt(x,y,town) || Math.abs(x - 18) < 3 ||
       Math.abs(y - 13) < 2 ||
       props.some((p) => Math.hypot(p.x - x, p.y - y) < 2)
     )
@@ -171,6 +182,7 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
       solid: i % 3 === 0,
     });
   }
+  mapCache.set(`${region.id}:outside`,props);
   return props;
 }
 export function isWater(x: number, y: number, r: Region) {
@@ -183,8 +195,8 @@ export function isWater(x: number, y: number, r: Region) {
     Math.hypot((x - 29) / 1.5, y - 7) < 4
   );
 }
-export function isPath(x: number, y: number) {
-  return Math.abs(x - 18) < 1.7 || Math.abs(y - 13) < 1.5;
+export function isPath(x: number, y: number, town=false) {
+  return roadAt(x,y,town);
 }
 export function canWalk(
   x: number,
@@ -202,7 +214,7 @@ export function canWalk(
   return !props.some(
     (p) =>
       p.solid &&
-      Math.abs(p.x * TILE - x) < ((p.kind >= 4 && p.kind <= 7) || p.kind >= 20 ? 38 : 18) &&
+      Math.abs(p.x * TILE - x) < (p.kind>=30?56:(p.kind >= 4 && p.kind <= 7) || p.kind >= 20 ? 38 : 18) &&
       y > p.y * TILE - (p.kind >= 20 ? 65 : 24) &&
       y < p.y * TILE + 9,
   );
@@ -225,8 +237,9 @@ export function findPath(
       [key(...(start as [number, number])), null],
     ]);
   let found = false;
-  while (queue.length) {
-    const point = queue.shift()!;
+  let head=0;
+  while (head<queue.length) {
+    const point = queue[head++];
     if (point[0] === goal[0] && point[1] === goal[1]) {
       found = true;
       break;
@@ -449,7 +462,7 @@ export function World({
             steps++;
             distance = 0;
             if (
-              !s.interior && !isPath(x / 32, y / 32) &&
+              !s.interior && tallGrassAt(Math.floor(x/32)+.5,Math.floor(y/32)+.5,r) &&
               r.kind !== "Town" &&
               elapsed - lastEncounter > 5 &&
               Math.random() < 0.22
@@ -484,14 +497,14 @@ export function World({
           ty = y;
         if (y < 58 && Math.abs(x - 576) < 80 && r.links.north) {
           next = r.links.north;
-          ty = 760;
-        } else if (y > 774 && Math.abs(x - 576) < 80 && r.links.south) {
+          ty = WORLD_H*TILE-72;
+        } else if (y > WORLD_H*TILE-58 && Math.abs(x - 576) < 80 && r.links.south) {
           next = r.links.south;
           ty = 72;
         } else if (x < 58 && Math.abs(y - 416) < 75 && r.links.west) {
           next = r.links.west;
-          tx = 1080;
-        } else if (x > 1094 && Math.abs(y - 416) < 75 && r.links.east) {
+          tx = WORLD_W*TILE-72;
+        } else if (x > WORLD_W*TILE-58 && Math.abs(y - 416) < 75 && r.links.east) {
           next = r.links.east;
           tx = 72;
         }
@@ -503,7 +516,7 @@ export function World({
       }
       // Match the rendered ground tile, rather than treating an entire town as paving.
       gameAudio.updateFootsteps(travelled, s && !state.paused
-        ? footstepSurface(r.id, s.interior, isPath(Math.floor(x / TILE) + .5, Math.floor(y / TILE) + .5))
+        ? footstepSurface(r.id, s.interior, isPath(Math.floor(x / TILE) + .5, Math.floor(y / TILE) + .5,r.kind==="Town"))
         : null, sprinting);
       const followDistance = Math.hypot(x - fx, y - fy);
       const companionGap = 30 + (s ? SPECIES_BY_ID[s.party[0].speciesId].stage * 16 : 0);
@@ -523,10 +536,12 @@ export function World({
       const zoom = w < 600 ? 1.05 : w > 1500 ? 1.6 : 1.32,
         vw = w / zoom,
         vh = h / zoom;
-      const cx = Math.max(0, Math.min(WORLD_W * TILE - vw, x - vw / 2)),
-        cy = Math.max(0, Math.min(WORLD_H * TILE - vh, y - vh * 0.56));
+      const worldWidth=s?.interior?1152:WORLD_W*TILE,worldHeight=s?.interior?832:WORLD_H*TILE;
+      const targetX=worldWidth<vw?(worldWidth-vw)/2:Math.max(0,Math.min(worldWidth-vw,x-vw/2)),targetY=worldHeight<vh?(worldHeight-vh)/2:Math.max(0,Math.min(worldHeight-vh,y-vh*.52));
+      const snap=Math.hypot(camera.x-targetX,camera.y-targetY)>450||camera.zoom!==zoom;
+      const cx=snap?targetX:camera.x+(targetX-camera.x)*Math.min(1,dt*8),cy=snap?targetY:camera.y+(targetY-camera.y)*Math.min(1,dt*8);
       camera = { x: cx, y: cy, zoom };
-      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle="#162c2c";ctx.fillRect(0,0,w,h);
       ctx.save();
       ctx.scale(zoom, zoom);
       ctx.translate(-cx, -cy);
@@ -554,15 +569,16 @@ export function World({
               ? "#9fc186"
               : "#88c180";
       if (s?.interior) drawInterior(ctx, s.interior, elapsed);
-      else for (let gy = 0; gy < WORLD_H; gy++)
-        for (let gx = 0; gx < WORLD_W; gx++) {
+      else for (let gy = Math.max(0,Math.floor(cy/32)); gy < Math.min(WORLD_H,Math.ceil((cy+vh)/32)); gy++)
+        for (let gx = Math.max(0,Math.floor(cx/32)); gx < Math.min(WORLD_W,Math.ceil((cx+vw)/32)); gx++) {
           const n = noise(gx, gy, r.name.length);
           ctx.fillStyle = n > 0.5 ? grass : grass2;
-          ctx.fillRect(gx * 32, gy * 32, 32, 32);
-          const path = isPath(gx + 0.5, gy + 0.5);
+          ctx.fillRect(gx * 32, gy * 32, 33, 33);
+          const path = isPath(gx + 0.5, gy + 0.5,r.kind==="Town");
           if (path) {
             ctx.fillStyle = night ? "#b6b3a0" : frost ? "#d8e1d5" : "#ded2a4";
-            ctx.fillRect(gx * 32, gy * 32, 32, 32);
+            ctx.fillRect(gx * 32, gy * 32, 33, 33);
+            if(r.kind==="Town"){ctx.strokeStyle="#aaa18a55";ctx.strokeRect(gx*32+1,gy*32+1,30,14);ctx.strokeRect(gx*32-15,gy*32+17,30,14);}
             if (n > 0.6) {
               ctx.fillStyle = night ? "#a4a392" : "#cabc90";
               ctx.fillRect(gx * 32 + n * 20, gy * 32 + 8, 4, 2);
@@ -570,7 +586,7 @@ export function World({
             }
           } else if (isWater(gx + 0.5, gy + 0.5, r)) {
             ctx.fillStyle = "#59a7ad";
-            ctx.fillRect(gx * 32, gy * 32, 32, 32);
+            ctx.fillRect(gx * 32, gy * 32, 33, 33);
             ctx.fillStyle = "#a0d4cb";
             ctx.globalAlpha = 0.5 + 0.3 * Math.sin(elapsed + gx);
             ctx.fillRect(
@@ -580,6 +596,7 @@ export function World({
               2,
             );
             ctx.globalAlpha = 1;
+          } else if(tallGrassAt(gx+.5,gy+.5,r)){drawTallGrass(ctx,gx,gy,elapsed,r,x,y);
           } else {
             ctx.fillStyle = frost
               ? "#dfede8"
@@ -598,8 +615,8 @@ export function World({
         }
       // Functional trail exits are signed directly on the walkable route.
       for (const [side, id] of Object.entries(s?.interior ? {} : r.links)) {
-        const px = side === "west" ? 85 : side === "east" ? 1066 : 576,
-          py = side === "north" ? 56 : side === "south" ? 785 : 417;
+        const px = side === "west" ? 85 : side === "east" ? WORLD_W*TILE-86 : 576,
+          py = side === "north" ? 56 : side === "south" ? WORLD_H*TILE-47 : 417;
         text(
           `${side === "north" ? "↑ " : side === "south" ? "↓ " : side === "west" ? "← " : "→ "}${REGION_BY_ID[id!].name}`,
           px,
@@ -608,7 +625,7 @@ export function World({
         );
       }
       type Renderable = { y: number; draw: () => void };
-      const sorted: Renderable[] = props.map((p) => ({
+      const sorted: Renderable[] = props.filter(p=>p.x*32>cx-180&&p.x*32<cx+vw+180&&p.y*32>cy-80&&p.y*32<cy+vh+180).map((p) => ({
         y: p.y * TILE,
         draw: () => {
           ctx.fillStyle = "#264b3820";
@@ -627,7 +644,9 @@ export function World({
           else if (p.kind === -1) {
             drawCell(explorer, 0, 4, p.x * TILE, p.y * TILE, 64);
             text(`${p.interact?.startsWith("trainer:") ? (s?.defeatedTrainers?.includes(p.interact.slice(8)) ? "✓ " : "⚔ ") : ""}${p.label || "Elowen"}`, p.x * TILE, p.y * TILE - 52, "#f4deb0");
-          } else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
+          } else if (p.kind>=40) drawTownDetail(ctx,p.x*TILE,p.y*TILE,p.kind,elapsed);
+          else if (p.kind>=30){ctx.save();ctx.filter=`hue-rotate(${[0,25,-15,160][p.kind-30]}deg)`;drawCell(art,4,4,p.x*TILE,p.y*TILE,160);ctx.restore();drawTownDetail(ctx,p.x*TILE,p.y*TILE,42,elapsed);}
+          else if (p.kind >= 20) drawFurniture(ctx, p.kind, p.x*TILE, p.y*TILE, s?.interior === "lodge", elapsed);
           else if (p.kind >= 0) drawCell(art, p.kind, 4, p.x * TILE, p.y * TILE, p.size);
           if (["tailor","barber","league","nursery"].includes(p.interact || "")) text(p.label!,p.x*TILE,p.y*TILE-p.size*.76,"#ffe3b0");
           if (
@@ -658,7 +677,7 @@ export function World({
         isMoving: boolean,
         palette: number,
         name?: string,
-        look: Pick<Save["player"],"outfit"|"hair"|"hairColor"> = {},
+        look: Pick<Save["player"],"outfit"|"hair"|"hairColor"|"appearance"> = {},
       ) => {
         ctx.save();
         ctx.fillStyle = "#1e443533";
@@ -669,6 +688,7 @@ export function World({
         const frame = isMoving
           ? 1 + (Math.floor(elapsed * (sprint ? 14 : 8)) % 3)
           : 0;
+        if(look.appearance){drawDressedKeeper(ctx,px,py,58,look.appearance,direction,elapsed*(sprint?14:8),isMoving);ctx.restore();if(name)text(name,px,py-58,"#fff7d9");return;}
         drawCell(
           keeperSheet(explorer,{palette,...look}) as HTMLCanvasElement,
           direction * 4 + frame,
@@ -730,6 +750,7 @@ export function World({
         });
       }
       sorted.sort((a, b) => a.y - b.y).forEach((o) => o.draw());
+      if(s&&!s.interior){ctx.save();ctx.beginPath();ctx.rect(x-24,y-8,48,24);ctx.clip();for(let yy=Math.floor(y/32)-1;yy<=Math.floor(y/32);yy++)for(let xx=Math.floor(x/32)-1;xx<=Math.floor(x/32)+1;xx++)if(tallGrassAt(xx+.5,yy+.5,r))drawTallGrass(ctx,xx,yy,elapsed,r,x,y,true);ctx.restore();}
       for (let i = 0; i < 16; i++) {
         const px =
             (noise(i, 8) * WORLD_W * 32 + elapsed * (night ? 3 : 9)) %

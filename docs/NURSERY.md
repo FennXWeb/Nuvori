@@ -14,7 +14,7 @@ Guest visits persist with the local adventure and use the device clock. Signed-i
 
 ## Evolution families
 
-The game contains 27 families and 311 forms. Spriglet, Cindlet, Bubbfin, Wisplet and Voltik each have five stages: 1 → 2 → 2 → 4 → 8 forms per stage. Evolve at levels 12, 22, 34 and 44; choose between two branches at the first, third and fourth evolution. Other ordinary families use different tree shapes, with three to five stages, unequal branch lengths, or three choices at a later stage. Oneirune does not evolve. The Nuvopedia lets players browse every path and its move tables.
+The game contains 28 families and 312 forms. Spriglet, Cindlet, Bubbfin, Wisplet and Voltik each have five stages: 1 → 2 → 2 → 4 → 8 forms per stage. Evolve at levels 12, 22, 34 and 44; choose between two branches at the first, third and fourth evolution. Other ordinary families use different tree shapes, with three to five stages, unequal branch lengths, or three choices at a later stage. Oneirune does not evolve. The Nuvopedia lets players browse every path and its move tables.
 
 Dreamweaver has four stages including the base: 1 → 4 → 16 → 64, for 85 forms. Its three evolution thresholds are 16, 30 and 44, each with four choices. Every chosen thread contributes to its battle stats, and the newest thread determines its secondary element.
 
@@ -22,6 +22,6 @@ Dreamweaver appears only in Dream Land. Each adventure can capture exactly one w
 
 ## Artwork and compatibility
 
-Eleven new sprite atlases contain 135 new forms and one nursery egg illustration. All 311 forms use verified alpha bounds and the same aspect-preserving crops in portraits and followers. Source art and prompts are committed in `public/assets` and `docs/nursery-art-prompts.json`.
+Eleven new sprite atlases contain 135 new forms and one nursery egg illustration. All 312 forms use verified alpha bounds and the same aspect-preserving crops in portraits and followers. Source art and prompts are committed in `public/assets` and `docs/nursery-art-prompts.json`.
 
 The two October migrations update the authoritative League catalog and add the nursery RPC, save guards and interior chat channel. Apply them before publishing the client. The save format remains version 1 with optional nursery and capture-ledger fields, so existing adventures migrate without a reset. Ordinary inventory remains client-controlled; this is a cooperative game rather than an anti-cheat economy.

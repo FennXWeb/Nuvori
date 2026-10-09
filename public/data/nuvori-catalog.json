@@ -1,6 +1,6 @@
 {
-  "families": 27,
-  "forms": 311,
+  "families": 28,
+  "forms": 312,
   "rarity": {
     "name": "Prismatic",
     "wildOdds": "1/512"
@@ -27142,6 +27142,91 @@
         "astral-8",
         "astral-9"
       ]
+    },
+    {
+      "id": "solunelle",
+      "dex": 28,
+      "name": "Solunelle",
+      "types": [
+        "Astral",
+        "Bloom"
+      ],
+      "title": "The first-light companion",
+      "lore": "A celestial fox-dragon whose leaf-woven tail carries the first stars of a new season. A companion earned through the Season 1 pass, never encountered in the wild.",
+      "habitat": "Season 1 · Tier 100",
+      "stats": {
+        "hp": 76,
+        "attack": 73,
+        "defense": 69,
+        "speed": 82
+      },
+      "sprite": 27,
+      "stage": 0,
+      "branch": 0,
+      "rarity": "Mythical",
+      "base": "solunelle",
+      "evolvesTo": [],
+      "evolveLevel": 50,
+      "art": {
+        "file": "solunelle.png",
+        "frame": 0
+      },
+      "startMoves": [
+        "astral-0",
+        "bloom-1"
+      ],
+      "learnset": [
+        {
+          "level": 4,
+          "move": "astral-2"
+        },
+        {
+          "level": 7,
+          "move": "bloom-3"
+        },
+        {
+          "level": 10,
+          "move": "astral-4"
+        },
+        {
+          "level": 13,
+          "move": "bloom-5"
+        },
+        {
+          "level": 17,
+          "move": "astral-6"
+        },
+        {
+          "level": 22,
+          "move": "bloom-7"
+        },
+        {
+          "level": 26,
+          "move": "astral-8"
+        },
+        {
+          "level": 32,
+          "move": "astral-9"
+        }
+      ],
+      "teachable": [
+        "bloom-0",
+        "bloom-1",
+        "bloom-2",
+        "bloom-3",
+        "bloom-4",
+        "bloom-5",
+        "bloom-6",
+        "bloom-8",
+        "astral-0",
+        "astral-1",
+        "astral-2",
+        "astral-3",
+        "astral-4",
+        "astral-5",
+        "astral-6",
+        "astral-8"
+      ]
     }
   ],
   "moves": [
@@ -28881,5 +28966,757 @@
       "biome": "dream",
       "hidden": true
     }
-  ]
+  ],
+  "season": {
+    "id": "s1",
+    "name": "First Light",
+    "subtitle": "The Starlace Expedition",
+    "starts": 1791504000000,
+    "ends": 1799452800000,
+    "tiers": 100,
+    "xpPerTier": 300,
+    "rewards": [
+      {
+        "tier": 1,
+        "kind": "coins",
+        "amount": 100,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 2,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 3,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 4,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 5,
+        "kind": "orbs",
+        "orb": "tide",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 6,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 7,
+        "kind": "coins",
+        "amount": 100,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 8,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 9,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 10,
+        "kind": "boost",
+        "amount": 1,
+        "name": "2× pass XP · 30 minutes",
+        "icon": "⚡"
+      },
+      {
+        "tier": 11,
+        "kind": "coins",
+        "amount": 125,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 12,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 13,
+        "kind": "coins",
+        "amount": 125,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 14,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 15,
+        "kind": "orbs",
+        "orb": "prism",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 16,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 17,
+        "kind": "coins",
+        "amount": 125,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 18,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 19,
+        "kind": "coins",
+        "amount": 125,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 20,
+        "kind": "cosmetic",
+        "amount": 1,
+        "name": "Starlace halo",
+        "cosmetic": "s1-hat-4",
+        "icon": "✧"
+      },
+      {
+        "tier": 21,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 22,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 4,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 23,
+        "kind": "coins",
+        "amount": 150,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 24,
+        "kind": "potions",
+        "amount": 3,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 25,
+        "kind": "orbs",
+        "orb": "verdant",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 26,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 27,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 28,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 29,
+        "kind": "coins",
+        "amount": 150,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 30,
+        "kind": "boost",
+        "amount": 1,
+        "name": "2× pass XP · 30 minutes",
+        "icon": "⚡"
+      },
+      {
+        "tier": 31,
+        "kind": "coins",
+        "amount": 175,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 32,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 33,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 34,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 35,
+        "kind": "orbs",
+        "orb": "dusk",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 36,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 37,
+        "kind": "coins",
+        "amount": 175,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 38,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 39,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 40,
+        "kind": "cosmetic",
+        "amount": 1,
+        "name": "Starlace coat",
+        "cosmetic": "s1-top-8",
+        "icon": "✧"
+      },
+      {
+        "tier": 41,
+        "kind": "coins",
+        "amount": 200,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 42,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 43,
+        "kind": "coins",
+        "amount": 200,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 44,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 45,
+        "kind": "orbs",
+        "orb": "swift",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 46,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 5,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 47,
+        "kind": "coins",
+        "amount": 200,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 48,
+        "kind": "potions",
+        "amount": 4,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 49,
+        "kind": "coins",
+        "amount": 200,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 50,
+        "kind": "boost",
+        "amount": 1,
+        "name": "2× pass XP · 30 minutes",
+        "icon": "⚡"
+      },
+      {
+        "tier": 51,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 52,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 53,
+        "kind": "coins",
+        "amount": 225,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 54,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 55,
+        "kind": "orbs",
+        "orb": "tide",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 56,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 57,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 58,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 59,
+        "kind": "coins",
+        "amount": 225,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 60,
+        "kind": "cosmetic",
+        "amount": 1,
+        "name": "Dawnwarden crown",
+        "cosmetic": "s1-hat-5",
+        "icon": "✧"
+      },
+      {
+        "tier": 61,
+        "kind": "coins",
+        "amount": 250,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 62,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 63,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 64,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 65,
+        "kind": "orbs",
+        "orb": "prism",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 66,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 67,
+        "kind": "coins",
+        "amount": 250,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 68,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 69,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 70,
+        "kind": "boost",
+        "amount": 1,
+        "name": "2× pass XP · 30 minutes",
+        "icon": "⚡"
+      },
+      {
+        "tier": 71,
+        "kind": "coins",
+        "amount": 275,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 72,
+        "kind": "potions",
+        "amount": 5,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 73,
+        "kind": "coins",
+        "amount": 275,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 74,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 6,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 75,
+        "kind": "orbs",
+        "orb": "verdant",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 76,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 77,
+        "kind": "coins",
+        "amount": 275,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 78,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 79,
+        "kind": "coins",
+        "amount": 275,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 80,
+        "kind": "cosmetic",
+        "amount": 1,
+        "name": "Dawnwarden regalia",
+        "cosmetic": "s1-top-9",
+        "icon": "✧"
+      },
+      {
+        "tier": 81,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 82,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 83,
+        "kind": "coins",
+        "amount": 300,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 84,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 85,
+        "kind": "orbs",
+        "orb": "dusk",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 86,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 87,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 88,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 89,
+        "kind": "coins",
+        "amount": 300,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 90,
+        "kind": "boost",
+        "amount": 1,
+        "name": "2× pass XP · 30 minutes",
+        "icon": "⚡"
+      },
+      {
+        "tier": 91,
+        "kind": "coins",
+        "amount": 325,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 92,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 93,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 94,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 95,
+        "kind": "orbs",
+        "orb": "swift",
+        "amount": 3,
+        "name": "Specialty orb bundle",
+        "icon": "◈"
+      },
+      {
+        "tier": 96,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 97,
+        "kind": "coins",
+        "amount": 325,
+        "name": "Keeper coins",
+        "icon": "✺"
+      },
+      {
+        "tier": 98,
+        "kind": "orbs",
+        "orb": "binding",
+        "amount": 7,
+        "name": "Binding orbs",
+        "icon": "◉"
+      },
+      {
+        "tier": 99,
+        "kind": "potions",
+        "amount": 6,
+        "name": "Restoring potions",
+        "icon": "♥"
+      },
+      {
+        "tier": 100,
+        "kind": "nuvo",
+        "amount": 1,
+        "name": "Solunelle",
+        "icon": "✦"
+      }
+    ]
+  }
 }

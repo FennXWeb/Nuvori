@@ -769,7 +769,9 @@ export const DREAMWEAVER_FORMS: Species[] = Array.from({ length: 85 }, (_, n) =>
 });
 export const DREAMWEAVER = DREAMWEAVER_FORMS[0];
 SPECIES.push(...DREAMWEAVER_FORMS);
-export const ALL_FAMILIES = [...BASE_SPECIES, DREAM_SPECIES, DREAMWEAVER];
+export const SOLUNELLE: Species = {id:"solunelle",dex:28,name:"Solunelle",types:["Astral","Bloom"],title:"The first-light companion",lore:"A celestial fox-dragon whose leaf-woven tail carries the first stars of a new season. A companion earned through the Season 1 pass, never encountered in the wild.",habitat:"Season 1 · Tier 100",stats:{hp:76,attack:73,defense:69,speed:82},sprite:27,stage:0,branch:0,rarity:"Mythical",base:"solunelle",evolvesTo:[],evolveLevel:50,art:{file:"solunelle.png",frame:0},...learnTable(["Astral","Bloom"],0)};
+SPECIES.push(SOLUNELLE);
+export const ALL_FAMILIES = [...BASE_SPECIES, DREAM_SPECIES, DREAMWEAVER, SOLUNELLE];
 export const SPECIES_BY_ID = Object.fromEntries(
   SPECIES.map((s) => [s.id, s]),
 ) as Record<string, Species>;

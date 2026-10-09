@@ -1,5 +1,6 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { ALL_FAMILIES, SPECIES, MOVES, REGIONS } from "../src/data";
+import { SEASON, PASS_REWARDS } from "../src/season";
 mkdirSync("public/data", { recursive: true });
 writeFileSync(
   "public/data/nuvori-catalog.json",
@@ -11,6 +12,7 @@ writeFileSync(
       species: SPECIES,
       moves: MOVES,
       regions: REGIONS,
+      season: {...SEASON,rewards:PASS_REWARDS},
     },
     null,
     2,

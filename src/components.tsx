@@ -1,4 +1,5 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { drawDressedKeeper } from "./appearance";
 import { X, Volume2, VolumeX } from "lucide-react";
 import { drawCustomization, keeperSheet } from "./spriteMotion";
 import { nuvoSprite, fitSprite, spriteFill } from "./sprites";
@@ -7,7 +8,6 @@ import {
   SPECIES_BY_ID,
   TYPE_COLORS,
   TYPE_SYMBOLS,
-  MOVE_BY_ID,
   maxHp,
   type Element,
   type Nuvo,
@@ -67,18 +67,21 @@ export function PlayerArt({
   palette = 0,
   size = 110,
   look,
+  direction = 0,
 }: {
   palette?: number;
   size?: number;
-  look?: Pick<Player,"outfit"|"hair"|"hairColor">;
+  look?: Pick<Player,"outfit"|"hair"|"hairColor"|"appearance">;
+  direction?: number;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const el=canvas.current!, ctx=el.getContext("2d")!, im=new Image(); let alive=true;
+    if(look?.appearance){ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);ctx.imageSmoothingEnabled=false;drawDressedKeeper(ctx,size/2,size*.93,size*.9,look.appearance,direction);ctx.restore();return;}
     im.src=import.meta.env.BASE_URL+"assets/explorer-atlas.png";
     void im.decode().then(()=>{ if(!alive)return;ctx.clearRect(0,0,size*2,size*2);ctx.save();ctx.scale(2,2);ctx.imageSmoothingEnabled=false;ctx.drawImage(keeperSheet(im,{palette,...look}),0,0,im.width/4,im.height/4,0,0,size,size);drawCustomization(ctx,size/2,size*.83,size,look || {});ctx.restore(); }).catch(()=>{});
     return()=>{alive=false;};
-  },[size,palette,look?.outfit,look?.hair,look?.hairColor]);
+  },[size,palette,look?.outfit,look?.hair,look?.hairColor,look?.appearance,direction]);
   return (
     <canvas ref={canvas} width={size*2} height={size*2}
       className="keeper-art"
@@ -186,106 +189,7 @@ export function Modal({
     </div>
   );
 }
-export function MoveAnimation({
-  moveId,
-  animationKey,
-}: {
-  moveId: string;
-  animationKey: number;
-}) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current!,
-      ctx = canvas.getContext("2d")!,
-      move = MOVE_BY_ID[moveId];
-    if (!move) return;
-    let raf = 0,
-      start = 0;
-    const w = (canvas.width = 800),
-      h = (canvas.height = 340);
-    const pattern = move.animation % 10,
-      color = TYPE_COLORS[move.type];
-    const draw = (t: number) => {
-      if (!start) start = t;
-      const p = (t - start) / 1100;
-      ctx.clearRect(0, 0, w, h);
-      if (p > 1) return;
-      const count = 12 + Math.floor(move.animation / 10);
-      for (let i = 0; i < count; i++) {
-        const a = (i / count) * Math.PI * 2,
-          progress = Math.max(0, Math.min(1, p * 1.6 - i * 0.016));
-        let x = 180 + 440 * progress,
-          y = 225 - 110 * progress;
-        const spread = pattern * 2 + 15;
-        if (pattern === 0 || pattern === 1) {
-          x += Math.cos(a + p * 10) * spread;
-          y += Math.sin(a + p * 10) * spread;
-        }
-        if (pattern === 2) {
-          x = 620 + Math.cos(a) * p * 85;
-          y = 110 + Math.sin(a) * p * 60;
-        }
-        if (pattern === 3 || pattern === 8) {
-          x = 190 + Math.cos(a) * 55;
-          y = 200 + Math.sin(a) * 45 - p * 20;
-        }
-        if (pattern === 4) {
-          x = 180 + 440 * progress;
-          y += i % 2 ? 20 : -20;
-        }
-        if (pattern === 5) {
-          x = 620 - 440 * progress;
-          y = 110 + 110 * progress + Math.sin(progress * Math.PI) * 60;
-        }
-        if (pattern === 6) {
-          x = 520 + i * 8;
-          y = -40 + 250 * progress;
-        }
-        if (pattern === 7) {
-          x = 620 + Math.cos(a) * p * 95;
-          y = 180 + Math.sin(a) * p * 25;
-        }
-        if (pattern === 9) {
-          x = 620 + Math.cos(a + p * 6) * (1 - p) * 160;
-          y = 110 + Math.sin(a + p * 6) * (1 - p) * 100;
-        }
-        const size = 3 + (move.animation % 7) + Math.sin(p * Math.PI) * 5;
-        ctx.globalAlpha = Math.sin(p * Math.PI);
-        ctx.fillStyle = color;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 12;
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.rotate(a + p * 3);
-        if (move.type === "Volt") {
-          ctx.beginPath();
-          ctx.moveTo(0, -size * 2);
-          ctx.lineTo(-size, 0);
-          ctx.lineTo(0, 0);
-          ctx.lineTo(-size / 2, size * 2);
-          ctx.lineTo(size, -2);
-          ctx.lineTo(0, -2);
-          ctx.fill();
-        } else if (move.type === "Tide" || move.type === "Shade") {
-          ctx.beginPath();
-          ctx.arc(0, 0, size, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (move.type === "Bloom" || move.type === "Gale") {
-          ctx.beginPath();
-          ctx.ellipse(0, 0, size, size / 2, 0, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          ctx.fillRect(-size / 2, -size / 2, size, size);
-        }
-        ctx.restore();
-      }
-      raf = requestAnimationFrame(draw);
-    };
-    raf = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(raf);
-  }, [moveId, animationKey]);
-  return <canvas ref={ref} className="move-animation" aria-hidden="true" />;
-}
+export { MoveAnimation } from "./BattleEffects";
 export { sound } from "./audio";
 export function SoundButton({
   enabled,

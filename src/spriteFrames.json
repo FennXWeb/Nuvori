@@ -1111,6 +1111,19 @@
       }
     ]
   },
+  "solunelle.png": {
+    "width": 1254,
+    "height": 1254,
+    "sha256": "a5f9fa4104c774384e4560c297f4248abf2190f28d9eab4142895a04273c7e59",
+    "frames": [
+      {
+        "x": 51,
+        "y": 40,
+        "width": 1187,
+        "height": 1179
+      }
+    ]
+  },
   "spriglet-evolutions.png": {
     "width": 893,
     "height": 1760,

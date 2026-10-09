@@ -10,7 +10,7 @@ const fresh=()=>newSave({name:"Nursery tester",palette:0,pronouns:"They / them"}
 const parents=()=>[createNuvo("spriglet-4",37,false,"male"),createNuvo("spriglet-8",39,true,"female")] as const;
 
 test("every evolution tree is reachable and acyclic; starters branch at evolutions one, three and four",()=>{
-  assert.equal(SPECIES.length,311);assert.equal(ALL_FAMILIES.length,27);assert.equal(new Set(SPECIES.map(s=>s.id)).size,311);
+  assert.equal(SPECIES.length,312);assert.equal(ALL_FAMILIES.length,28);assert.equal(new Set(SPECIES.map(s=>s.id)).size,312);
   for(const base of ALL_FAMILIES){const seen=new Set<string>();const walk=(id:string)=>{assert.ok(!seen.has(id),id);seen.add(id);const s=SPECIES_BY_ID[id];assert.equal(s.base,base.id);for(const child of s.evolvesTo){assert.equal(SPECIES_BY_ID[child].stage,s.stage+1);assert.ok(s.evolveLevel<=50);walk(child);}};walk(base.id);assert.equal(seen.size,SPECIES.filter(s=>s.base===base.id).length);}
   for(const base of STARTERS){const family=SPECIES.filter(s=>s.base===base.id);assert.deepEqual([0,1,2,3,4].map(stage=>family.filter(s=>s.stage===stage).length),[1,2,2,4,8]);for(const s of family)assert.equal(s.evolvesTo.length,[2,1,2,2,0][s.stage]);}
   assert.deepEqual([0,1,2,3].map(stage=>DREAMWEAVER_FORMS.filter(s=>s.stage===stage).length),[1,4,16,64]);

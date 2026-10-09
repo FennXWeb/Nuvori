@@ -1,5 +1,14 @@
 Nuvori 1.1.0 brings new generations and deeper evolution paths to Auralis.
 
+## 1.2.0 · First Light (web)
+
+- Full-screen exploration, main menu, Esc pause and Tab journal.
+- Four-times-larger regions, smooth camera, tall-grass encounters and residential town districts.
+- Expanded directional character customization, stronger type-specific battle SFX/VFX, and a skippable evolution cinematic.
+- Free 100-tier Season 1 with timed XP boosts, supplies, coins, four exclusive cosmetics, and the new mythical Solunelle.
+- Existing adventures retained; online catalog and keeper appearance support updated.
+
+
 - Male and female Nuvo, with stable assignments for existing companions.
 - Walkable nurseries in all five towns. Pair opposite-sex Nuvo from the same family, including different branches, for a level-1 base-form offspring. Rarity, levels and evolution stages determine the wait. Signed-in visits persist across devices and use the server clock.
 - Five-stage starter families with branching at the first, third and final evolution. Other families have varied depths and branch patterns.

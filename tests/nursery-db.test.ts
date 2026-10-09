@@ -8,7 +8,7 @@ import {breedingDetails} from "../src/nursery";
 test("PostgreSQL nursery: account isolation, server timer, escrow, immutable sex, retries, cancellation, and Dreamweaver lifetime quota",async()=>{
  const db=new PGlite();try{
   await db.exec(`create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated,anon;create table public.keeper_saves(user_id uuid primary key references auth.users(id),data jsonb not null,updated_at timestamptz default now());`);
-  for(const file of ["202609270002_community.sql","202609280001_frontiers.sql","202610070001_nursery_catalog.sql","202610070002_nursery.sql"])await db.exec(await readFile(`supabase/migrations/${file}`,"utf8"));
+  for(const file of ["202609270002_community.sql","202609280001_frontiers.sql","202610070001_nursery_catalog.sql","202610070002_nursery.sql","202610090001_first_light.sql"])await db.exec(await readFile(`supabase/migrations/${file}`,"utf8"));
   const user="00000000-0000-4000-8000-000000000071",other="00000000-0000-4000-8000-000000000072";
   await db.query("insert into auth.users values($1),($2)",[user,other]);await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user]);
   const original={...newSave({name:"Clover test",palette:0,pronouns:"They"},"bubbfin"),interior:"nursery" as const};

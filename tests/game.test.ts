@@ -39,8 +39,8 @@ const fight = (id = "bubbfin", level = 4): Battle => ({
 });
 test("all original families and expanded forms have unique names and valid move tables", () => {
   assert.equal(BASE_SPECIES.length, 25);
-  assert.equal(SPECIES.length, 311);
-  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 311);
+  assert.equal(SPECIES.length, 312);
+  assert.equal(new Set(SPECIES.map((s) => s.name)).size, 312);
   assert.equal(MOVES.length, 100);
   assert.equal(new Set(MOVES.map((m) => m.name)).size, 100);
   assert.equal(new Set(MOVES.map((m) => m.animation)).size, 100);

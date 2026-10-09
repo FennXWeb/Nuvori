@@ -24,5 +24,5 @@ export function moveSound(id: string) {
 }
 export function creatureSound(id: string) {
   const nuvo = SPECIES_BY_ID[id];
-  return nuvo ? { id: `cry-${nuvo.base === "dreamweaver" ? "oneirune" : nuvo.base}`, rate: Math.max(.6, 1 - nuvo.stage * .1) } : null;
+  return nuvo ? { id: `cry-${nuvo.base === "dreamweaver" ? "oneirune" : nuvo.base === "solunelle" ? "wisplet" : nuvo.base}`, rate: nuvo.base === "solunelle" ? 1.18 : Math.max(.6, 1 - nuvo.stage * .1) } : null;
 }

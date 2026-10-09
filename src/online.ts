@@ -8,6 +8,8 @@ import { validateSave, type Save } from "./game";
 import { normalizeSave } from "./nursery";
 import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
 import type { Interior } from "./adventure";
+import {validAppearance, type Appearance} from "./appearance";
+import {WORLD_PIXEL_WIDTH,WORLD_PIXEL_HEIGHT} from "./worldScenery";
 const env = import.meta.env ?? {};
 export const backendConfigured = Boolean(
   env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY,
@@ -78,6 +80,7 @@ export async function saveCloud(user: User, save: Save) {
   if (error) throw error;
 }
 export interface RemoteKeeper {
+  appearance?: Appearance;
   id: string;
   name: string;
   region: string;
@@ -108,12 +111,13 @@ export function validRemote(p: unknown): p is RemoteKeeper {
     Boolean(REGION_BY_ID[k.region]) &&
     (k.interior === undefined || ["lodge","shop","tailor","barber","nursery"].includes(k.interior)) &&
     [k.outfit,k.hair,k.hairColor].every(v => v === undefined || (Number.isInteger(v) && v >= 0 && v < 6)) &&
+    (k.appearance===undefined||validAppearance(k.appearance)) &&
     Number.isFinite(k.x) &&
     Number.isFinite(k.y) &&
     k.x >= 0 &&
-    k.x <= 1152 &&
+    k.x <= WORLD_PIXEL_WIDTH &&
     k.y >= 0 &&
-    k.y <= 832 &&
+    k.y <= WORLD_PIXEL_HEIGHT &&
     Number.isInteger(k.palette) &&
     k.palette >= 0 &&
     k.palette <= 3 &&

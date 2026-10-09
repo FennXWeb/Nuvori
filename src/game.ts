@@ -11,7 +11,11 @@ import {
 } from "./data";
 import { ORBS, orbCount, orbAffinity, awardCrewXp, keeperDefeat, restoreAtLodge, type OrbKind } from "./expansion";
 import { normalizeSave, canCatchDreamweaver, sexOf, SEXES, breedingDetails, pairingError, type NurseryJob, type Sex } from "./nursery";
+import { validAppearance, type Appearance } from "./appearance";
+import { validPasses, type PassProgress } from "./season";
+import { WORLD_PIXEL_WIDTH, WORLD_PIXEL_HEIGHT } from "./worldScenery";
 export interface Player {
+  appearance?: Appearance;
   name: string;
   palette: number;
   pronouns: string;
@@ -20,6 +24,8 @@ export interface Player {
   hairColor?: number;
 }
 export interface Save {
+  passes?: Record<string,PassProgress>;
+  cosmetics?: string[];
   version: 1;
   player: Player;
   party: Nuvo[];
@@ -108,6 +114,9 @@ export function validateSave(value: unknown): value is Save {
     );
   return (
     s.version === 1 &&
+    validPasses(s.passes) &&
+    (s.cosmetics === undefined || (Array.isArray(s.cosmetics) && s.cosmetics.length <= 100 && s.cosmetics.every(id => ["s1-top-8","s1-top-9","s1-hat-4","s1-hat-5"].includes(id)))) &&
+    (s.player?.appearance === undefined || validAppearance(s.player.appearance)) &&
     typeof s.player?.name === "string" &&
     s.player.name.length > 0 &&
     s.player.name.length <= 18 &&
@@ -121,16 +130,16 @@ export function validateSave(value: unknown): value is Save {
     (s.lastLodge === undefined || REGION_BY_ID[s.lastLodge]?.kind === "Town") &&
     Boolean(REGION_BY_ID[s.region]) &&
     (s.interior === undefined || (["lodge", "shop", "tailor", "barber", "nursery"].includes(s.interior) && REGION_BY_ID[s.region].kind === "Town")) &&
-    (s.outside === undefined || (finite(s.outside.x) && finite(s.outside.y) && s.outside.x >= 24 && s.outside.x <= 1128 && s.outside.y >= 24 && s.outside.y <= 808)) &&
+    (s.outside === undefined || (finite(s.outside.x) && finite(s.outside.y) && s.outside.x >= 24 && s.outside.x <= WORLD_PIXEL_WIDTH-24 && s.outside.y >= 24 && s.outside.y <= WORLD_PIXEL_HEIGHT-24)) &&
     (s.evolutionNotices === undefined || (Array.isArray(s.evolutionNotices) && s.evolutionNotices.length <= 2000 && s.evolutionNotices.every(v => typeof v === "string"))) &&
     (s.dailySpinDay === undefined || /^\d{4}-\d{2}-\d{2}$/.test(s.dailySpinDay)) &&
     (s.dailySpinPrize === undefined || (Number.isInteger(s.dailySpinPrize) && s.dailySpinPrize >= 0 && s.dailySpinPrize < 8)) &&
     finite(s.x) &&
-    s.x >= 32 &&
-    s.x <= 1120 &&
+    s.x >= 24 &&
+    s.x <= WORLD_PIXEL_WIDTH-24 &&
     finite(s.y) &&
-    s.y >= 32 &&
-    s.y <= 800 &&
+    s.y >= 24 &&
+    s.y <= WORLD_PIXEL_HEIGHT-24 &&
     Array.isArray(s.party) &&
     s.party.length > 0 &&
     s.party.length <= 6 &&

@@ -110,7 +110,17 @@ import { AudioSettings, readAudioMix } from "./AudioSettings";
 import { Nursery, type NurseryAction } from "./NurseryPanel";
 import { startBreeding, finishBreeding, sexLabel, normalizeSave } from "./nursery";
 import { nurseryCloud } from "./nurseryOnline";
+import {CharacterStudio} from "./CharacterStudio";
+import {DEFAULT_APPEARANCE} from "./appearance";
+import {SeasonPass} from "./SeasonPass";
+import {MainMenu,AdventureMenu} from "./GameMenus";
+import {EvolutionSequence} from "./EvolutionSequence";
+import {awardAdventureProgress,awardPassXp,passTier} from "./season";
+import "./firstLight.css";
 type Panel =
+  | "season"
+  | "pause"
+  | "menu"
   | "guide"
   | "map"
   | "team"
@@ -208,15 +218,16 @@ export default function App() {
   }, [otherTab]);
   const raidPhase = league.raid?.members.find(m => m.user_id === user?.id)?.phase;
   const battleMusic = league.raid?.status === "active" ? (raidPhase === "keeper" ? "keeper" : "league") : battle && !battle.over ? (battle.lastStand === "fighting" ? "keeper" : battle.trainerId ? "trainer" : "wild") : undefined;
-  useEffect(() => {
-    const scene = soundscape(save?.region, save?.interior, battleMusic);
-    gameAudio.setScene(scene.music, scene.ambience);
-  }, [save?.region, save?.interior, battleMusic]);
+
   const [updateOpen,setUpdateOpen] = useState(false);
   const [trainerOffer,setTrainerOffer] = useState<string|null>(null);
   const { social, error: socialError, refresh: refreshSocial } = useSocial(user?.id, authReady ? save?.player.name : undefined, save?.player.palette);
   const friendIds = social.friends.filter(f => f.status === "accepted").map(f => f.profile.user_id);
   const blockedIds = social.blocked.map(p => p.user_id);
+  const [mainMenu,setMainMenu]=useState(true);
+  useEffect(()=>{const scene=mainMenu?soundscape():soundscape(save?.region,save?.interior,battleMusic);gameAudio.setScene(scene.music,scene.ambience);},[mainMenu,save?.region,save?.interior,battleMusic]);
+  const [appearance,setAppearance]=useState(DEFAULT_APPEARANCE);
+  const [evolutionScene,setEvolutionScene]=useState<{before:Nuvo;after:Nuvo}|null>(null);
   const [creationName, setCreationName] = useState(""),
     [palette, setPalette] = useState(0),
     [pronouns, setPronouns] = useState("They / them"),
@@ -382,7 +393,7 @@ export default function App() {
           palette: s.player.palette,
           outfit: s.player.outfit,
           hair: s.player.hair,
-          hairColor: s.player.hairColor,
+          hairColor: s.player.hairColor,appearance:s.player.appearance,
           speciesId: s.party[0].speciesId,
           prismatic: s.party[0].prismatic,
           emote: Date.now() < emoteUntil.current ? "Hello! 👋" : undefined,
@@ -393,10 +404,12 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
   useEffect(() => {
-    if (!save || !authReady || otherTab || battle || panel || dialog || evolutionNotice || trainerOffer || league.raid || updateOpen) return;
+    if (!save || !authReady || otherTab || battle || panel || dialog || evolutionNotice || trainerOffer || league.raid || updateOpen || mainMenu || evolutionScene) return;
     const next = [...save.party, ...save.box].find(n => readyToEvolve(n) && !save.evolutionNotices?.includes(evolutionKey(n)));
     if (next) { keys.current.clear(); setEvolutionNotice(next); gameAudio.play("evolution-ready"); }
-  }, [save, authReady, otherTab, battle, panel, dialog, evolutionNotice, audio,trainerOffer,league.raid,updateOpen]);
+  }, [save, authReady, otherTab, battle, panel, dialog, evolutionNotice, audio,trainerOffer,league.raid,updateOpen,mainMenu,evolutionScene]);
+  const passNotice=useRef({keeper:save?.started,tier:save?passTier(save):0});
+  useEffect(()=>{const tier=save?passTier(save):0;if(save&&passNotice.current.keeper===save.started&&tier>passNotice.current.tier)notify(`Season 1 · Tier ${tier} unlocked! Open the pass to claim your rewards.`);passNotice.current={keeper:save?.started,tier};},[save,notify]);
   const dismissEvolution = useCallback(() => {
     if (!evolutionNotice) return;
     const key = evolutionKey(evolutionNotice);
@@ -406,7 +419,8 @@ export default function App() {
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (pausedByOtherTab.current) return;
-      if (leagueBusy.current || updateOpen) return;
+      if (leagueBusy.current || updateOpen || mainMenu || evolutionScene) return;
+      if(e.key==="Escape"&&battle&&!panel&&!busy){e.preventDefault();keys.current.clear();setPanel("pause");return;}
       if ((e.target as HTMLElement).closest('[role="dialog"]')) return;
       if (
         ["INPUT", "SELECT", "TEXTAREA"].includes(
@@ -421,7 +435,9 @@ export default function App() {
         e.preventDefault();
       keys.current.add(key);
       if (e.repeat) return;
+      if(key==="escape"&&save&&!panel&&!dialog&&!league.raid&&!evolutionNotice&&!trainerOffer){e.preventDefault();keys.current.clear();setPanel("pause");return;}
       if (!battle && save) {
+        if(key==="tab"){e.preventDefault();keys.current.clear();setPanel("menu");return;}
         if (key === "m") setPanel((p) => (p === "map" ? null : "map"));
         if (key === "b") setPanel((p) => (p === "bag" ? null : "bag"));
         if (key === "j") setPanel((p) => (p === "journal" ? null : "journal"));
@@ -441,7 +457,7 @@ export default function App() {
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", blur);
     };
-  }, [battle, save,updateOpen]);
+  }, [battle,save,updateOpen,mainMenu,evolutionScene,panel,dialog,league.raid,evolutionNotice,trainerOffer,busy]);
   useEffect(() => {
     if (panel || battle || dialog || !save) keys.current.clear();
   }, [panel, battle, dialog, save === null]);
@@ -451,7 +467,7 @@ export default function App() {
       notify("Give your keeper a name first.");
       return;
     }
-    const s = newSave({ name, palette, pronouns }, starter);
+    const s = newSave({ name, palette, pronouns, appearance }, starter);
     position.current = { x: s.x, y: s.y, dir: 0, moving: false };
     setSave(s);
     sound("catch", audio);
@@ -472,7 +488,7 @@ export default function App() {
     position.current = { x, y, dir: 0, moving: false };
     setSave((s) =>
       s
-        ? { ...s, interior: undefined, outside: undefined, region, x, y, visited: [...new Set([...s.visited, region])] }
+        ? awardAdventureProgress(s,{ ...s, interior: undefined, outside: undefined, region, x, y, visited: [...new Set([...s.visited, region])] })
         : s,
     );
     setNearby("");
@@ -529,18 +545,18 @@ export default function App() {
           title: REGION_BY_ID[s.region].name,
           text:
             REGION_BY_ID[s.region].description +
-            " Use the signed paths at the edges of the area to travel. Wild Nuvo appear as you walk off the paths.",
+            " Use the signed paths at the edges of the area to travel. Wild Nuvo appear in the tall grass. Open trails are safe.",
         });
       if (kind === "landmark") {
         gameAudio.play("discovery");
         if(s.region==="dreamland") {const next=restoreAtLodge(s);position.current={x:next.x,y:next.y,dir:0,moving:false};setSave(next);notify("You wake beneath the warm lights of the Healing Lodge. Your dream companions are still with you.");return;}
         const r = REGION_BY_ID[s.region],
           first = !s.landmarks.includes(s.region);
-        setSave({
+        setSave(awardPassXp({
           ...s,
           landmarks: [...new Set([...s.landmarks, s.region])],
           coins: s.coins + (first ? 100 : 0),
-        });
+        },first?150:0));
         setDialog({
           title: r.landmark,
           text: `${r.description} ${first ? "You recorded this discovery in your journal. +100 coins." : "You pause for a moment and take it all in."}`,
@@ -557,6 +573,7 @@ export default function App() {
       notify(result.error);
       return;
     }
+    result.save=awardAdventureProgress(save,result.save);
     setBusy(true);
     if(result.save.region!==save.region||result.save.interior!==save.interior)position.current={x:result.save.x,y:result.save.y,dir:0,moving:false};
     setSave(result.save);
@@ -688,8 +705,17 @@ export default function App() {
     writeSave(merged,userRef.current?.id||"guest");
     if(userRef.current){if(!cloudReady.current)throw new Error("Reconnect your cloud save before joining.");await pendingCloud.current;await saveCloud(userRef.current,merged);}
   };
+  const startEvolution=(nuvo:Nuvo,id:string)=>{
+    const current=state.current;if(!current||evolutionScene)return;
+    const before=[...current.party,...current.box].find(n=>n.uid===nuvo.uid);if(!before||!readyToEvolve(before)||!SPECIES_BY_ID[before.speciesId].evolvesTo.includes(id))return;
+    const after=evolve(before,id),key=evolutionKey(before);
+    const next=awardPassXp({...current,x:position.current.x,y:position.current.y,party:current.party.map(n=>n.uid===before.uid?after:n),box:current.box.map(n=>n.uid===before.uid?after:n),evolutionNotices:[...new Set([...(current.evolutionNotices??[]),key])]},100);
+    // Commit once before the cinematic: skip, refresh and closing the view cannot re-award it.
+    writeSave(next,user?.id||"guest");state.current=next;setSave(next);keys.current.clear();setEvolutionNotice(null);setPanel(null);setEvolutionScene({before,after});
+  };
   return (
-    <div className="app-shell">
+    <div className="app-shell fullscreen-game">
+      {save&&!mainMenu&&<div className="game-hud-actions"><button disabled={Boolean(league.raid)} onClick={()=>setPanel("pause")} aria-label="Pause game">Ⅱ <kbd>Esc</kbd></button><button disabled={Boolean(battle)||Boolean(league.raid)} onClick={()=>open("menu")}>Journal <kbd>Tab</kbd></button><button disabled={Boolean(battle)||Boolean(league.raid)} onClick={()=>open("season")}>✦ Season 1 <small>Tier {passTier(save)}</small></button></div>}
       <aside className="sidebar">
         <a
           className="brand"
@@ -759,7 +785,7 @@ export default function App() {
           </button>
         </div>
       </aside>
-      <main className="main-shell">
+      <main className="main-shell" inert={mainMenu||!save||Boolean(evolutionScene)}>
         <header className="topbar">
           <div className="breadcrumb">
             <span>Auralis</span>
@@ -821,7 +847,7 @@ export default function App() {
               <World
                 save={save}
                 paused={
-                  otherTab ||
+                  mainMenu || Boolean(evolutionScene) || otherTab ||
                   !save ||
                   Boolean(panel) ||
                   Boolean(battle) ||
@@ -854,7 +880,7 @@ export default function App() {
                 </span>
               </div>
               {!save?.interior && <button
-                className="mini-map"
+                className={`mini-map ${region.kind==="Town"?"town-map":"wild-map"}`}
                 aria-label="Open Auralis map"
                 onClick={() => open("map")}
               >
@@ -866,14 +892,14 @@ export default function App() {
                 <span className="mini-house" />
                 <i
                   style={{
-                    left: `${(position.current.x / 1152) * 100}%`,
-                    top: `${(position.current.y / 832) * 100}%`,
+                    left: `${(position.current.x / 2304) * 100}%`,
+                    top: `${(position.current.y / 1664) * 100}%`,
                   }}
                 />
                 <span className="mini-label">N</span>
               </button>}
               {save?.interior && <button className="room-exit" onClick={() => onInteract("exit")}><LogOut size={15}/> Return outside</button>}
-              {nearby && save && !panel && !battle && (
+              {nearby && save && !panel && !battle && !mainMenu && !evolutionScene && (
                 <button
                   className="interact-prompt"
                   onClick={() => {
@@ -967,7 +993,7 @@ export default function App() {
               </button>
             </div>
             {save && <ChatDock userId={user?.id} cell={cellKey(save.region, save.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} onSignIn={() => open("online")} notify={notify} refresh={refreshSocial}/>}
-            {save && <CrewStrip save={save} disabled={Boolean(battle)||Boolean(league.raid)||otherTab} onChange={next=>{setSave(next);gameAudio.play("ui-reorder");if(next.party[0].uid!==save.party[0].uid)gameAudio.cry(next.party[0].speciesId);}} onManage={()=>open("team")}/>}
+            {save && <CrewStrip save={save} disabled={Boolean(battle)||Boolean(league.raid)||otherTab||mainMenu||Boolean(evolutionScene)||Boolean(panel)} onChange={next=>{setSave(next);gameAudio.play("ui-reorder");if(next.party[0].uid!==save.party[0].uid)gameAudio.cry(next.party[0].speciesId);}} onManage={()=>open("team")}/>}
 
           </section>
           <aside className="adventure-aside">
@@ -1079,7 +1105,7 @@ export default function App() {
           </div>
         </div>
       )}
-      {authReady && !save && panel !== "online" && panel !== "settings" && (
+      {authReady && !mainMenu && !save && panel !== "online" && panel !== "settings" && (
         <div className="creation-backdrop">
           <div
             className="creation-modal"
@@ -1164,13 +1190,14 @@ export default function App() {
                     <div className="preview-orbit" />
                     <div className="preview-star ps1">✦</div>
                     <div className="preview-star ps2">✧</div>
-                    <PlayerArt palette={palette} size={270} />
+                    <PlayerArt palette={palette} look={{appearance}} size={270} />
                     <span className="preview-name">
                       {creationName.trim() || "Your story awaits"}
                     </span>
                     <small>KEEPER OF POSSIBILITIES</small>
                   </div>
                 </div>
+                <CharacterStudio value={appearance} onChange={setAppearance}/>
                 <footer className="creation-footer">
                   <button
                     className="text-button"
@@ -1257,10 +1284,14 @@ export default function App() {
           </div>
         </div>
       )}
-      <UpdateNotice safe={authReady&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
+      {authReady&&mainMenu&&!panel&&!otherTab&&<MainMenu save={save} onPlay={()=>{setMainMenu(false);gameAudio.play("ui-confirm");}} onSettings={()=>setPanel("settings")} onOnline={()=>setPanel("online")}/>}
+      {(panel==="pause"||panel==="menu")&&save&&<AdventureMenu pause={panel==="pause"} save={save} online={Boolean(user)} onOpen={id=>{if(battle){notify("Resume and finish your battle first.");return;}if(id==="nursery"&&!save.nursery){notify("Visit the Nuvo Nursery in any town to pair your companions.");return;}setPanel(id as Panel);}} onClose={closePanel} onSave={()=>void saveNow()} onHome={()=>{if(battle){notify("Finish your battle before returning to the main menu.");return;}void saveNow();setPanel(null);setMainMenu(true);}}/>}
+      {panel==="season"&&save&&<SeasonPass save={save} onClose={closePanel} onChange={next=>{writeSave(next,user?.id||"guest");state.current=next;setSave(next);}}/>}
+      {evolutionScene&&<EvolutionSequence before={evolutionScene.before} after={evolutionScene.after} onDone={()=>setEvolutionScene(null)}/>}
+      <UpdateNotice safe={authReady&&!mainMenu&&!evolutionScene&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
       {(panel === "tailor" || panel === "barber") && save && <StyleShop save={save} kind={panel} onChange={setSave} onClose={closePanel} notify={notify}/>}
       {panel === "nursery" && save && <Nursery save={save} account={Boolean(user)} onAction={nurseryAction} onClose={()=>{if(!dailyBusy.current)closePanel();}}/>}
-      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=JSON.stringify(result);if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
+      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{const serverSnapshot=JSON.stringify(result);if(state.current)result=awardAdventureProgress(state.current,result);position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=serverSnapshot;if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
       {trainerOffer && save && (()=>{const trainer=TRAINERS.find(t=>t.id===trainerOffer)!;return <Modal title={trainer.name} eyebrow="KEEPER CHALLENGE" onClose={()=>setTrainerOffer(null)}><div className="trainer-offer"><PlayerArt palette={trainer.level%4} size={125}/><div><h3>“{trainer.quote}”</h3><p>{trainer.species.length} Nuvo · Lv. {trainer.level}{save.defeatedTrainers?.includes(trainer.id)?" · Rematch":""}</p><p>Trainer Nuvo cannot be caught. Your whole crew shares experience.</p></div></div><div className="expansion-footer"><button className="secondary-button" onClick={()=>setTrainerOffer(null)}>Maybe later</button><button className="primary-button" disabled={save.party.every(n=>n.hp<=0)} onClick={()=>{battleLock.current=true;setBattle(trainerBattle(save,trainer));setTrainerOffer(null);sound("battle",audio);}}>Let’s battle <ArrowRight size={16}/></button></div></Modal>;})()}
       {panel === "guide" && <Guide onClose={closePanel} save={save} />}
       {panel === "friends" && user && <FriendsPanel social={social} error={socialError} remote={remote} refresh={refreshSocial} notify={notify} onClose={closePanel}/>}
@@ -1344,6 +1375,7 @@ export default function App() {
         <Team
           save={save}
           setSave={setSave}
+          onEvolve={startEvolution}
           notify={notify}
           onClose={closePanel}
         />
@@ -1712,12 +1744,7 @@ export default function App() {
           onFinish={finishBattle}
         />
       )}
-      {evolutionNotice && !battle && !otherTab && <EvolutionReady nuvo={evolutionNotice} onLater={dismissEvolution} onEvolve={id => {
-        const key = evolutionKey(evolutionNotice);
-        setSave(s => s ? { ...s, party: s.party.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), box: s.box.map(n => n.uid === evolutionNotice.uid ? evolve(n,id) : n), evolutionNotices: [...new Set([...(s.evolutionNotices || []),key])] } : s);
-        notify(`${SPECIES_BY_ID[evolutionNotice.speciesId].name} evolved into ${SPECIES_BY_ID[id].name}!`);
-        setEvolutionNotice(null); gameAudio.play("evolve"); gameAudio.cry(id, 1.5);
-      }}/>}
+      {evolutionNotice && !battle && !otherTab && !mainMenu && <EvolutionReady nuvo={evolutionNotice} onLater={dismissEvolution} onEvolve={id=>startEvolution(evolutionNotice,id)}/>}
       {toast && (
         <div className="toast" role="status">
           <Sparkles size={17} />
@@ -2022,11 +2049,13 @@ function EvolutionTree({ base, selected:current, onSelect }: { base: Species; se
   </section>;
 }
 function Team({
+  onEvolve,
   save,
   setSave,
   notify,
   onClose,
 }: {
+  onEvolve:(n:Nuvo,id:string)=>void;
   save: Save;
   setSave: React.Dispatch<React.SetStateAction<Save | null>>;
   notify: (m: string) => void;
@@ -2232,11 +2261,7 @@ function Team({
                     key={id}
                     disabled={n.level < s.evolveLevel}
                     onClick={() => {
-                      update(evolve(n, id));
-                      gameAudio.play("evolve"); gameAudio.cry(id, 1.5);
-                      notify(
-                        `${s.name} evolved into ${SPECIES_BY_ID[id].name}!`,
-                      );
+                      onEvolve(n,id);
                     }}
                   >
                     <NuvoArt id={id} size={87} />
@@ -2354,7 +2379,7 @@ function BattleView({
               <small>{battle.wild.status.toUpperCase()}</small>
             )}
           </div>
-          <div className="wild-nuvo">
+          <div className="wild-nuvo" key={battle.animation?.key??0} data-impact={battle.animation&&MOVE_BY_ID[battle.animation.move].power>0?battle.animation.key:undefined}>
             <NuvoArt
               id={battle.wild.speciesId}
               size={205}

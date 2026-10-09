@@ -1,10 +1,12 @@
 import { gameAudio } from "./audio";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, GripVertical, RefreshCw, Scissors, Shirt, Shield } from "lucide-react";
-import { Health, Modal, NuvoArt, PlayerArt } from "./components";
+import { ArrowRight, GripVertical, RefreshCw, Shield } from "lucide-react";
+import { Health, Modal, NuvoArt } from "./components";
 import { SPECIES_BY_ID } from "./data";
 import { sexOf } from "./nursery";
-import { OUTFITS, HAIRSTYLES, HAIR_COLORS, ORBS, orbCount, reorderCrew } from "./expansion";
+import { ORBS, orbCount, reorderCrew } from "./expansion";
+import {CharacterStudio} from "./CharacterStudio";
+import {DEFAULT_APPEARANCE} from "./appearance";
 import type { Save } from "./game";
 
 export function CrewStrip({save,disabled,onChange,onManage}:{save:Save;disabled:boolean;onChange:(s:Save)=>void;onManage:()=>void}) {
@@ -26,15 +28,11 @@ export function CrewStrip({save,disabled,onChange,onManage}:{save:Save;disabled:
 }
 
 export function StyleShop({save,kind,onChange,onClose,notify}:{save:Save;kind:"tailor"|"barber";onChange:(s:Save)=>void;onClose:()=>void;notify:(s:string)=>void}) {
-  const [outfit,setOutfit]=useState(save.player.outfit||0),[hair,setHair]=useState(save.player.hair||0),[hairColor,setColor]=useState(save.player.hairColor||0);
-  const owned=(save.wardrobe||[0]).includes(outfit)||outfit===0;
-  const changed=kind==="tailor"?outfit!==(save.player.outfit||0):hair!==(save.player.hair||0)||hairColor!==save.player.hairColor;
-  const cost=kind==="tailor"?owned?0:OUTFITS[outfit].price:40;
-  return <Modal title={kind==="tailor"?"Thread & Thistle":"The Tidy Tangle"} eyebrow={kind==="tailor"?"A NEW LOOK FOR THE NEXT CHAPTER":"A LITTLE CHANGE. A WHOLE NEW YOU."} onClose={onClose}>
-    <div className="style-preview"><div className="style-halo"/><PlayerArt palette={save.player.palette} size={210} look={{outfit:kind==="tailor"?outfit:save.player.outfit,hair:kind==="barber"?hair:save.player.hair,hairColor:kind==="barber"?hairColor:save.player.hairColor}}/><div><span className="eyebrow">{save.player.name}</span><h3>{kind==="tailor"?OUTFITS[outfit].name:HAIRSTYLES[hair]}</h3><p>{save.coins} keeper coins</p></div></div>
-    <div className="style-options">{(kind==="tailor"?OUTFITS.map(o=>o.name):HAIRSTYLES).map((name,i)=><button key={name} className={(kind==="tailor"?outfit:hair)===i?"chosen":""} aria-pressed={(kind==="tailor"?outfit:hair)===i} onClick={()=>kind==="tailor"?setOutfit(i):setHair(i)}>{kind==="tailor"?<Shirt size={19}/>:<Scissors size={19}/>}<strong>{name}</strong>{kind==="tailor"&&<small>{i===0||save.wardrobe?.includes(i)?"Owned":`${OUTFITS[i].price} coins`}</small>}</button>)}</div>
-    {kind==="barber"&&<div className="hair-swatches" aria-label="Hair color">{HAIR_COLORS.map((c,i)=><button key={c} aria-label={`Hair color ${i+1}`} aria-pressed={hairColor===i} onClick={()=>setColor(i)} style={{background:c}}>{hairColor===i?"✓":""}</button>)}</div>}
-    <footer className="expansion-footer"><p>{kind==="tailor"?"Owned clothing is free to wear again.":"A cut and color costs 40 keeper coins."}</p><button className="primary-button" disabled={!changed||save.coins<cost} onClick={()=>{onChange({...save,coins:save.coins-cost,wardrobe:kind==="tailor"?[...new Set([0,...(save.wardrobe||[]),outfit])]:save.wardrobe,player:{...save.player,...(kind==="tailor"?{outfit}:{hair,hairColor})}});gameAudio.play("customize");notify("Your new look is ready for the world.");}}>{!changed?"Currently wearing":cost?`Apply · ${cost} coins`:"Wear this outfit"}</button></footer>
+  const [appearance,setAppearance]=useState(save.player.appearance??DEFAULT_APPEARANCE);
+  const cost=save.player.appearance ? kind==="tailor"?80:40 : 0;
+  return <Modal title={kind==="tailor"?"Thread & Thistle":"The Tidy Tangle"} eyebrow="YOUR KEEPER, YOUR WAY" onClose={onClose} wide>
+    <CharacterStudio value={appearance} onChange={setAppearance} owned={save.cosmetics} mode={kind}/>
+    <footer className="expansion-footer"><p>{save.coins} coins · {cost?"Try anything. Pay only when you apply your look.":"Your first visit to the expanded studio is free."}</p><button className="primary-button" disabled={save.coins<cost||JSON.stringify(appearance)===JSON.stringify(save.player.appearance)} onClick={()=>{onChange({...save,coins:save.coins-cost,player:{...save.player,appearance}});gameAudio.play("customize");notify("Your new look is ready for the world.");}}>Apply look · {cost} coins</button></footer>
   </Modal>;
 }
 

@@ -7,6 +7,7 @@ class Parameter {
   events: { value: number; time: number }[] = [];
   setValueAtTime(value: number, time: number) { this.events.push({ value, time }); }
   linearRampToValueAtTime(value: number, time: number) { this.events.push({ value, time }); }
+  exponentialRampToValueAtTime(value: number, time: number) { this.events.push({ value, time }); }
   setTargetAtTime() {}
   cancelScheduledValues() {}
 }
@@ -19,6 +20,7 @@ class Node {
 }
 class Source extends Node {
   playbackRate = new Parameter();
+  frequency = new Parameter();
   buffer?: AudioBuffer;
   startTime?: number;
   stopTime?: number;
@@ -30,6 +32,8 @@ class Context {
   currentTime = 10;
   destination = new Node();
   sources: Source[] = [];
+  tones: Source[] = [];
+  createOscillator() { const source=new Source();this.tones.push(source);return source; }
   createGain() { return new Node(); }
   createStereoPanner() { return new Node(); }
   createDynamicsCompressor() { return Object.assign(new Node(), { threshold: new Parameter(), ratio: new Parameter() }); }
@@ -88,4 +92,15 @@ test('muting and immediately re-enabling does not resurrect pending effects', as
   release();
   await settle();
   assert.equal(context.sources.length, 0);
+});
+
+test('new attack layers have soft envelopes and timed impact; evolution voices stop on dismissal',async t=>{
+  const {audio,context}=await setup(t);
+  audio.move('flame-4');await settle();
+  assert.ok(context.tones.length>=2);
+  for(const source of context.tones){const envelope=source.target!.gain.events;assert.equal(envelope[0].value,0);assert.ok(Math.max(...envelope.map(e=>e.value))<=.055);assert.equal(envelope.at(-1)?.value,.0001);}
+  assert.ok(context.tones[1].startTime!>=context.currentTime+.59);
+  const previous=context.tones.length,stop=audio.evolution();assert.ok(context.tones.length>previous);stop();
+  for(const source of context.tones.slice(previous))assert.equal(source.stopTime,undefined,'cleanup stops scheduled voices immediately');
+  audio.configure(false);const muted=context.tones.length;audio.move('flame-4');assert.equal(context.tones.length,muted);
 });

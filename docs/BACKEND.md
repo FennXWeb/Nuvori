@@ -13,6 +13,8 @@ All migrations are installed, including friends, chat, the daily wheel, Champion
 
 Google and Discord credentials have been entered by the project owner and both providers have completed end-to-end sign-in. Google is published for public sign-in. Account cloud saving and loading have been verified. Two independent accounts, signed in through Google in Chrome and Discord in Codex's browser, both showed two online keepers, listed each other, and rendered their companions and live movement in Mossbell Village after the Broadcast fix. Never put provider secrets in chat, source control, or the frontend environment. The privacy notice is served at `https://fennxweb.github.io/Nuvori/privacy.html`.
 
+On October 9, 2026, `202610090001_first_light.sql` was applied in production. The verification query confirmed 312 species, Solunelle in the catalog, and the new appearance validation in `nuvori_league_open`. See [First Light](FIRST-LIGHT.md).
+
 ## Supabase
 
 1. Create a free Supabase project. Enable the Data API and row-level security.

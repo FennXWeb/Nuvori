@@ -1,6 +1,7 @@
 import manifest from "./audioManifest.json";
 import { DEFAULT_MIX, validMix, creatureSound, moveSound, type AudioMix } from "./audioCues";
 import { FootstepSequence, FootstepStride, type FootstepSurface } from "./footsteps";
+import { MOVE_BY_ID, TYPES } from "./data";
 
 interface Cue { title: string; kind: string; file: string; available: boolean; seconds: number; loopStart?: number | null; loopEnd?: number | null }
 export const AUDIO_CUES = manifest as Record<string, Cue>;
@@ -18,7 +19,7 @@ export class GameAudio {
   private loops: Partial<Record<LoopBus, Loop>> = {};
   private desired: Record<LoopBus, string | null> = { music: null, ambience: null };
   private generations = { music: 0, ambience: 0 };
-  private effects = new Set<AudioBufferSourceNode>();
+  private effects = new Set<AudioBufferSourceNode | OscillatorNode>();
   private played = new Map<string, number>();
   private enabled = false;
   private paused = false;
@@ -212,7 +213,32 @@ export class GameAudio {
   }
 
   cry(speciesId: string, delay = 0, gain = .8) { const cue = creatureSound(speciesId); if (cue) this.play(cue.id, { rate: cue.rate, gain, delay }); }
-  move(moveId: string) { const cue = moveSound(moveId); this.play(cue.id, { rate: cue.rate }); }
+  /** Quiet synthesized transients complement the recorded effects through the same SFX bus. */
+  private tone(frequency:number,end:number,duration:number,delay:number,level:number,wave:OscillatorType="sine") {
+    const c=this.context;
+    if(!this.enabled||this.paused||this.mix.sfx<=0||!c||c.state!=="running"||!this.buses||!c.createOscillator||this.effects.size>=18)return;
+    const source=c.createOscillator(),gain=c.createGain(),start=c.currentTime+delay;
+    source.type=wave;source.frequency.setValueAtTime(frequency,start);source.frequency.exponentialRampToValueAtTime(Math.max(20,end),start+duration);
+    gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(level,start+.025);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    source.connect(gain);gain.connect(this.buses.sfx);this.effects.add(source);
+    source.onended=()=>{this.effects.delete(source);source.disconnect();gain.disconnect();};source.start(start);source.stop(start+duration+.025);
+  }
+  evolution(){
+    const before=new Set(this.effects);
+    this.duck(6);this.play("evolve",{gain:.38,delay:.4});
+    [261.63,329.63,392,523.25,659.25,783.99].forEach((hz,i)=>this.tone(hz,hz*1.005,1.2,i*.45,.035));
+    [523.25,659.25,783.99,1046.5].forEach((hz,i)=>this.tone(hz,hz,1.4,4.6+i*.08,.025));
+    const voices=[...this.effects].filter(voice=>!before.has(voice));
+    return ()=>voices.forEach(voice=>{try{voice.stop();}catch{/* Already ended. */}this.effects.delete(voice);});
+  }
+  move(moveId: string) {
+    const move=MOVE_BY_ID[moveId];if(!move)return;
+    const cue = moveSound(moveId),index=TYPES.indexOf(move.type),note=155*Math.pow(2,index/12);
+    this.play(cue.id, { rate: cue.rate, gain:.62,pan:-.2 });
+    this.tone(note*.6,note*1.6,.23,0,.045,"sine");
+    this.tone(note*(move.power?1:.8),move.power?note*.28:note*2,.36,.59,.055,index%3===0?"triangle":"sine");
+    if(move.power>=70)this.tone(90,35,.25,.6,.04,"triangle");
+  }
 }
 
 export const gameAudio = new GameAudio();
