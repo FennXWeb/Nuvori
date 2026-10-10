@@ -2,7 +2,7 @@ import published from './content/world.json';
 import type {TerrainTile,TrailFeature} from './terrain';
 import type {Interior} from './adventure';
 
-export type Interaction = 'nursery'|'breeder'|'professor'|'heal'|'shop'|'landmark'|'sign'|'nurse'|'merchant'|'exit'|'tailor'|'barber'|'stylist'|'clothier'|'league'|`trainer:${string}`|`resident:${string}`;
+export type Interaction = 'story'|'nursery'|'breeder'|'professor'|'heal'|'shop'|'landmark'|'sign'|'nurse'|'merchant'|'exit'|'tailor'|'barber'|'stylist'|'clothier'|'league'|`trainer:${string}`|`resident:${string}`;
 export interface WorldObject {id?:string;x:number;y:number;kind:number;size:number;solid:boolean;interact?:Interaction;label?:string}
 export interface SpawnEntry {species:string;weight:number;minLevel:number;maxLevel:number}
 export interface SpawnZone {id:string;name:string;x:number;y:number;width:number;height:number;entries:SpawnEntry[];rate:number}

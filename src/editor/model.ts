@@ -18,7 +18,7 @@ export function seedCell(id:string):AuthoredCell {
  }
  return structuredClone({tiles:t.tiles,features:t.features,objects:getMap(r).map((p,i)=>({...p,id:`${id}-${i}`})),
   interiors:Object.fromEntries(ROOMS.map(room=>[room,getMap(r,room).map((p,i)=>({...p,id:`${id}-${room}-${i}`}))])),
-  encounters:{enabled:r.kind!=='Town',rate:.22,entries,zones:[]}});
+  encounters:{enabled:r.kind!=='Town'&&entries.length>0,rate:.22,entries,zones:[]}});
 }
 export function paint(tiles:TerrainTile[][],x:number,y:number,size:number,material:TerrainTile){
  const radius=(size-1)/2;

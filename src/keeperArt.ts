@@ -50,6 +50,11 @@ export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:numb
  if(!head||!top||!bottom)return;
  c.save();c.translate(x,y);c.scale(size/100,size/100);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
  const {stride,bob,swing,lift}=keeperStep(phase,moving,running);
+ if(a.adornment===5){
+  const cape=c.createLinearGradient(-20,-57,22,-7);cape.addColorStop(0,'#fff0c9');cape.addColorStop(.55,'#d6d1b8');cape.addColorStop(1,'#9aafba');
+  c.fillStyle=cape;c.strokeStyle='#b59750';c.lineWidth=1.2;c.beginPath();c.moveTo(-19,-58-bob);c.quadraticCurveTo(-17+stride*3,-34,-26+stride*6,-9);c.quadraticCurveTo(0,-1,26+stride*6,-9);c.quadraticCurveTo(17+stride*3,-34,19,-58-bob);c.closePath();c.fill();c.stroke();
+  c.strokeStyle='#f4e4a9';for(const v of [-12,0,12]){c.beginPath();c.moveTo(v*.7,-53-bob);c.lineTo(v+stride*5,-11);c.stroke();}
+ }
  const bw=side?24:32,bh=30;
  // Cropped limb sources pivot around their hips. Boots are never clipped at their old position.
  const waist=.38,legHeight=bh*(1-waist),sourceY=bottom.height*waist;
@@ -68,6 +73,7 @@ export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:numb
    c.beginPath();c.rect(arm<0?-tw/2:arm>0?tw*.285:-tw*.30,0,arm?tw*.215:tw*.60,th);c.clip();c.drawImage(top,-tw/2,0,tw,th);c.restore();}
  }
  c.restore();
+ drawStoryClothing(c,a.adornment??0,dir,bob,stride);
  if(a.accessory===3){const bag=part('keeper-accessories.png',8+dir,a,'accessory');if(bag)c.drawImage(bag,-14,-58-bob,27,33);}
  const f=WORLD_ART[headFile].frames[headIndex],hs=.215,chin=jaws[a.hairStyle][dir]-f.y;
  const hx=-head.width*hs/2;
@@ -81,6 +87,7 @@ export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:numb
   const attachment=[0,.91,.71,.46,.48,.84][a.hat],forehead=a.hat===3?-27:-26;
   c.drawImage(hat,a.hat===3?(dir===1?-22:dir===2?5:10):-width/2,forehead-height*attachment,width,height);
  }}
+ if(a.adornment===5){c.fillStyle='#dbb55b';c.strokeStyle='#fff0b0';c.lineWidth=1;c.beginPath();c.moveTo(-17,-29);for(let i=0;i<5;i++){const px=-16+i*8;c.lineTo(px,-36-(i===2?5:0));c.lineTo(px+4,-31);}c.lineTo(17,-25);c.lineTo(-17,-25);c.closePath();c.fill();c.stroke();c.fillStyle='#65caba';c.beginPath();c.arc(0,-29,2.3,0,Math.PI*2);c.fill();}
  c.restore();
  if(a.accessory&&a.accessory!==3&&a.accessory!==5&&(dir!==3||a.accessory===2)){
   const accessory=part('keeper-accessories.png',(a.accessory-1)*4+dir,a,'accessory');
@@ -88,5 +95,20 @@ export function drawIllustratedKeeper(c:CanvasRenderingContext2D,x:number,y:numb
    c.drawImage(accessory,side&&a.accessory===1?(dir===1?-19:2):-w/2,a.accessory===1?-78-bob:a.accessory===2?-60-bob:-66-bob,w,h);}
  }
  if(a.accessory===5&&dir!==3){c.fillStyle='#92524c';for(const sideX of side?[dir===1?-1:1]:[-1,1])for(let i=0;i<3;i++){c.beginPath();c.arc(sideX*10+(i%2)*2,-67-bob+Math.floor(i/2)*2,.65,0,Math.PI*2);c.fill();}}
+ c.restore();
+}
+
+function drawStoryClothing(c:CanvasRenderingContext2D,adornment:number,dir:number,bob:number,stride:number){
+ if(!adornment)return;const side=dir===1||dir===2;
+ c.save();c.translate(0,-bob);c.lineJoin='round';c.lineWidth=1.2;
+ if(adornment===1){c.fillStyle='#57b99a';c.strokeStyle='#285e52';c.beginPath();c.moveTo(side?2:10,-58);c.lineTo(side?7:17,-55);c.lineTo(side?9:19,-34);c.lineTo(side?4:13,-38);c.lineTo(side?0:9,-34);c.closePath();c.fill();c.stroke();c.fillStyle='#f1d38c';c.beginPath();c.arc(side?4:13,-54,2.5,0,Math.PI*2);c.fill();}
+ if(adornment===2||adornment===3){
+  const fabric=c.createLinearGradient(-22,-62,22,-35);fabric.addColorStop(0,adornment===2?'#88cddd':'#b3a4e6');fabric.addColorStop(.45,adornment===2?'#3a91a8':'#6c60a3');fabric.addColorStop(1,adornment===2?'#285968':'#443d73');c.fillStyle=fabric;c.strokeStyle=adornment===2?'#abcdda':'#b3dccc';c.beginPath();c.moveTo(-18,-60);c.quadraticCurveTo(0,-66,18,-60);c.lineTo(side?15:24,adornment===2?-40:-49);c.quadraticCurveTo(0,-47,-24,adornment===2?-40:-49);c.closePath();c.fill();c.stroke();
+  if(adornment===3){c.beginPath();c.moveTo(-13,-52);c.quadraticCurveTo(-29-stride*5,-35,-24-stride*8,-25);c.lineTo(-17-stride*8,-28);c.quadraticCurveTo(-20-stride*5,-41,-7,-52);c.fill();c.stroke();}
+  if(dir!==3){c.fillStyle='#f3e8cc';c.beginPath();c.arc(side?8:0,-56,2.6,0,Math.PI*2);c.fill();}
+ }
+ if(adornment>=4){c.fillStyle='#d8b55d';c.strokeStyle='#fff0b8';for(const sx of side?[dir===1?-1:1]:[-1,1]){c.beginPath();c.ellipse(sx*17,-56,7,3.5,sx*.2,0,Math.PI*2);c.fill();c.stroke();for(let i=0;i<3;i++){c.beginPath();c.moveTo(sx*(13+i*3),-55);c.lineTo(sx*(13+i*3),-49);c.stroke();}}
+  if(dir!==3){c.fillStyle='#fff0bd';c.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?2:5;c.lineTo((side?6:0)+Math.cos(a)*r,-53+Math.sin(a)*r);}c.closePath();c.fill();}
+ }
  c.restore();
 }

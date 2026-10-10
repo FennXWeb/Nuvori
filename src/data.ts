@@ -1062,6 +1062,8 @@ for(const r of REGIONS)if(landmarkPositions[r.id])r.landmarkPosition=landmarkPos
 for (const r of REGIONS) if(expandedLinks[r.id]) Object.assign(r.links,expandedLinks[r.id]);
 Object.assign(mapPositions,{mossbell:[23,77],verdant:[23,53],hollow:[23,29],starfall:[38,12],crystal:[40,49],frostmere:[54,25],tempest:[68,25],crownspire:[80,12],emberfall:[56,49],saffron:[71,49],sunwake:[57,79],threadhaven:[76,78],mirelight:[85,49],tideglass:[40,94]});
 for (const r of REGIONS) if (mapPositions[r.id]) r.pos = mapPositions[r.id];
+REGIONS.push({id:'hall',name:'The Hall of Nuvori',kind:'Landmark',subtitle:'Tomorrow is a promise we keep together',description:'Beyond Crownspire, five bridges rise over mirrored dawnwater. Four wardens and Champion Iris await in the sanctuary of the First Dawn. Complete the campaign to unseal this region.',color:'#ecd7a3',level:[46,50],pool:[],links:{south:'crownspire'},landmark:'The Oath of Tomorrow',prop:10,pos:[80,3],biome:'storm',hidden:true,music:'crownspire'});
+REGIONS.find(r=>r.id==='crownspire')!.links.north='hall';
 export const REGION_BY_ID = Object.fromEntries(
   REGIONS.map((r) => [r.id, r]),
 ) as Record<string, Region>;

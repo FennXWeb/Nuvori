@@ -40,6 +40,16 @@ See [First Light](docs/FIRST-LIGHT.md) for the full-screen world, expanded chara
 
 This is an early-access cooperative game. Champions League rooms, battle actions, shared boss health, and reward claims run in PostgreSQL. Ordinary battles and inventory remain client-controlled, so this is not an authoritative competitive economy. PvP and trading are not included.
 
+## The First Dawn campaign (private beta)
+
+Open **Your story** in the main menu, **The First Dawn** in the pause menu, or the objective card in the world. The 26-chapter campaign introduces Nuvo origins, teaches a real wild capture, follows three returning friends and three rivals (three battles each), and visits all five Champions Leagues. New keepers register with Elowen after choosing their starter; existing adventures begin with their current crew intact. Solo guardians award the same crests as cooperative trials.
+
+The finale unseals the **Hall of Nuvori** north of Crownspire for four wardens and Champion Iris. Damage and move energy carry between opponents; leaving, losing, or reloading an unfinished fight resets the attempt. Saves between opponents resume safely. Five milestone cosmetics can be equipped free in the story wardrobe. Completed dialogue remains available in Memories.
+
+Campaign state, rewards, and cosmetics travel with the adventure save. Beta remains local/guest-only. Before a future production promotion, apply `supabase/migrations/202610100001_first_dawn.sql` for the Hall's local chat channel; this private update does not change the production database. Story progress follows the existing cooperative, client-controlled save model.
+
+The development-only `/scripts/story-preview.html` provides isolated, in-memory story, battle, wardrobe, and Hall views without reading or modifying player saves.
+
 ## Controls
 
 | Input                  | Action                               |

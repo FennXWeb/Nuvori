@@ -51,7 +51,13 @@ export function getTerrain(r:Region):Terrain {
   feature(hedge?"Roseheart switchbacks":"The fallen galleries",35,26,"maze");
  };
 
- if(underground){
+ if(r.id==='hall'){
+  rect(0,0,72,52,'cliff');rect(4,3,64,45,'ground');
+  ellipse(35,29,27,16,'water');ellipse(35,29,11,9,'ground');
+  path([[18,51],[18,13],[60,13],[60,39],[35,39],[35,21],[18,21]],5);
+  path([[18,13],[18,5],[35,5],[35,29],[60,29]],4);
+  feature('The five bridges of dawn',35,21,'bridge');feature('Reflection court',35,29,'lake');
+ }else if(underground){
   for(const [x,y,rx,ry] of [[18,14,11,11],[44,13,13,8],[54,34,12,10],[24,39,11,9]])ellipse(x,y,rx,ry,"cave");
   stroke([[18,13],[44,13],[54,25],[54,34],[24,39],[18,28],[18,13]],5,"cave");
   if(r.id==="glassvein"){

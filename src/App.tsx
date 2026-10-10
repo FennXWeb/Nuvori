@@ -6,6 +6,9 @@ export {BattleView} from './BattleScreen';
 import {fastTravel} from './travel';
 import {NuvoriCursor} from './NuvoriCursor';
 import './nuvoriUI.css';
+import {StoryJournal,StoryHud} from './StoryJournal';
+import {currentChapter,storyProgress,finishStoryConversation,prepareStoryBattle,tutorialEncounter,storyTravelReason,leaveStoryRegion,hallAttemptActive,equipStoryCosmetic} from './story';
+import {STORY_COSMETICS} from './storyContent';
 import {sceneDuration} from './battlePresentation';
 import {RESIDENTS} from './townLife';
 import {
@@ -131,6 +134,7 @@ import {EvolutionSequence} from "./EvolutionSequence";
 import {awardAdventureProgress,awardPassXp,passTier} from "./season";
 import "./firstLight.css";
 type Panel =
+  | "story"
   | "updates"
   | "menu-welcome"
   | "season"
@@ -232,7 +236,7 @@ export default function App() {
     return () => { document.removeEventListener("pointerdown", unlock); document.removeEventListener("keydown", unlock); document.removeEventListener("visibilitychange", visibility); };
   }, [otherTab]);
   const raidPhase = league.raid?.members.find(m => m.user_id === user?.id)?.phase;
-  const battleMusic = league.raid?.status === "active" ? (raidPhase === "keeper" ? "keeper" : "league") : battle && !battle.over ? (battle.lastStand === "fighting" ? "keeper" : battle.trainerId ? "trainer" : "wild") : undefined;
+  const battleMusic = league.raid?.status === "active" ? (raidPhase === "keeper" ? "keeper" : "league") : battle && !battle.over ? (battle.lastStand === "fighting" ? "keeper" : battle.storyId?.startsWith("trial-")||battle.storyId==="hall-endurance" ? "league" : battle.trainerId ? "trainer" : "wild") : undefined;
 
   const [updateOpen,setUpdateOpen] = useState(false);
   const [trainerOffer,setTrainerOffer] = useState<string|null>(null);
@@ -240,6 +244,11 @@ export default function App() {
   const friendIds = social.friends.filter(f => f.status === "accepted").map(f => f.profile.user_id);
   const blockedIds = social.blocked.map(p => p.user_id);
   const [mainMenu,setMainMenu]=useState(true);
+  useEffect(()=>{
+    if(save&&hallAttemptActive(save)&&panel&&['team','bag','nursery','season','wheel','league','tailor','barber'].includes(panel)){
+      setPanel('story');setToast('The Hall challenge carries your crew and supplies between battles. Leave the Hall to change your reserve or visit services.');
+    }
+  },[panel,save]);
   useEffect(()=>{const scene=mainMenu?soundscape():soundscape(save?.region,save?.interior,battleMusic);gameAudio.setScene(scene.music,scene.ambience);},[mainMenu,save?.region,save?.interior,battleMusic]);
   const [appearance,setAppearance]=useState(DEFAULT_APPEARANCE);
   const [evolutionScene,setEvolutionScene]=useState<{before:Nuvo;after:Nuvo}|null>(null);
@@ -485,6 +494,7 @@ export default function App() {
     const s = newSave({ name, palette, pronouns, appearance }, starter);
     position.current = { x: s.x, y: s.y, dir: 0, moving: false };
     setSave(s);
+    setPanel('story');
     sound("catch", audio);
     gameAudio.cry(starter, .4);
     notify(`${SPECIES_BY_ID[starter].name} is ready. Your adventure begins!`);
@@ -499,11 +509,12 @@ export default function App() {
     [],
   );
   const onTravel = useCallback((region: string, x: number, y: number) => {
+    const current=state.current;if(current){const reason=storyTravelReason(current,region);if(reason){setToast(reason);return;}}
     gameAudio.play("travel");
     position.current = { x, y, dir: 0, moving: false };
     setSave((s) =>
       s
-        ? awardAdventureProgress(s,{ ...s, interior: undefined, outside: undefined, region, x, y, visited: [...new Set([...s.visited, region])] })
+        ? awardAdventureProgress(s,{ ...leaveStoryRegion(s,region), interior: undefined, outside: undefined, region, x, y, visited: [...new Set([...s.visited, region])] })
         : s,
     );
     setNearby("");
@@ -513,7 +524,7 @@ export default function App() {
     const s = state.current;
     if (!s || s.interior || !(spawnTableAt(s.region,(x??s.x)/32,(y??s.y)/32)?.enabled??REGION_BY_ID[s.region].kind!=="Town")) return;
     battleLock.current = true;
-    const b = encounter({...s,x:x??s.x,y:y??s.y});
+    const b = tutorialEncounter(s)??encounter({...s,x:x??s.x,y:y??s.y});
     setBattle(b);
     setSave((v) =>
       v
@@ -526,6 +537,7 @@ export default function App() {
         : v,
     );
     sound("battle", audio);
+    if(b.tutorial)setSave(v=>v?{...v,orbs:Math.max(3,v.orbs)}:v);
     gameAudio.cry(b.wild.speciesId, .85, .4);
     if (b.wild.prismatic) gameAudio.play("prismatic", { delay: 1.1, gain: .5 });
   }, [audio]);
@@ -533,6 +545,8 @@ export default function App() {
     (kind: Interaction) => {
       const s = state.current;
       if (!s) return;
+      if(kind==='story'){setPanel('story');return;}
+      if(hallAttemptActive(s)&&kind!=='landmark'){notify('Finish the Hall challenge or leave the Hall to use other services.');return;}
       if (kind === "heal" || kind === "shop" || kind === "tailor" || kind === "barber" || kind === "nursery" || kind === "exit") {
         gameAudio.play("door");
         const next = kind === "exit" ? leaveInterior(s) : enterInterior(s, kind === "heal" ? "lodge" : kind, position.current.x, position.current.y);
@@ -551,6 +565,7 @@ export default function App() {
       if (kind === "league") setPanel("league");
       if (kind.startsWith("trainer:")) setTrainerOffer(kind.slice(8));
       if(kind.startsWith('resident:')){const person=RESIDENTS.find(p=>p.name===kind.slice(9));if(person)setDialog({title:person.name,text:person.line});}
+      if (kind === "professor" && currentChapter(s)?.region===s.region && currentChapter(s)?.person==='elowen'){setPanel('story');return;}
       if (kind === "professor")
         setDialog({
           title: "Ranger Elowen",
@@ -564,6 +579,7 @@ export default function App() {
             " Use the signed paths at the edges of the area to travel. Wild Nuvo appear in tall grass and cave gravel. Open trails and bridges are safe. Check the area map for bridges, side paths, and habitats.",
         });
       if (kind === "landmark") {
+        if(s.region==='hall'){setPanel('story');return;}
         gameAudio.play("discovery");
         if(s.region==="dreamland") {const next=restoreAtLodge(s);position.current={x:next.x,y:next.y,dir:0,moving:false};setSave(next);notify("You wake beneath the warm lights of the Healing Lodge. Your dream companions are still with you.");return;}
         const r = REGION_BY_ID[s.region],
@@ -590,6 +606,7 @@ export default function App() {
       return;
     }
     result.save=awardAdventureProgress(save,result.save);
+    if(storyProgress(result.save).chapter>storyProgress(save).chapter){const unlocked=result.save.cosmetics?.find(id=>!save.cosmetics?.includes(id));notify(unlocked?`Chapter complete · ${STORY_COSMETICS.find(c=>c.id===unlocked)?.name??'New story reward'} unlocked!`:'Chapter complete. Your next meeting is in the story journal.');}
     setBusy(true);
     if(result.save.region!==save.region||result.save.interior!==save.interior)position.current={x:result.save.x,y:result.save.y,dir:0,moving:false};
     setSave(result.save);
@@ -611,6 +628,13 @@ export default function App() {
     if (busy) return;
     setBattle(null);
     battleLock.current = false;
+    if(battle?.storyId||battle?.tutorial)setPanel('story');
+  };
+  const storyAction=(id:string)=>{
+    const current=state.current;if(!current||battleLock.current||pausedByOtherTab.current||league.raid)return;
+    const next=finishStoryConversation(current,id);
+    if(next!==current){state.current=next;setSave(next);gameAudio.play('discovery');const unlocked=next.cosmetics?.find(c=>!current.cosmetics?.includes(c));if(unlocked)notify(`${STORY_COSMETICS.find(c=>c.id===unlocked)?.name} unlocked. Equip it in Story wardrobe.`);return;}
+    try{const challenge=prepareStoryBattle(current,id);state.current=challenge.save;setSave(challenge.save);setBattle(challenge.battle);battleLock.current=true;setPanel(null);setMainMenu(false);sound('battle',audio);}catch(error){notify((error as Error).message);}
   };
   const login = async (provider: "google" | "discord") => {
     if (pausedByOtherTab.current) return;
@@ -729,6 +753,7 @@ export default function App() {
   };
   return (
     <div className="app-shell fullscreen-game">
+      {save&&!mainMenu&&!panel&&!battle&&!dialog&&!league.raid&&!evolutionScene&&!evolutionNotice&&<StoryHud save={save} onOpen={()=>open("story")}/>}
       {save&&!mainMenu&&<div className="game-hud-actions"><button disabled={Boolean(league.raid)} onClick={()=>setPanel("pause")} aria-label="Pause game">Ⅱ <kbd>Esc</kbd></button><button disabled={Boolean(battle)||Boolean(league.raid)} onClick={()=>open("menu")}>Journal <kbd>Tab</kbd></button><button disabled={Boolean(battle)||Boolean(league.raid)} onClick={()=>open("season")}>✦ Season 1 <small>Tier {passTier(save)}</small></button></div>}
       <aside className="sidebar">
         <a
@@ -1117,7 +1142,7 @@ export default function App() {
             aria-label="Create your keeper"
           >
             <div className="creation-top">
-              <span className="eyebrow">A NEW CHAPTER IN AURALIS</span>
+              <span className="eyebrow">MOSSBELL KEEPER REGISTRY · THE FIRST DAWN</span>
               <span className="step-label">{creationStep + 1} / 2</span>
             </div>
             {creationStep === 0 ? (
@@ -1131,8 +1156,8 @@ export default function App() {
                       begins with you<span>.</span>
                     </h2>
                     <p>
-                      A name, a little curiosity, and a world of possibilities.
-                      Let’s meet your keeper.
+                      Long ago, the First Dawn woke Nuvo in roots, tides, stone, and dreams.
+                      Today, you arrive in Mossbell to become a keeper. Register your name and appearance, then choose the companion who will share your journey.
                     </p>
                     <label htmlFor="keeper-name">
                       What should we call you?
@@ -1229,8 +1254,7 @@ export default function App() {
                   <span className="tiny-label">FIVE LITTLE BEGINNINGS.</span>
                   <h2>Who will you grow with?</h2>
                   <p>
-                    Choose your first companion. There’s no wrong path from
-                    here.
+                    Elowen has five young Nuvo ready to meet you. Choose your beginning companion, then sign the keeper’s oath together in Mossbell.
                   </p>
                 </div>
                 <div className="starter-grid">
@@ -1288,7 +1312,7 @@ export default function App() {
         </div>
       )}
       <NuvoriCursor/>
-      {authReady&&mainMenu&&!otherTab&&<MainMenu save={save} obscured={Boolean(panel)||Boolean(dialog)||updateOpen} online={Boolean(user)} status={onlineStatus} social={social} remote={remote} audio={audio} onAudio={()=>enableAudio(!audio)} onPlay={()=>{setMainMenu(false);if(league.raid)setPanel('league');gameAudio.play('ui-confirm');}} onOpen={(id:MenuDestination)=>{if(id==='friends'&&!user){setPanel('online');return;}if(!save&&['wheel','friends','team','journal'].includes(id)){setPanel('menu-welcome');return;}if(league.raid&&!['friends','settings','online','updates','map','guide'].includes(id)){setMainMenu(false);setPanel('league');return;}setPanel(id);}} chat={<ChatDock embedded userId={user?.id} cell={cellKey(save?.region||'mossbell',save?.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} needsKeeper={!save} onCreate={()=>setMainMenu(false)} onSignIn={()=>setPanel('online')} notify={notify} refresh={refreshSocial}/>}/>}
+      {authReady&&mainMenu&&!otherTab&&<MainMenu save={save} obscured={Boolean(panel)||Boolean(dialog)||updateOpen} online={Boolean(user)} status={onlineStatus} social={social} remote={remote} audio={audio} onAudio={()=>enableAudio(!audio)} onPlay={()=>{setMainMenu(false);if(league.raid)setPanel('league');gameAudio.play('ui-confirm');}} onOpen={(id:MenuDestination)=>{if(id==='friends'&&!user){setPanel('online');return;}if(!save&&['wheel','friends','team','journal','story'].includes(id)){setPanel('menu-welcome');return;}if(league.raid&&!['friends','settings','online','updates','map','guide'].includes(id)){setMainMenu(false);setPanel('league');return;}setPanel(id);}} chat={<ChatDock embedded userId={user?.id} cell={cellKey(save?.region||'mossbell',save?.interior)} cellName={placeName} blockedIds={blockedIds} ready={Boolean(social.profile)} needsKeeper={!save} onCreate={()=>setMainMenu(false)} onSignIn={()=>setPanel('online')} notify={notify} refresh={refreshSocial}/>}/>}
       {panel==='menu-welcome'&&<Modal title="Every adventure begins with a keeper" eyebrow="YOUR NEXT CHAPTER" onClose={closePanel}><p className="quiet-copy">Create your keeper and choose a starter to collect daily gifts, build your crew and meet other keepers. Your rewards will belong to that adventure.</p><div className="menu-footer"><button className="primary-button" onClick={()=>{setPanel(null);setMainMenu(false);}}>Create your keeper <ArrowRight size={16}/></button>{!user&&<button className="secondary-button" onClick={()=>setPanel('online')}>Sign in first</button>}</div></Modal>}
       {panel==='updates'&&<UpdateArchive onClose={closePanel}/>}
       {(panel==="pause"||panel==="menu")&&save&&<AdventureMenu pause={panel==="pause"} save={save} online={Boolean(user)} onOpen={id=>{if(battle){notify("Resume and finish your battle first.");return;}if(id==="nursery"&&!save.nursery){notify("Visit the Nuvo Nursery in any town to pair your companions.");return;}setPanel(id as Panel);}} onClose={closePanel} onSave={()=>void saveNow()} onHome={()=>{if(battle){notify("Finish your battle before returning to the main menu.");return;}void saveNow();setPanel(null);setMainMenu(true);}}/>}
@@ -1297,7 +1321,7 @@ export default function App() {
       <UpdateNotice safe={authReady&&!evolutionScene&&!otherTab&&!battle&&!panel&&!dialog&&!evolutionNotice&&!trainerOffer&&!league.raid&&!busy} onApply={flushForExpansion} onBlocking={setUpdateOpen}/>
       {(panel === "tailor" || panel === "barber") && save && <StyleShop save={save} kind={panel} onChange={setSave} onClose={closePanel} notify={notify}/>}
       {panel === "nursery" && save && <Nursery save={save} account={Boolean(user)} onAction={nurseryAction} onClose={()=>{if(!dailyBusy.current)closePanel();}}/>}
-      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{const serverSnapshot=JSON.stringify(result);if(state.current)result=awardAdventureProgress(state.current,result);position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=serverSnapshot;if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} notify={notify}/>}
+      {panel === "league" && save && <LeaguePanel save={save} userId={user?.id} raid={league.raid} onRaid={league.setRaid} error={league.error} onBeforeJoin={flushForExpansion} onResult={result=>{const serverSnapshot=JSON.stringify(result);if(state.current)result=awardAdventureProgress(state.current,result);position.current={x:result.x,y:result.y,dir:0,moving:false};state.current=result;writeSave(result,user?.id||"guest");setSave(result);lastCloud.current=serverSnapshot;if(result.region==="dreamland")notify("You awaken in Dream Land… Seek Oneirune and Dreamweaver beyond the path.");}} onClose={closePanel} onStory={()=>setPanel("story")} notify={notify}/>}
       {trainerOffer && save && (()=>{const trainer=TRAINERS.find(t=>t.id===trainerOffer)!;return <Modal title={trainer.name} eyebrow="KEEPER CHALLENGE" onClose={()=>setTrainerOffer(null)}><div className="trainer-offer"><PlayerArt palette={trainer.level%4} size={125}/><div><h3>“{trainer.quote}”</h3><p>{trainer.species.length} Nuvo · Lv. {trainer.level}{save.defeatedTrainers?.includes(trainer.id)?" · Rematch":""}</p><p>Trainer Nuvo cannot be caught. Your whole crew shares experience.</p></div></div><div className="expansion-footer"><button className="secondary-button" onClick={()=>setTrainerOffer(null)}>Maybe later</button><button className="primary-button" onClick={()=>{battleLock.current=true;setBattle(trainerBattle(save,trainer));setTrainerOffer(null);sound("battle",audio);}}>Let’s battle <ArrowRight size={16}/></button></div></Modal>;})()}
       {panel === "guide" && <Guide onClose={closePanel} save={save} />}
       {panel === "friends" && user && <FriendsPanel social={social} error={socialError} remote={remote} refresh={refreshSocial} notify={notify} onClose={closePanel}/>}
@@ -1402,12 +1426,14 @@ export default function App() {
           </div>
         </Modal>
       )}
+      {panel === "story" && save && <StoryJournal save={save} onClose={closePanel} onAction={storyAction} onMap={()=>setPanel("map")} onEquip={index=>setSave(s=>s?equipStoryCosmetic(s,index):s)}/>}
       {panel === "journal" && save && (
         <Modal
           title="Your field journal"
           eyebrow="SMALL STEPS. GREAT STORIES."
           onClose={closePanel}
         >
+          <button className="nu-button primary" onClick={()=>setPanel("story")}>✦ The First Dawn · Open story campaign</button>
           <div className="journal-stats">
             <span>
               <strong>{save.caught.length}</strong>Nuvo families

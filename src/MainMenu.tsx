@@ -11,7 +11,7 @@ import {menuProgress,RELEASES} from './menuModel';
 import {gameAudio} from './audio';
 import './mainMenu.css';
 
-export type MenuDestination='season'|'wheel'|'friends'|'updates'|'settings'|'online'|'team'|'map'|'journal'|'guide';
+export type MenuDestination='story'|'season'|'wheel'|'friends'|'updates'|'settings'|'online'|'team'|'map'|'journal'|'guide';
 export function MainMenu({save,onPlay,onOpen,online,status,social,remote,audio,onAudio,chat,obscured=false}:{save:Save|null;onPlay:()=>void;onOpen:(id:MenuDestination)=>void;online:boolean;status:string;social:SocialState;remote:RemoteKeeper[];audio:boolean;onAudio:()=>void;chat:ReactNode;obscured?:boolean}){
  const [now,setNow]=useState(Date.now()),[chatOpen,setChatOpen]=useState(false),[notice,setNotice]=useState('');
  const play=useRef<HTMLButtonElement>(null),m=menuProgress(save,now);
@@ -31,7 +31,7 @@ export function MainMenu({save,onPlay,onOpen,online,status,social,remote,audio,o
    <h1>Your next<br/>legend <em>awaits.</em></h1>
    <p>A world to wander.<br/>A companion for every possibility.</p>
    <button ref={play} autoFocus className="lobby-play" onClick={onPlay}><Compass size={24}/><span>{save?'Continue adventure':'Begin your adventure'}<small>{save?REGION_BY_ID[save.region].name:'Create your keeper · choose your first Nuvo'}</small></span><ArrowRight size={23}/></button>
-   <div className="lobby-shortcuts"><button onClick={()=>open(save?'team':'guide')}><Sparkles size={15}/>{save?'Your crew':'Keeper’s guide'}</button><span/><button onClick={()=>open('map')}><Compass size={15}/>World atlas</button>{save&&<><span/><button onClick={()=>open('journal')}><BookOpen size={15}/>Journal</button></>}</div>
+   <div className="lobby-shortcuts"><button onClick={()=>open(save?'team':'guide')}><Sparkles size={15}/>{save?'Your crew':'Keeper’s guide'}</button><span/><button onClick={()=>open('map')}><Compass size={15}/>World atlas</button>{save&&<><span/><button onClick={()=>open('story')}><BookOpen size={15}/>Your story</button></>}</div>
    {save&&<div className="lobby-crew"><div>{save.party.map(n=><span key={n.uid} title={`Level ${n.level}`}><NuvoArt id={n.speciesId} prismatic={n.prismatic} size={39}/></span>)}</div><small>{caughtFormCount(save)} Nuvo collected <i>·</i> {save.coins.toLocaleString()} coins</small></div>}
   </section>
   <section className="lobby-feature" aria-label="Featured season reward"><span className="feature-mythic"><Sparkles size={13}/> MYTHICAL · ASTRAL / BLOOM</span><h2>Solunelle</h2><p>The first-light companion</p><button onClick={()=>open('season')}>Yours at tier 100 <ArrowUpRight size={14}/></button></section>

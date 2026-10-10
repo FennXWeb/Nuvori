@@ -20,6 +20,8 @@ import {buildResidents,residentAt,drawFountainWater,type ResidentRoute} from './
 import {drawNuvoActor} from './nuvoAnimation';
 import {TILE,WORLD_W,WORLD_H,getMap,canWalk,findPath,safeWorldPosition} from './worldLayout';
 import {spawnTableAt,type Interaction} from './worldContent';
+import {currentChapter,storyTravelReason} from './story';
+import {STORY_CAST} from './storyContent';
 export {TILE,WORLD_W,WORLD_H,getMap,canWalk,findPath,safeWorldPosition,isWater,isPath} from './worldLayout';
 export type {Interaction} from './worldContent';
 export interface WorldProps {
@@ -200,7 +202,11 @@ export function World({
         route = [];
         gameAudio.updateFootsteps(0, null);
       }
-      const props = getMap(r, s?.interior);
+      const chapter=s?currentChapter(s):undefined;
+      const storyPerson=chapter&&chapter.region===r.id&&!s?.interior?STORY_CAST[chapter.person]:undefined;
+      const mapProps=getMap(r,s?.interior),mentor=storyPerson&&chapter?.person==='elowen'?mapProps.find(p=>p.interact==='professor'):undefined;
+      const props=mentor?mapProps.filter(p=>p!==mentor):mapProps;
+      const storySpot=storyPerson?safeWorldPosition((mentor?.x??18.6)*TILE,(mentor?.y??17)*TILE,r):undefined;
       if(r.kind==='Town'&&!residents.has(r.id))residents.set(r.id,buildResidents(r,(a,b,c,d)=>findPath(a,b,c,d,r),(a,b)=>canWalk(a,b,r)));
       const townsfolk=s?.interior?[]:(residents.get(r.id)??[]).map(person=>{
         const previous=residentAt(person),near=Math.hypot(previous.x-x,previous.y-y)<48;
@@ -258,7 +264,7 @@ export function World({
             }
           }
         }
-        const nearby = [...props,...townsfolk.map(n=>({x:n.x/TILE,y:n.y/TILE,solid:false,interact:`resident:${n.person.name}` as Interaction,label:n.person.name}))].find(
+        const nearby = [...(storySpot?[{x:storySpot[0]/TILE,y:storySpot[1]/TILE,solid:false,interact:'story' as Interaction,label:`${storyPerson!.name} · Story`}]:[]),...props,...townsfolk.map(n=>({x:n.x/TILE,y:n.y/TILE,solid:false,interact:`resident:${n.person.name}` as Interaction,label:n.person.name}))].find(
           (p) =>
             p.interact &&
             Math.hypot(p.x * TILE - x, p.y * TILE - y) < (p.solid ? 84 : 62),
@@ -295,7 +301,14 @@ export function World({
         }
         if (next && !s.interior) {
           keys.current.clear();
-          state.onTravel(next, tx, ty);
+          if(storyTravelReason(s,next)){route=[];x=Math.max(72,Math.min(WORLD_W*TILE-72,x));y=Math.max(72,Math.min(WORLD_H*TILE-72,y));state.onNearby('The Hall is sealed · continue your story journal');}
+          else {
+            // Do not emit the departing cell's coordinates after committing arrival.
+            // A same-frame onMove used to place keepers at the far edge of the new
+            // cell and immediately skip it, breaking the first story journey.
+            state.onMove(x,y,dir,false,steps);steps=0;state.onTravel(next, tx, ty);gameAudio.updateFootsteps(0,null);
+            raf=requestAnimationFrame(frame);return;
+          }
           travelled = 0;
         }
       }
@@ -378,6 +391,12 @@ export function World({
           }
         },
       }));
+      if(storySpot&&storyPerson)sorted.push({y:storySpot[1],draw:()=>{
+        const [sx,sy]=storySpot;
+        drawDressedKeeper(ctx,sx,sy,64,{...DEFAULT_APPEARANCE,hairStyle:storyPerson.hair,top:storyPerson.top,topTint:[8,2,6,7][storyPerson.palette],hairTint:storyPerson.palette+1},0,elapsed*2);
+        text(`✦ ${storyPerson.name}`,sx,sy-79,'#f4dfac');
+        text('STORY',sx,sy-96,'#aadfc6');
+      }});
       const drawNuvo = (
         id: string,
         px: number,

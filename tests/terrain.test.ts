@@ -28,7 +28,7 @@ test("all new and existing regions have reachable exits, trainers, landmarks and
   const trainer=TRAINERS.find(t=>t.region===r.id);if(trainer){assert.ok(trainer.name);assert.ok(reached.has(`${Math.floor(trainer.x)},${Math.floor(trainer.y)}`),`${r.id} trainer`);}
   const [lx,ly]=r.landmarkPosition??[18,7];assert.ok([...reached].some(k=>{const [x,y]=k.split(',').map(Number);return Math.hypot(x+.5-lx,y+.5-ly)<2.5;}),`${r.id} landmark`);
   const habitat=[...reached].filter(k=>{const [x,y]=k.split(',').map(Number);return encounterTile(terrainAt(x+.5,y+.5,r));});
-  assert.ok(r.kind==="Town"?habitat.length===0:habitat.length>60,`${r.id} reachable habitat: ${habitat.length}`);
+  assert.ok(r.kind==="Town"||r.id==='hall'?habitat.length===0:habitat.length>60,`${r.id} reachable habitat: ${habitat.length}`);
   if(r.kind!=="Town")for(const [x,y] of [[17,13],[18,20]])assert.equal(encounterTile(terrainAt(x+.5,y+.5,r)),false);
  }
 });

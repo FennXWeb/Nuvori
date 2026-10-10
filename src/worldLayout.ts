@@ -17,6 +17,12 @@ export function getMap(region: Region, interior?: Interior): Prop[] {
   if(cacheRevision!==worldRevision()){mapCache.clear();cacheRevision=worldRevision();}
   const cached=mapCache.get(`${region.id}:${interior??"outside"}`);if(cached)return cached;
   const props: Prop[] = [];
+  if(region.id==='hall'&&!interior){const hall:Prop[]=[
+   {x:18,y:7,kind:10,size:220,solid:true,interact:'landmark',label:'The Oath of Tomorrow'},
+   ...[[13,11],[23,11],[30,5],[40,5],[55,13],[65,13],[30,39],[40,39]].map(([x,y],i)=>({x,y,kind:i%2?8:9,size:120,solid:true})),
+   ...[[16,17],[20,17],[33,21],[37,21],[58,27],[62,27],[33,37],[37,37]].map(([x,y])=>({x,y,kind:41,size:65,solid:false})),
+   {x:35,y:29,kind:11,size:175,solid:true},
+  ];mapCache.set('hall:outside',hall);return hall;}
   if (interior) return [
     { x: 18, y: 9, kind: -1, size: 62, solid: false, label: {lodge:"Nurse Liora",shop:"Shopkeeper Finch",tailor:"Tailor Lark",barber:"Stylist Rue",nursery:"Nurserist Clover"}[interior] },
     ...[16,18,20].map(x => ({ x, y: 10, kind: 21, size: 65, solid: true, interact: ({lodge:"nurse",shop:"merchant",tailor:"clothier",barber:"stylist",nursery:"breeder"}[interior]) as Interaction, label: {lodge:"Restore your team",shop:"Browse supplies",tailor:"Browse clothing",barber:"Change your hairstyle",nursery:"Care for a new generation"}[interior] })),

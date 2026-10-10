@@ -1,5 +1,7 @@
 import {spawnTableAt,weightedSpawn} from './worldContent';
 import {recordForms,validFormRecords} from './collection';
+import {freshStory,validStory,recoverStory,storyBattleResult,type StoryProgress} from './story';
+import {STORY_COSMETICS} from './storyContent';
 import {
   BASE_SPECIES,
   MOVE_BY_ID,
@@ -26,6 +28,7 @@ export interface Player {
   hairColor?: number;
 }
 export interface Save {
+  story?: StoryProgress;
   passes?: Record<string,PassProgress>;
   cosmetics?: string[];
   version: 1;
@@ -67,6 +70,7 @@ export interface Save {
 }
 export function newSave(player: Player, starter: string): Save {
   return {
+    story: freshStory(),
     version: 1,
     player,
     party: [{...createNuvo(starter, 5, false),origin:"starter"}],
@@ -121,9 +125,10 @@ export function validateSave(value: unknown): value is Save {
     );
   return (
     s.version === 1 &&
+    validStory(s.story) &&
     validFormRecords(s.caughtForms) && validFormRecords(s.seenForms) &&
     validPasses(s.passes) &&
-    (s.cosmetics === undefined || (Array.isArray(s.cosmetics) && s.cosmetics.length <= 100 && s.cosmetics.every(id => ["s1-top-8","s1-top-9","s1-hat-4","s1-hat-5"].includes(id)))) &&
+    (s.cosmetics === undefined || (Array.isArray(s.cosmetics) && s.cosmetics.length <= 100 && s.cosmetics.every(id => ["s1-top-8","s1-top-9","s1-hat-4","s1-hat-5",...STORY_COSMETICS.map(c=>c.id)].includes(id)))) &&
     (s.player?.appearance === undefined || validAppearance(s.player.appearance)) &&
     typeof s.player?.name === "string" &&
     s.player.name.length > 0 &&
@@ -173,7 +178,7 @@ export function validateSave(value: unknown): value is Save {
 export function readSave(key = "guest"): Save | null {
   try {
     const s = JSON.parse(localStorage.getItem(`nuvori-save:${key}`) || "null");
-    return validateSave(s) ? normalizeSave(s) : null;
+    return validateSave(s) ? recoverStory(normalizeSave(s)) : null;
   } catch {
     return null;
   }
@@ -198,6 +203,9 @@ export function healParty(save: Save): Save {
   };
 }
 export interface Battle {
+  storyId?: string;
+  tutorial?: boolean;
+  guardianMaxHp?: number;
   wild: Nuvo;
   active: number;
   log: string[];
@@ -218,7 +226,7 @@ export interface BattleScene {kind:'attack'|'damaged'|'faint'|'summon'|'recall';
 export function encounter(save: Save, random = Math.random): Battle {
   const r = REGION_BY_ID[save.region];
   const authored=spawnTableAt(save.region,save.x/32,save.y/32);
-  if(!r||save.interior||(authored?!authored.enabled||!authored.entries.length:r.kind==="Town"||!r.pool.length))throw new Error("Wild Nuvo live on routes, not in towns or shops.");
+  if(!r||save.interior||(authored?!authored.enabled||!authored.entries.length:r.kind==="Town"||!r.pool.length))throw new Error("Wild Nuvo live on routes, not in towns, shops, or the Hall of Nuvori.");
   const index = r.pool[Math.floor(random() * r.pool.length)];
   let level =
     r.level[0] + Math.floor(random() * (r.level[1] - r.level[0] + 1));
@@ -279,6 +287,7 @@ export function useMove(
   defender: Nuvo,
   moveId: string,
   random = Math.random,
+  attackerMaxHp?: number,
 ): { attacker: Nuvo; defender: Nuvo; log: string[] } {
   const a = structuredClone(attacker),
     d = structuredClone(defender),
@@ -292,7 +301,8 @@ export function useMove(
   if (random() * 100 > m.accuracy)
     return { attacker: a, defender: d, log: [...log, "It missed!"] };
   if (m.effect === "heal") {
-    const recovery = Math.min(maxHp(a) - a.hp, Math.ceil(maxHp(a) * 0.4));
+    const limit=attackerMaxHp??maxHp(a);
+    const recovery = Math.max(0,Math.min(limit - a.hp, Math.ceil(limit * 0.4)));
     a.hp += recovery;
     log.push(`Recovered ${recovery} HP.`);
   } else if (m.effect === "guard") {
@@ -306,7 +316,7 @@ export function useMove(
       `${dn} took ${damage} damage.${effectiveness(m.type, SPECIES_BY_ID[d.speciesId].types) > 1 ? " Super effective!" : ""}`,
     );
     if (m.effect === "drain")
-      a.hp = Math.min(maxHp(a), a.hp + Math.ceil(damage / 2));
+      a.hp = Math.min(attackerMaxHp??maxHp(a), a.hp + Math.ceil(damage / 2));
     if (m.effect === "boost") a.boost = true;
     if (
       (m.effect === "burn" || m.effect === "slow" || m.effect === "poison") &&
@@ -362,7 +372,7 @@ export function battleTurn(
       b.log.push(`${s.player.name} steps forward. Your companions are counting on you!`);
       return { save: s, battle: b };
     }
-    if (action.type === "retreat") return { save: restoreAtLodge(s), battle: { ...b, over: "lost", log: [...b.log, "You accepted the rescue and woke in the Healing Lodge."] } };
+    if (action.type === "retreat") {const lost:Battle={...b,over:'lost',log:[...b.log,'You accepted the rescue and woke in the Healing Lodge.']};return {save:storyBattleResult(restoreAtLodge(s),lost),battle:lost};}
     return fail("Choose to make a last stand or return to the lodge.");
   }
   if (["stand", "retreat"].includes(action.type)) return fail("Your crew is still fighting.");
@@ -408,7 +418,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
       return fail("You need a binding orb. Buy more at a town shop.");
     if (orb === "binding") s.orbs--; else s.specialOrbs = { ...s.specialOrbs, [orb]: orbCount(s,orb)-1 };
     logs.push(`You tossed a ${ORBS.find(o => o.id === orb)!.name.toLowerCase()}…`);
-    if (random() < catchChance(b.wild,orb,b.turn)) {
+    if ((b.tutorial && b.wild.hp<=maxHp(b.wild)/2) || random() < catchChance(b.wild,orb,b.turn)) {
       b.over = "caught";
       wildActs = false;
       const caught = { ...b.wild, sex:sexOf(b.wild), origin:"wild" as const, guard: false, boost: false };
@@ -479,7 +489,7 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
     }
     if (wildMove) {
       const beforeP=structuredClone(p),beforeW=structuredClone(b.wild);
-      const res = useMove(b.wild, p, wildMove, random);
+      const res = useMove(b.wild, p, wildMove, random,b.guardianMaxHp);
       b.wild = res.attacker;
       p = res.defender;
       logs.push(...res.log);
@@ -551,5 +561,5 @@ if (b.trainerId) return fail("A trainer’s bonded Nuvo cannot be caught.");
   s = recordForms(s,[],[battle.wild.speciesId,b.wild.speciesId]);
   b.turn++;
   b.log = [...b.log, ...logs].slice(-40);
-  return { save: s, battle: b };
+  return { save: storyBattleResult(s,b), battle: b };
 }

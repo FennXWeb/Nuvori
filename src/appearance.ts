@@ -5,12 +5,13 @@ export const TOP_STYLES = ["Trail jacket","T-shirt","Overalls","Sailor shirt","H
 export const BOTTOM_STYLES = ["Trousers","Shorts","Skirt","Dungarees"];
 export const HAT_STYLES = ["None","Beanie","Sunhat","Ribbon","Starlace halo","Dawnwarden crown"];
 export const ACCESSORIES = ["None","Glasses","Scarf","Satchel","Earrings","Freckles"];
-export interface Appearance { skin:number; eyes:number; hairStyle:number; hairTint:number; top:number; topTint:number; bottom:number; bottomTint:number; shoes:number; hat:number; accessory:number }
+export interface Appearance { skin:number; eyes:number; hairStyle:number; hairTint:number; top:number; topTint:number; bottom:number; bottomTint:number; shoes:number; hat:number; accessory:number; adornment?:number }
 export const DEFAULT_APPEARANCE:Appearance = {skin:1,eyes:8,hairStyle:0,hairTint:1,top:0,topTint:9,bottom:0,bottomTint:0,shoes:1,hat:0,accessory:0};
-export const APPEARANCE_LIMITS:Record<keyof Appearance,number>={skin:6,eyes:12,hairStyle:12,hairTint:12,top:10,topTint:12,bottom:4,bottomTint:12,shoes:12,hat:6,accessory:6};
+export const APPEARANCE_LIMITS:Record<Exclude<keyof Appearance,'adornment'>,number>={skin:6,eyes:12,hairStyle:12,hairTint:12,top:10,topTint:12,bottom:4,bottomTint:12,shoes:12,hat:6,accessory:6};
 export function validAppearance(value:unknown):value is Appearance {
   if(!value||typeof value!=="object")return false;
-  return Object.entries(APPEARANCE_LIMITS).every(([k,max])=>{const n=(value as Record<string,unknown>)[k];return Number.isInteger(n)&&Number(n)>=0&&Number(n)<max;});
+  const adornment=(value as Appearance).adornment;
+  return (adornment===undefined||(Number.isInteger(adornment)&&adornment>=0&&adornment<=5))&&Object.entries(APPEARANCE_LIMITS).every(([k,max])=>{const n=(value as Record<string,unknown>)[k];return Number.isInteger(n)&&Number(n)>=0&&Number(n)<max;});
 }
 export function cosmeticFor(key:keyof Appearance,index:number){return key==="top"&&index>=8?`s1-top-${index}`:key==="hat"&&index>=4?`s1-hat-${index}`:undefined;}
 

@@ -9,6 +9,7 @@ import { normalizeSave } from "./nursery";
 import { REGION_BY_ID, SPECIES_BY_ID } from "./data";
 import type { Interior } from "./adventure";
 import {validAppearance, type Appearance} from "./appearance";
+import {recoverStory} from './story';
 import {WORLD_PIXEL_WIDTH,WORLD_PIXEL_HEIGHT} from "./worldScenery";
 import {writeCloudAdventure} from './cloudSave';
 const env = import.meta.env ?? {};
@@ -67,7 +68,7 @@ export async function fetchCloudSave(user: User): Promise<Save | null> {
     throw new Error(
       "Your cloud save could not be read. Your local save is safe.",
     );
-  return data ? normalizeSave({ ...data.data, updated: data.updated_at }) : null;
+  return data ? recoverStory(normalizeSave({ ...data.data, updated: data.updated_at })) : null;
 }
 export async function saveCloud(user: User, save: Save) {
   if (!supabase) return;

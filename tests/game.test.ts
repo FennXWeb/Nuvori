@@ -74,7 +74,7 @@ test("world graph is connected and spawn/exit paths are walkable", () => {
       ...Object.values(REGION_BY_ID[id].links).filter((x): x is string => !!x),
     );
   }
-  assert.equal(seen.size, REGIONS.filter(r=>!r.hidden).length);
+  assert.equal(seen.size, REGIONS.filter(r=>r.id!=='dreamland').length);
   for (const r of REGIONS) {
     const props = getMap(r);
     assert.ok(canWalk(560, 496, r, props), r.id);
