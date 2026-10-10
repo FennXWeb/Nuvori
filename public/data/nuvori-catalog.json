@@ -28936,7 +28936,8 @@
       ],
       "links": {
         "south": "tempest",
-        "east": "rimewind"
+        "east": "rimewind",
+        "north": "hall"
       },
       "landmark": "The Crown of Auralis",
       "prop": 10,
@@ -29188,6 +29189,31 @@
         67,
         45
       ]
+    },
+    {
+      "id": "hall",
+      "name": "The Hall of Nuvori",
+      "kind": "Landmark",
+      "subtitle": "Tomorrow is a promise we keep together",
+      "description": "Beyond Crownspire, five bridges rise over mirrored dawnwater. Four wardens and Champion Iris await in the sanctuary of the First Dawn. Complete the campaign to unseal this region.",
+      "color": "#ecd7a3",
+      "level": [
+        46,
+        50
+      ],
+      "pool": [],
+      "links": {
+        "south": "crownspire"
+      },
+      "landmark": "The Oath of Tomorrow",
+      "prop": 10,
+      "pos": [
+        80,
+        3
+      ],
+      "biome": "storm",
+      "hidden": true,
+      "music": "crownspire"
     }
   ],
   "season": {

@@ -46,7 +46,7 @@ Open **Your story** in the main menu, **The First Dawn** in the pause menu, or t
 
 The finale unseals the **Hall of Nuvori** north of Crownspire for four wardens and Champion Iris. Damage and move energy carry between opponents; leaving, losing, or reloading an unfinished fight resets the attempt. Saves between opponents resume safely. Five milestone cosmetics can be equipped free in the story wardrobe. Completed dialogue remains available in Memories.
 
-Campaign state, rewards, and cosmetics travel with the adventure save. Beta remains local/guest-only. Before a future production promotion, apply `supabase/migrations/202610100001_first_dawn.sql` for the Hall's local chat channel; this private update does not change the production database. Story progress follows the existing cooperative, client-controlled save model.
+Campaign state, rewards, and cosmetics travel with the adventure save. Beta remains local/guest-only. The Hall local-chat migration, `supabase/migrations/202610100001_first_dawn.sql`, was applied to production for the 1.4.0 web promotion on October 10, 2026. Story progress follows the existing cooperative, client-controlled save model.
 
 The development-only `/scripts/story-preview.html` provides isolated, in-memory story, battle, wardrobe, and Hall views without reading or modifying player saves.
 

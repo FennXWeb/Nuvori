@@ -15,6 +15,8 @@ Google and Discord credentials have been entered by the project owner and both p
 
 On October 9, 2026, `202610090001_first_light.sql` was applied in production. The verification query confirmed 312 species, Solunelle in the catalog, and the new appearance validation in `nuvori_league_open`. See [First Light](FIRST-LIGHT.md).
 
+On October 10, 2026, `202610100001_first_dawn.sql` was applied to production for version 1.4.0. The SQL Editor confirmed `hall_chat_enabled = true`. The transaction adds the Hall of Nuvori to local chat without changing message records, access policies or rate limits.
+
 ## Supabase
 
 1. Create a free Supabase project. Enable the Data API and row-level security.

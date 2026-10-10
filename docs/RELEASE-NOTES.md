@@ -1,5 +1,19 @@
 Nuvori release notes.
 
+## 1.4.0 · The First Dawn (web)
+
+- A 26-chapter campaign introduces Auralis, the origins of Nuvo, keeper registration, starter selection and a guided first catch. Existing keepers can begin with their current crew.
+- Recurring friends and three rivals accompany the journey through all five Champions Leagues. The finale unlocks the Hall of Nuvori, with four wardens and a reigning champion in an endurance challenge.
+- Five story cosmetic unlocks, a story journal, route guidance and persistent campaign checkpoints.
+- All 312 Nuvo forms have separate guide entries and exact-form caught/seen records. Evolving retains the record of each previous form; legacy saves recover forms supported by their saved companions and history.
+- Full-screen battle controls, jade-and-gold interface styling, an animated custom cursor and corrected headwear placement. Fallen companions remain fainted until properly healed.
+- An illustrated world atlas and paid fast travel to discovered areas, plus the latest authored Auralis world layout.
+- Fixed cloud-save updates that could block nursery collection and entry to Champions battles.
+- Owner-only local World Studio and private beta launchers support world drafts, terrain and object editing, weighted encounter zones, validation and private testing publication. Editor tools are excluded from the live game bundle.
+
+Existing saves remain compatible. The Hall local-chat migration accompanies this web update. This promotion does not create a new Windows/SMOG release.
+
+
 ## 1.3.1 · Soft Trails (web)
 
 - Eight new ElevenLabs grass footfalls with shuffled playback, plus remade selection, confirm, back, error, notification, reorder, purchase and customization cues.
