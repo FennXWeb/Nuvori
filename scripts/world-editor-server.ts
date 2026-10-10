@@ -1,4 +1,5 @@
-import {createServer} from 'vite';
+import {createServer,type ViteDevServer} from 'vite';
+import type {Server} from 'node:http';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {randomBytes,randomUUID,createHash} from 'node:crypto';
@@ -9,6 +10,7 @@ import {authorizedRequest,verifyPrivateWorkspace,REPOSITORY,BRANCH,OWNER} from '
 import {publishWorld} from './world-publisher';
 import {compileBeta,readBetaBuild} from './beta-build';
 import {startBetaServer} from './beta-server';
+import {findRunningStudio,waitForRunningStudio,isPortConflict,studioLaunchError,openStudioPage} from './studio-launch';
 import {inspectWorld,validateWorld} from '../src/editor/model';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=5187;
 const home=path.join(root,'.world-editor'),drafts=path.join(home,'drafts'),content=path.join(root,'src/content/world.json');
@@ -16,16 +18,40 @@ const exec=promisify(execFile);
 const run=async(command:string,args:string[])=>{
  const result=await exec(command,args,{cwd:root,windowsHide:true,maxBuffer:8*1024*1024,timeout:180000});return result.stdout;
 };
-await verifyPrivateWorkspace(run);
+const sessionFile=path.join(home,'session.json'),page=process.argv.includes('--beta')?'beta':'editor';
+async function announce(url:string,reused=false){
+ console.log(`\nNUVORI WORLD STUDIO • Owner: ${OWNER}\nPrivate destination: ${REPOSITORY} / ${BRANCH}\n${reused?'World Studio is already running. Reusing your existing session.\nKeep the original server terminal running.\n':''}Open this private launch link (do not share):\n${url}\n`);
+ if(process.argv.includes('--open'))await openStudioPage(url).catch(()=>console.log('The browser could not be opened automatically. Open the private link above.'));
+}
+async function main(){
+ await verifyPrivateWorkspace(run);
+ const running=await findRunningStudio(sessionFile,page,port);
+ if(running){await announce(running,true);return;}
+ try{await startStudio();}
+ catch(error){
+  if(isPortConflict(error)){
+   const running=await waitForRunningStudio(sessionFile,page,port);
+   if(running){await announce(running,true);return;}
+  }
+  throw error;
+ }
+}
+async function startStudio(){
 await mkdir(drafts,{recursive:true});
 const key=randomBytes(32).toString('hex');
-const betaServer=await startBetaServer(path.join(home,'beta'),key);
+let betaServer:Server|undefined,server:ViteDevServer|undefined;
+const closeServers=async()=>{
+ try{await server?.close();}
+ finally{if(betaServer?.listening)await new Promise<void>(resolve=>betaServer!.close(()=>resolve()));}
+};
+try{
+betaServer=await startBetaServer(path.join(home,'beta'),key);
 const betaStatus=async()=>{const build=await readBetaBuild(root),head=(await run('git',['rev-parse','HEAD'])).trim();return {build,head,stale:!!build&&build.sha!==head,busy,phase,launch:build?`http://127.0.0.1:5188/launch#${key}:${build.id}`:null};};
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 const state=async()=>{const raw=await readFile(content,'utf8');return {document:JSON.parse(raw),revision:hash(raw)};};
 const atomic=async(file:string,value:unknown)=>{const tmp=file+'.tmp';await writeFile(tmp,JSON.stringify(value,null,2)+'\n',{mode:0o600});await rename(tmp,file);};
 let busy=false,phase='Ready';
-const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,open:false,cors:false,fs:{deny:['.env','.env.*','*.{crt,pem}','**/.git/**','**/.world-editor/**']},watch:{ignored:['**/.world-editor/**','**/src/content/world.json']}},plugins:[{
+server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,open:false,cors:false,fs:{deny:['.env','.env.*','*.{crt,pem}','**/.git/**','**/.world-editor/**']},watch:{ignored:['**/.world-editor/**','**/src/content/world.json']}},plugins:[{
  name:'nuvori-private-studio',configureServer(vite){
   vite.middlewares.use('/__studio',async(req,res)=>{
    res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');
@@ -81,8 +107,17 @@ const server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:t
  }
 }]});
 await server.listen();
-const url=`http://127.0.0.1:${port}/${process.argv.includes('--beta')?'beta':'editor'}.html#${key}`;
-await atomic(path.join(home,'session.json'),{url,betaUrl:`http://127.0.0.1:${port}/beta.html#${key}`});
-console.log(`\nNUVORI WORLD STUDIO • Owner: ${OWNER}\nPrivate destination: ${REPOSITORY} / ${BRANCH}\nOpen this private launch link (do not share):\n${url}\n`);
-const close=async()=>{await unlink(path.join(home,'session.json')).catch(()=>{});betaServer.close();await server.close();process.exit();};
+const url=`http://127.0.0.1:${port}/${page}.html#${key}`;
+await atomic(sessionFile,{url,betaUrl:`http://127.0.0.1:${port}/beta.html#${key}`});
+let closing=false;
+const close=async()=>{
+ if(closing)return;closing=true;
+ const saved=await readFile(sessionFile,'utf8').then(raw=>JSON.parse(raw)).catch(()=>null);
+ if(saved?.url===url)await unlink(sessionFile).catch(()=>{});
+ await closeServers();process.exit();
+};
 process.on('SIGINT',()=>void close());process.on('SIGTERM',()=>void close());
+await announce(url);
+}catch(error){await closeServers();throw error;}
+}
+await main().catch(error=>{console.error('\n'+studioLaunchError(error)+'\n');process.exitCode=1;});

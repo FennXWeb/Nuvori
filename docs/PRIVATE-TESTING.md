@@ -8,7 +8,7 @@ Every testing push runs automated tests and a beta web build in the private repo
 
 ## Play beta in your browser
 
-Double-click **Nuvori Play Beta.cmd**, or run `npm run beta`, then open the private launch link printed in the terminal. If World Studio is already running, click **Play Beta** in its header instead of starting a second server. GitHub CLI must be signed into FennXWeb, with this checkout on `codex/testing` and the testing repository private.
+Double-click **Nuvori Play Beta.cmd** to open the beta lounge in your default browser, or run `npm run beta` and open the private launch link printed in the terminal. If World Studio or Play Beta is already running, either launcher reuses that verified session. Keep the original server terminal open. GitHub CLI must be signed into FennXWeb, with this checkout on `codex/testing` and the testing repository private.
 
 The beta lounge has **Build beta / Rebuild latest beta**, **Play beta**, a compiled commit/date, and a link back to World Studio. The first build requires a clean committed checkout. After publishing a world draft or pushing code changes, rebuild to play that commit. Rebuilding is local and does not publish anything. Unsaved or saved-but-unpublished world drafts are not included. Build failures preserve the previous playable game.
 

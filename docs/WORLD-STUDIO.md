@@ -10,7 +10,7 @@ Double-click **Nuvori World Studio.cmd** in the project folder, or run:
 npm run world:editor
 ```
 
-Open the private launch link printed in that terminal. Leave the terminal running while editing. The studio uses port 5187 and checks that GitHub CLI is signed into **FennXWeb**, the checkout is on **codex/testing**, and the `testing` remote is the **private FennXWeb/Nuvori-Testing repository**. It fails closed if those checks cannot complete. Run `npm ci` first on a fresh checkout; Node 22+ and GitHub CLI are required.
+The desktop launcher opens the studio in your default browser; the npm command prints a private launch link to open. Leave the original server terminal running while editing. Reopening either launcher reuses the same verified session, so you can switch between World Studio and Play Beta without a port conflict. The studio uses port 5187 and checks that GitHub CLI is signed into **FennXWeb**, the checkout is on **codex/testing**, and the `testing` remote is the **private FennXWeb/Nuvori-Testing repository**. It fails closed if those checks cannot complete. Run `npm ci` first on a fresh checkout; Node 22+ and GitHub CLI are required.
 
 The studio is a development tool on your computer, not a public game menu. No Supabase role or additional cloud credential is needed. The launch link is a short-lived capability for the current process; do not share it. Restarting the studio invalidates old links. API calls require that capability and a loopback client, exact host, and matching origin. Drafts and launch files are excluded from Git and denied by the development server. GitHub credentials remain in GitHub CLI; they never enter the browser or game build. Like any local tool, it trusts your OS account and anyone with access to its files.
 
