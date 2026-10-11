@@ -43,6 +43,8 @@ Choose **Publish to beta** to review affected cells and validation results, then
 
 Choose **Publish beta to main** in the top bar when the committed beta is ready for everyone. Restart World Studio after installing this feature so its local server loads the new release routes.
 
+If the page has updated while the server is still running older code, the release review explains that a restart is needed. Save your draft, close the original World Studio terminal and reopen **Nuvori World Studio.cmd**. Reopening a launcher detects an incompatible server instead of silently reusing it. Saved drafts and beta adventures are preserved; use the new private launch link after restarting. Unknown API actions are reported as unsupported actions, rather than invalid world data.
+
 1. Publish any world draft you want included with **Publish to beta**, then wait for its private GitHub validation to pass. Saved and unsaved drafts remain local until published to beta.
 2. Open **Publish beta to main**. Review the current main and beta commit IDs, commit descriptions, changed files and full-diff link. This publishes the entire committed beta, including game code and artwork.
 3. Check the confirmation naming the beta commit, then choose **Publish beta to main**. The studio rechecks ownership, repository identities, branch state, successful private CI, tests and the production build before pushing.

@@ -13,6 +13,7 @@ import {compileBeta,readBetaBuild} from './beta-build';
 import {startBetaServer} from './beta-server';
 import {findRunningStudio,waitForRunningStudio,isPortConflict,studioLaunchError,openStudioPage} from './studio-launch';
 import {inspectWorld,validateWorld} from '../src/editor/model';
+import {STUDIO_API_VERSION} from '../src/editor/studioProtocol';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=5187;
 const home=path.join(root,'.world-editor'),drafts=path.join(home,'drafts'),content=path.join(root,'src/content/world.json');
 const exec=promisify(execFile);
@@ -70,7 +71,7 @@ server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,op
    const url=new URL(req.url??'/',`http://127.0.0.1:${port}`),route=url.pathname;
    if(req.method==='GET'){
     try{
-     if(route==='/session')return send(200,{owner:OWNER,repository:REPOSITORY,branch:BRANCH,...await state(),phase,busy});
+     if(route==='/session')return send(200,{apiVersion:STUDIO_API_VERSION,owner:OWNER,repository:REPOSITORY,branch:BRANCH,...await state(),phase,busy});
      if(route==='/beta')return send(200,await betaStatus());
      if(route==='/drafts'){
       const files=(await readdir(drafts)).filter(f=>/^(autosave|[a-f0-9-]{36})\.json$/.test(f));
@@ -82,6 +83,7 @@ server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,op
     }catch{return send(500,{error:'The studio could not read its local data.'});}
    }
    if(req.method!=='POST'||req.headers.origin!==`http://127.0.0.1:${port}`||!req.headers['content-type']?.startsWith('application/json'))return send(403,{error:'Use the private studio to make changes.'});
+   if(!['/production/review','/production/publish','/beta/build','/drafts','/publish'].includes(route))return send(404,{error:'Unknown studio action. Update and restart World Studio, then try again.'});
    if(busy)return send(409,{error:`${phase}. Please wait.`});
    busy=true;
    try{
@@ -102,7 +104,6 @@ server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,op
      await atomic(path.join(drafts,id+'.json'),{name,updated:new Date().toISOString(),document:body.document});
      return send(200,{id});
     }
-    if(route!=='/publish')return send(404,{error:'Unknown studio action.'});
     phase='Validating paths and habitats';const checks=validateWorld(body.document);
     if(checks.some(i=>i.severity==='error'))return send(422,{error:'Resolve validation errors before publishing.',issues:checks});
     const result=await publishWorld(body,{root,run,phase:value=>{phase=value;},check:async()=>{

@@ -6,9 +6,10 @@ import {setTimeout as delay} from 'node:timers/promises';
 import path from 'node:path';
 import {findRunningStudio,waitForRunningStudio,isPortConflict,studioLaunchError,openStudioPage} from '../scripts/studio-launch';
 import {OWNER,REPOSITORY,BRANCH} from '../scripts/editor-security';
+import {STUDIO_API_VERSION,StudioRestartRequired} from '../src/editor/studioProtocol';
 
 const key='c'.repeat(64);
-const identity={owner:OWNER,repository:REPOSITORY,branch:BRANCH,document:{schema:1,cells:{}},revision:'a'.repeat(64)};
+const identity={apiVersion:STUDIO_API_VERSION,owner:OWNER,repository:REPOSITORY,branch:BRANCH,document:{schema:1,cells:{}},revision:'a'.repeat(64)};
 async function fixture(handler:RequestListener){
  const home=path.resolve('.sites-runtime');await mkdir(home,{recursive:true});
  const root=await mkdtemp(path.join(home,'studio-launch-')),file=path.join(root,'session.json');
@@ -64,6 +65,21 @@ test('session probes reject redirects without forwarding the private key',async(
  const f=await fixture((_req,res)=>{requests++;res.writeHead(302,{Location:'/redirected'});res.end();});
  try{await f.save();assert.equal(await findRunningStudio(f.file,'editor',f.port),null);assert.equal(requests,1);}
  finally{await f.cleanup();}
+});
+
+test('an authenticated older Studio requires a restart instead of silently reusing its outdated server',async()=>{
+ let version:unknown=undefined;
+ const f=await fixture((_req,res)=>res.end(JSON.stringify({...identity,apiVersion:version})));
+ try{
+  await f.save();const before=await readFile(f.file,'utf8');
+  for(const value of [undefined,null,0,STUDIO_API_VERSION+1,String(STUDIO_API_VERSION)]){
+   version=value;
+   await assert.rejects(findRunningStudio(f.file,'editor',f.port),StudioRestartRequired);
+  }
+  assert.equal(await readFile(f.file,'utf8'),before);
+  assert.match(studioLaunchError(new StudioRestartRequired()),/close the original World Studio terminal/);
+  assert.match(studioLaunchError(new StudioRestartRequired()),/saved drafts and beta saves are preserved/);
+ }finally{await f.cleanup();}
 });
 
 test('a hung service has a bounded probe and simultaneous launch can wait for session publication',async()=>{

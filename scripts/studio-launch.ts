@@ -3,6 +3,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {OWNER,REPOSITORY,BRANCH} from './editor-security';
+import {requireCurrentStudio,StudioRestartRequired} from '../src/editor/studioProtocol';
 
 export type StudioPage='editor'|'beta';
 
@@ -17,8 +18,9 @@ export async function findRunningStudio(sessionFile:string,page:StudioPage,port=
   if(!response.ok)return null;
   const session=await response.json();
   if(session.owner!==OWNER||session.repository!==REPOSITORY||session.branch!==BRANCH||session.document?.schema!==1||!/^[a-f0-9]{64}$/.test(session.revision))return null;
+  requireCurrentStudio(session);
   return `${origin}/${page}.html${url.hash}`;
- }catch{return null;}
+ }catch(error){if(error instanceof StudioRestartRequired)throw error;return null;}
 }
 
 /** A simultaneous first launch can bind its port before writing session.json. */

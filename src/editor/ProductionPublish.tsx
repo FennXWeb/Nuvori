@@ -1,8 +1,15 @@
 import {useEffect,useRef,useState} from 'react';
 import {ArrowRight,Check,ExternalLink,GitBranch,Globe,LoaderCircle,RefreshCw,ShieldCheck,Upload} from 'lucide-react';
 import type {ProductionReview,ProductionResult} from './productionTypes';
+import {requireCurrentStudio} from './studioProtocol';
 type Api=(path:string,body?:unknown)=>Promise<any>;
 interface Props {api:Api;onBusy:(busy:boolean)=>void;hasDraftChanges:boolean}
+
+export async function reviewProductionBeta(api:Api):Promise<ProductionReview>{
+ // Vite can update this page while an older local server is still running.
+ requireCurrentStudio(await api('/session'));
+ return api('/production/review',{});
+}
 
 export function ProductionPublish({api,onBusy,hasDraftChanges}:Props){
  const [review,setReview]=useState<ProductionReview|null>(null),[result,setResult]=useState<ProductionResult|null>(null),[busy,setBusy]=useState(false),[phase,setPhase]=useState(''),[error,setError]=useState(''),[confirmed,setConfirmed]=useState(false);
@@ -12,7 +19,7 @@ export function ProductionPublish({api,onBusy,hasDraftChanges}:Props){
   const poll=setInterval(()=>{void api('/session').then(s=>{if(active.current)setPhase(s.phase);}).catch(()=>{});},2500);
   try{await work();}catch(e){if(active.current)setError((e as Error).message);}finally{clearInterval(poll);request.current=false;if(active.current){setBusy(false);onBusy(false);setPhase('');}}
  };
- const refresh=()=>void task(async()=>{setConfirmed(false);setReview(null);const next:ProductionReview=await api('/production/review',{});if(active.current)setReview(next);},'Comparing beta with main…');
+ const refresh=()=>void task(async()=>{setConfirmed(false);setReview(null);const next=await reviewProductionBeta(api);if(active.current)setReview(next);},'Comparing beta with main…');
  useEffect(()=>{active.current=true;refresh();return()=>{active.current=false;};},[]);
  const publish=()=>void task(async()=>{
   const selected=review;if(!selected||!confirmed||!selected.validation.passed||!selected.commitCount)return;

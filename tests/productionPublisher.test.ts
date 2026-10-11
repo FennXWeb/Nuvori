@@ -5,7 +5,8 @@ import path from 'node:path';
 import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {createProductionPublisher} from '../scripts/production-publisher';
-import {ProductionPublishView} from '../src/editor/ProductionPublish';
+import {ProductionPublishView,reviewProductionBeta} from '../src/editor/ProductionPublish';
+import {STUDIO_API_VERSION,StudioRestartRequired} from '../src/editor/studioProtocol';
 import type {Runner} from '../scripts/editor-security';
 import type {ProductionReview} from '../src/editor/productionTypes';
 
@@ -44,6 +45,18 @@ function fixture(){
  return {state,calls,phases,publisher,checked:()=>checked,onCheck:(work:()=>Promise<void>)=>{onCheck=work;},pushes:()=>calls.filter(c=>c.args.includes('push'))};
 }
 const confirm=(r:ProductionReview)=>({reviewId:r.id,betaSha:r.betaSha,mainSha:r.mainSha,confirmed:true});
+
+test('release review checks server compatibility before sending an action to an older server',async()=>{
+ for(const apiVersion of [undefined,null,0,STUDIO_API_VERSION+1]){
+  const calls:string[]=[];
+  await assert.rejects(reviewProductionBeta(async route=>{calls.push(route);return {apiVersion};}),StudioRestartRequired);
+  assert.deepEqual(calls,['/session']);
+ }
+ const calls:{route:string;body:unknown}[]=[],review=await fixture().publisher.preview();
+ assert.equal(await reviewProductionBeta(async(route,body)=>{calls.push({route,body});return route==='/session'?{apiVersion:STUDIO_API_VERSION}:review;}),review);
+ assert.deepEqual(calls,[{route:'/session',body:undefined},{route:'/production/review',body:{}}]);
+ await assert.rejects(reviewProductionBeta(async()=>{throw new Error('Session expired');}),/Session expired/);
+});
 
 test('production review shows exact published beta changes without committing, building or pushing',async()=>{
  const f=fixture(),r=await f.publisher.preview();
