@@ -20,6 +20,8 @@ Compiled builds and session details stay in ignored `.world-editor/beta/`. Each 
 
 ## Pending interface update
 
+The post-1.4.0 Champions League update adds a full-screen animated guardian arena and matching solo story trial styling. See [CHAMPIONS-ARENA.md](CHAMPIONS-ARENA.md) for preview controls, artwork and validation limits. Shared multiplayer still requires an online backend; the private beta deliberately keeps production accounts disabled, so use the disposable development preview for the four-keeper layout.
+
 - The Nuvopedia lists all 312 individual forms with distinct entry numbers, family/stage labels, exact-form completion, and caught/seen/not-caught filters. Battles and atlas habitat checkmarks use the same records.
 - New captures and evolutions persist exact species IDs in `caughtForms`/`seenForms`; evolving preserves each prior form. Starter, collected nursery, and claimed reward Nuvo also count as obtained. Existing family progress remains for family objectives and pass rewards. No database migration is required: saves already store their JSON document intact.
 - Legacy saves recover confirmed forms from crew, reserve, nursery parents, evolution notices, and the unambiguous lineage of starter/nursery companions. Pending offspring do not count. Old family-only flags cannot prove which branch or base was obtained, so they do not unlock forms without supporting records; missing historical forms cannot be fully reconstructed.

@@ -7,6 +7,8 @@ import {ORBS,orbCount,type OrbKind} from './expansion';
 import {caughtBefore} from './adventure';
 import {sexLabel} from './nursery';
 import type {Battle,BattleAction,Save} from './game';
+import {ChampionsBackdrop,ChampionCrest,ChampionEntrance} from './ChampionsScene';
+import {soloLeagueGuardian} from './leagueArenaModel';
 import './battleScreen.css';
 
 export function BattleView({battle,save,busy:turnBusy,onAction,onFinish}:{battle:Battle;save:Save;busy:boolean;onAction:(a:BattleAction)=>void;onFinish:()=>void}){
@@ -18,12 +20,12 @@ export function BattleView({battle,save,busy:turnBusy,onAction,onFinish}:{battle
  const shown=presented.player,wild=presented.wild,ps=SPECIES_BY_ID[shown.speciesId],ws=SPECIES_BY_ID[wild.speciesId];
  const act=(a:BattleAction)=>{if(!busy){onAction(a);setTab('moves');}};
  useEffect(()=>{if(battle.lastStand)setTab('moves');},[battle.lastStand]);
- const region=REGION_BY_ID[save.region];
- return <section ref={panel} tabIndex={-1} className={`nu-battle ${keeper?'keeper-stand':''} ${battle.over?'resolved':''}`} role="dialog" aria-modal="true" aria-label={battle.trainerName?`Battle with ${battle.trainerName}`:'Wild Nuvo encounter'} onKeyDown={e=>{
+ const region=REGION_BY_ID[save.region],guardian=soloLeagueGuardian(battle);
+ return <section ref={panel} tabIndex={-1} className={`nu-battle ${guardian?'champions-battle':''} ${keeper?'keeper-stand':''} ${battle.over?'resolved':''}`} style={guardian?{'--league-accent':guardian.color} as CSSProperties:undefined} role="dialog" aria-modal="true" aria-label={battle.trainerName?`Battle with ${battle.trainerName}`:'Wild Nuvo encounter'} onKeyDown={e=>{
   if(e.key==='Tab'){const els=Array.from(panel.current!.querySelectorAll<HTMLElement>('button:not(:disabled),select:not(:disabled)'));const first=els[0],last=els.at(-1);if(e.shiftKey&&(document.activeElement===first||document.activeElement===panel.current)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}
  }}>
-  <div className="battle-sky" aria-hidden="true"><i/><i/><i/></div>
-  <header className="encounter-header"><div><span className="nu-kicker">{battle.trainerName?'KEEPER CHALLENGE':'INTO THE WILD'}</span><h1>{region.name}</h1></div><div className="encounter-seal">✦</div><div><span className="nu-kicker">{battle.wild.prismatic?'PRISMATIC DISCOVERY':battle.trainerName??'YOUR PATH. THEIR EVOLUTION.'}</span><strong>Turn {battle.turn+1}<small>{battle.trainerId?` · ${(battle.opponentQueue?.length??0)+1} opponents remain`:''}</small></strong></div></header>
+  {guardian?<ChampionsBackdrop/>:<div className="battle-sky" aria-hidden="true"><i/><i/><i/></div>}
+  <header className="encounter-header"><div><span className="nu-kicker">{guardian?'CHAMPIONS LEAGUE · SOLO TRIAL':battle.trainerName?'KEEPER CHALLENGE':'INTO THE WILD'}</span><h1>{guardian?.name??region.name}</h1></div>{guardian?<ChampionCrest/>:<div className="encounter-seal">✦</div>}<div><span className="nu-kicker">{guardian?guardian.badge:battle.wild.prismatic?'PRISMATIC DISCOVERY':battle.trainerName??'YOUR PATH. THEIR EVOLUTION.'}</span><strong>Turn {battle.turn+1}<small>{battle.trainerId?` · ${(battle.opponentQueue?.length??0)+1} opponents remain`:''}</small></strong></div></header>
   <div className="encounter-stage">
    <div className="battle-plinth ally-plinth"/><div className="battle-plinth rival-plinth"/>
    <div className="combat-card rival-card"><span className="nu-kicker">{battle.trainerId?'OPPONENT':'WILD NUVO'} {caughtBefore(save,ws.id)&&<span className="caught-mark"><Check size={12}/> Collected</span>}</span><div className="combat-name"><h2>{ws.name}{wild.prismatic?' ✦':''}</h2><span>Lv. {wild.level} · {sexLabel(wild)}</span></div><>{battle.guardianMaxHp?<div className="health"><div className="health-track"><i style={{width:`${100*wild.hp/battle.guardianMaxHp}%`}}/></div><span>{wild.hp} / {battle.guardianMaxHp} HP</span></div>:<Health nuvo={wild}/>}</><div className="type-row">{ws.types.map(t=><TypeBadge key={t} type={t}/>)}{wild.status&&<small>{wild.status}</small>}</div></div>
@@ -34,7 +36,7 @@ export function BattleView({battle,save,busy:turnBusy,onAction,onFinish}:{battle
    <aside className="encounter-story"><span className="nu-kicker">{busy?'THE BATTLE UNFOLDS':'YOUR NEXT CHOICE'}</span><div className="encounter-log" aria-live="polite" aria-atomic="true">{battle.log.slice(-2).map((line,i)=><p key={i}>{line}</p>)}</div><div className="crew-vitals" aria-label="Crew health">{save.party.map(n=><span key={n.uid} className={n.hp<=0?'fallen':''} title={`${SPECIES_BY_ID[n.speciesId].name}: ${n.hp} HP`}>◈</span>)}</div></aside>
    <div className="encounter-controls">
     {battle.tutorial&&!battle.over&&<div className="tutorial-hint" role="status"><strong>Elowen’s catching lesson · </strong>{battle.wild.hp>maxHp(battle.wild)/2?"Use an Ability to lower its health without knocking it out. Then open Satchel → Throw orb.":"It’s ready! Open Satchel and throw a binding orb. Elowen will help this practice catch succeed."}</div>}
-    {battle.over?<div className="encounter-result"><span className="nu-kicker">{battle.over==='won'?'VICTORY':battle.over==='caught'?'A NEW BOND':battle.over==='lost'?'A NEW BEGINNING':'SAFELY AWAY'}</span><h2>{battle.over==='won'?'A little stronger, together.':battle.over==='caught'?'Your story grows.':battle.dreamAwakening?'Beyond the waking world…':battle.over==='lost'?'Rest beneath the lodge lights.':'The trail is calling.'}</h2>{keeper&&battle.over!=='lost'&&<p>Your fallen Nuvo still need care at the Healing Lodge.</p>}<button className="nu-button primary" disabled={busy} onClick={onFinish}>Continue adventure <ArrowRight size={18}/></button></div>
+    {battle.over?<div className="encounter-result">{guardian&&battle.over==='won'&&!busy&&<ChampionCrest/>}<span className="nu-kicker">{battle.over==='won'?'VICTORY':battle.over==='caught'?'A NEW BOND':battle.over==='lost'?'A NEW BEGINNING':'SAFELY AWAY'}</span><h2>{battle.over==='won'?(guardian?'A guardian’s respect. A keeper’s crest.':'A little stronger, together.'):battle.over==='caught'?'Your story grows.':battle.dreamAwakening?'Beyond the waking world…':battle.over==='lost'?'Rest beneath the lodge lights.':'The trail is calling.'}</h2>{keeper&&battle.over!=='lost'&&<p>Your fallen Nuvo still need care at the Healing Lodge.</p>}<button className="nu-button primary" disabled={busy} onClick={onFinish}>Continue adventure <ArrowRight size={18}/></button></div>
     :battle.lastStand==='choice'?<div className="encounter-result"><span className="nu-kicker">YOUR CREW HAS FALLEN</span><h2>Will you stand for them?</h2><p>Your Nuvo cannot fight. Step forward as your keeper, or return to the Healing Lodge.</p><div className="encounter-choices"><button className="nu-button primary" disabled={busy} onClick={()=>act({type:'stand'})}><Swords size={18}/> I’ll fight myself</button><button className="nu-button" disabled={busy} onClick={()=>act({type:'retreat'})}>Call for rescue</button></div></div>
     :<><nav className="combat-tabs" aria-label="Battle actions">{(['moves','bag','crew'] as const).map((id,i)=><button key={id} aria-pressed={tab===id} disabled={busy||(id==='crew'&&keeper)} onClick={()=>setTab(id)}>{i===0?<Swords size={17}/>:i===1?<Backpack size={17}/>:<Users size={17}/>} {id==='moves'?'Abilities':id==='bag'?'Satchel':'Crew'}</button>)}<button className="escape-action" disabled={busy||Boolean(battle.trainerId)} onClick={()=>act({type:'run'})}><Footprints size={17}/> Escape</button></nav>
     <div className="combat-content">
@@ -44,5 +46,6 @@ export function BattleView({battle,save,busy:turnBusy,onAction,onFinish}:{battle
     </div></>}
    </div>
   </div>
+  {guardian&&entering&&<ChampionEntrance guardian={guardian} onSkip={()=>setEntering(false)}/>}
  </section>;
 }
