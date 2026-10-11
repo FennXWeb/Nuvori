@@ -7,7 +7,7 @@ export function authorizedRequest(headers:Record<string,string|string[]|undefine
  if(a.length!==b.length||!timingSafeEqual(a,b))return false;
  return !headers.origin||headers.origin===`http://${expected}`;
 }
-export type Runner=(command:string,args:string[])=>Promise<string>;
+export type Runner=(command:string,args:string[],environment?:Record<string,string>)=>Promise<string>;
 export async function verifyPrivateWorkspace(run:Runner){
  const branch=(await run('git',['branch','--show-current'])).trim();
  if(branch!==BRANCH)throw new Error('Switch to codex/testing before opening or publishing from the studio.');

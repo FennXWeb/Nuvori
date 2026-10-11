@@ -8,6 +8,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {authorizedRequest,verifyPrivateWorkspace,REPOSITORY,BRANCH,OWNER} from './editor-security';
 import {publishWorld} from './world-publisher';
+import {createProductionPublisher} from './production-publisher';
 import {compileBeta,readBetaBuild} from './beta-build';
 import {startBetaServer} from './beta-server';
 import {findRunningStudio,waitForRunningStudio,isPortConflict,studioLaunchError,openStudioPage} from './studio-launch';
@@ -15,8 +16,8 @@ import {inspectWorld,validateWorld} from '../src/editor/model';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),port=5187;
 const home=path.join(root,'.world-editor'),drafts=path.join(home,'drafts'),content=path.join(root,'src/content/world.json');
 const exec=promisify(execFile);
-const run=async(command:string,args:string[])=>{
- const result=await exec(command,args,{cwd:root,windowsHide:true,maxBuffer:8*1024*1024,timeout:180000});return result.stdout;
+const run=async(command:string,args:string[],environment?:Record<string,string>)=>{
+ const result=await exec(command,args,{cwd:root,windowsHide:true,maxBuffer:8*1024*1024,timeout:180000,env:{...process.env,...environment}});return result.stdout;
 };
 const sessionFile=path.join(home,'session.json'),page=process.argv.includes('--beta')?'beta':'editor';
 async function announce(url:string,reused=false){
@@ -51,6 +52,15 @@ const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 const state=async()=>{const raw=await readFile(content,'utf8');return {document:JSON.parse(raw),revision:hash(raw)};};
 const atomic=async(file:string,value:unknown)=>{const tmp=file+'.tmp';await writeFile(tmp,JSON.stringify(value,null,2)+'\n',{mode:0o600});await rename(tmp,file);};
 let busy=false,phase='Ready';
+const production=createProductionPublisher({run,phase:value=>{phase=value;},check:async sha=>{
+ phase='Running regression checks';
+ await exec(process.execPath,['--import','tsx','--test',...((await readdir(path.join(root,'tests'))).filter(f=>f.endsWith('.test.ts')).map(f=>'tests/'+f))],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024,env:{...process.env,NUVORI_TEST_BASE_WORLD:'1'}});
+ phase='Building the production game';
+ await exec(process.execPath,['--import','tsx','scripts/export-catalog.ts'],{cwd:root,windowsHide:true,timeout:180000});
+ await exec(process.execPath,['scripts/third-party-licenses.mjs'],{cwd:root,windowsHide:true,timeout:180000});
+ await exec(process.execPath,[path.join(root,'node_modules/typescript/bin/tsc'),'-b'],{cwd:root,windowsHide:true,timeout:180000});
+ await exec(process.execPath,[path.join(root,'node_modules/vite/bin/vite.js'),'build','--outDir',path.join(home,'production-check')],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024,env:{...process.env,GITHUB_SHA:sha}});
+}});
 server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,open:false,cors:false,fs:{deny:['.env','.env.*','*.{crt,pem}','**/.git/**','**/.world-editor/**']},watch:{ignored:['**/.world-editor/**','**/src/content/world.json']}},plugins:[{
  name:'nuvori-private-studio',configureServer(vite){
   vite.middlewares.use('/__studio',async(req,res)=>{
@@ -77,6 +87,8 @@ server=await createServer({root,server:{host:'127.0.0.1',port,strictPort:true,op
    try{
     let raw='';for await(const chunk of req){raw+=chunk.toString();if(Buffer.byteLength(raw)>4*1024*1024)throw new Error('The world document exceeds the 4 MB limit.');}
     const body=JSON.parse(raw);
+    if(route==='/production/review')return send(200,await production.preview());
+    if(route==='/production/publish')return send(200,await production.publish(body));
     if(route==='/beta/build'){
      await compileBeta({root,run,phase:value=>{phase=value;},compile:async(out,id)=>{
       await exec(process.execPath,[path.join(root,'node_modules/typescript/bin/tsc'),'-b'],{cwd:root,windowsHide:true,timeout:180000,maxBuffer:8*1024*1024});

@@ -7,7 +7,7 @@ import type {WorldDocument} from '../src/worldContent';
 export const worldHash=(value:string)=>createHash('sha256').update(value).digest('hex');
 interface PublishRequest {document:WorldDocument;revision:string;name:string}
 interface Dependencies {root:string;run:Runner;check:()=>Promise<void>;phase:(value:string)=>void}
-/** The only publisher: fixed file, fixed private remote and ref, no force pushes or shell interpolation. */
+/** World-draft publisher: fixed file, fixed private remote and ref, no force pushes or shell interpolation. */
 export async function publishWorld(body:PublishRequest,{root,run,check,phase}:Dependencies){
  phase('Validating paths and habitats');const issues=validateWorld(body.document);
  if(issues.some(i=>i.severity==='error'))throw new Error('Resolve world validation errors before publishing.');

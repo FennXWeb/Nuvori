@@ -37,7 +37,22 @@ Choose **Publish to beta** to review affected cells and validation results, then
 2. Rechecks the GitHub owner, private repository, and exact testing branch. Requires a clean checkout and rejects stale draft base revisions.
 3. Saves a local backup of the previous beta world.
 4. Writes `src/content/world.json`, runs regression tests and validates the authored world separately, then builds the game.
-5. Commits **only that world-data file** and pushes to `testing/codex/testing`, without force. It never pushes to `origin`, main, tags, Pages, or production releases.
+5. Commits **only that world-data file** and pushes to `testing/codex/testing`, without force. This draft-publishing action never updates main or the live game.
+
+## Publish beta to main
+
+Choose **Publish beta to main** in the top bar when the committed beta is ready for everyone. Restart World Studio after installing this feature so its local server loads the new release routes.
+
+1. Publish any world draft you want included with **Publish to beta**, then wait for its private GitHub validation to pass. Saved and unsaved drafts remain local until published to beta.
+2. Open **Publish beta to main**. Review the current main and beta commit IDs, commit descriptions, changed files and full-diff link. This publishes the entire committed beta, including game code and artwork.
+3. Check the confirmation naming the beta commit, then choose **Publish beta to main**. The studio rechecks ownership, repository identities, branch state, successful private CI, tests and the production build before pushing.
+4. Follow **View deployment** to GitHub. The main workflow runs its own checks and deploys the web game. A successful push is reported separately from deployment completion.
+
+The checkout must be clean, on `codex/testing`, and match the pushed private beta. Main must be an ancestor of beta. A changed branch, failed build, expired review or duplicate request cannot silently publish a different commit. Reviews expire after ten minutes and confirmation is consumed by each publication attempt, including failures. Refresh the review to retry. If main already contains beta, there is nothing to publish.
+
+The pre-push guard stays enabled. Only the release process receives a one-command approval for the reviewed beta SHA, existing main SHA and exact public repository/main destination. Normal development pushes remain restricted to private testing. The publisher never force-pushes, switches your checkout, stages files, edits global Git settings, publishes native release tags, or applies database migrations. If a push connection fails, it checks the remote before reporting the outcome and never automatically retries.
+
+Validation: all 167 automated tests, TypeScript, the beta build and a separate World Studio bundle pass. Publisher tests cover ownership, repository identity, CI failure, stale reviews, concurrent requests, failed checks, uncertain network outcomes and the actual pre-push guard. Static UI rendering covers confirmation, draft reminders and success/error states. No Computer Use or live production push was used to test this feature.
 
 GitHub's private workflow creates the downloadable `nuvori-private-web-build` artifact. This is a branch/build publication, not public website hosting. Only built content goes into the game; neither editor entry point nor its backend is included in the production build.
 

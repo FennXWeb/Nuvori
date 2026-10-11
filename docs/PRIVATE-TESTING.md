@@ -6,6 +6,8 @@ GitHub branches inherit repository visibility. A separate private repository is 
 
 Every testing push runs automated tests and a beta web build in the private repository. The workflow's downloadable `nuvori-private-web-build` artifact is retained for 14 days. It creates no public preview, Pages deployment, production tag, or release. Beta mode explicitly disables online accounts and ignores production environment files; it supports guest play. Do not put a service-role key or provider secret in frontend configuration.
 
+World Studio also offers **Publish beta to main** as a separate owner-confirmed release action. It reviews the exact beta/main commits and all changes, requires successful private CI and local production checks, then pushes only that approved commit to public main with the publishing guard enabled. See [the release steps](WORLD-STUDIO.md#publish-beta-to-main). Draft publication and routine development remain private.
+
 ## Play beta in your browser
 
 Double-click **Nuvori Play Beta.cmd** to open the beta lounge in your default browser, or run `npm run beta` and open the private launch link printed in the terminal. If World Studio or Play Beta is already running, either launcher reuses that verified session. Keep the original server terminal open. GitHub CLI must be signed into FennXWeb, with this checkout on `codex/testing` and the testing repository private.
